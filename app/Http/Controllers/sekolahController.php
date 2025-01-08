@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\sekolah;
 use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class sekolahController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function showlogin()
+    public function index(Request $request)
     {
-        return view('auth.login');
+        $data = Sekolah::all();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+
+        return view('pages.sekolah.sekolah', compact('data'));
     }
+
 
     /**
      * Show the form for creating a new resource.
