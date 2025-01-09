@@ -1,23 +1,5 @@
 @extends('main.layout')
 @section('content')
-    <style>
-        #example_wrapper {
-            margin-bottom: 30px;
-        }
-
-        .level {
-            display: inline-block;
-            color: white;
-            width: 60px;
-            padding: 3px;
-            border-radius: 10px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -29,16 +11,16 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
+                                    <x-button.button_add_modal message="Tambah Program Belajar" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 10%;" class="text-center">Nama Program</th>
+                                                <th style="width: 15%;" class="text-center">Program belajar</th>
                                                 <th style="width: 10%;" class="text-center">Harga</th>
-                                                <th style="width: 20%;" class="text-center">Deskripsi</th>
+                                                <th style="width: 30%;" class="text-center">Deskripsi</th>
                                                 <th style="width: 10%;" class="text-center">Level</th>
                                                 <th style="width: 10%;" class="text-center">Jenis Kelas</th>
                                                 <th style="width: 15%;" class="text-center">Poin</th>
@@ -61,31 +43,49 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Program Belajar</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form action="" method="POST">
-                        @csrf
-                        <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-info" id="addfild">Tambah Form</button>
-                    <div>
+                <form id="inputForm">
+                    <div class="modal-body">
+                        <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
+                            name="program_belajar" />
+
+                        <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
+
+                        <x-form.input_textArea label="Deskripsi" name="deskripsi" />
+
+                        @php
+                            $option = [
+                                'Meker' => 'meker',
+                                'Coding' => 'coding',
+                                'Game Programing' => 'gameprograming',
+                                'Lainya' => 'lainya',
+                            ];
+                        @endphp
+                        <x-form.input_dropdown label="Jenis Kelas" name="jenis_kelas" :option="$option" />
+
+                        <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
+
+                        <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
+
+                        <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
+
+                        @php
+                            $option = [
+                                'Beginner (Pemula)' => 'mudah',
+                                'Intermediate (Menengah)' => 'sedang',
+                                'Advanced (Lanjutan)' => 'sulit',
+                            ];
+                        @endphp
+                        <x-form.input_dropdown label="Level" name="level" :option="$option" />
+
+                    </div>
+                    <div class="modal-footer d-flex">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-success">Kirim</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -108,17 +108,26 @@
                     {
                         data: 'nama_program',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-tabel text-start fw-bold">${data}</div>`;
                         }
                     },
                     {
                         data: 'harga',
                         render: function(data, type, row) {
-                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
+                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                currencyDisplay: 'narrowSymbol',
+                                minimumFractionDigits: 0
+                            }).format(data);
+
+                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
                         }
                     }, {
-                        data: 'deskripsi'
+                        data: 'deskripsi',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel text-start">${data}</div>`;
+                        }
                     },
                     {
                         data: 'level',
@@ -135,7 +144,10 @@
                         }
                     },
                     {
-                        data: 'jenis_kelas'
+                        data: 'jenis_kelas',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel text-center">${data}</div>`;
+                        }
                     },
                     {
                         data: null,
@@ -152,7 +164,6 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
                                     <a href="" class="btn btn-primary btn-sm">Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
@@ -164,22 +175,6 @@
                         }
                     }
                 ]
-            });
-
-
-            // Menambahkan Field Form
-            $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
-                `);
-            });
-
-            // Menghapus Field Form dengan event delegation
-            $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
             });
         });
     </script>

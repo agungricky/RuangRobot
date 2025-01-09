@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     {{-- Datatable --}}
-    <link href="{{ url('https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css') }}" rel="stylesheet" integrity="sha384 iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link href="{{ url('https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css') }}" rel="stylesheet"
+        integrity="sha384 iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('assets/datatables/style.css') }}">
 
 
@@ -34,6 +35,8 @@
 
     <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{{ asset('css_custom/style.css') }}">
 </head>
 
 <body>
@@ -51,7 +54,7 @@
 
     <!-- General JS Scripts -->
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script src="{{ asset('assets/js/popper.min.js') }}"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
     </script>
@@ -72,11 +75,6 @@
     {{-- datatable --}}
     <script src="{{ url('https://cdn.datatables.net/2.1.0/js/dataTables.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js') }}"></script>
-
-    {{-- <script>
-        new DataTable('#example');
-    </script> --}}
-
 
     <!-- Page Specific JS File -->
     {{-- @stack('script-js') --}}
