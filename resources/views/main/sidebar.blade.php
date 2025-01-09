@@ -28,8 +28,8 @@
                 </a>
                 <div class="collapse ps-4" id="kelasMenu">
                     <ul class="list-unstyled">
-                        <li><a href="/kelas-ekskul" class="nav-link"><i class="fa-solid fa-hotel"></i>Kelas Ekskul</a></li>
-                        <li><a href="/kelas-reguler" class="nav-link"><i class="fa-solid fa-house"></i>Kelas Reguler</a></li>
+                        <li><a href="{{ route('kelas_ekskul') }}" class="nav-link"><i class="fa-solid fa-hotel"></i>Kelas Ekskul</a></li>
+                        <li><a href="{{ route('kelas_reguler')}}" class="nav-link"><i class="fa-solid fa-house"></i>Kelas Reguler</a></li>
                     </ul>
                 </div>
             </li>
@@ -42,18 +42,17 @@
                 </a>
                 <div class="collapse ps-4" id="pengguna">
                     <ul class="list-unstyled">
-                        <li><a href="/kelas-ekskul" class="nav-link"><i class="fa-solid fa-user-tie"></i>Admin</a></li>
-                        <li><a href="/kelas-reguler" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i>Pengajar</a></li>
-                        <li><a href="/kelas-reguler" class="nav-link"><i class="fa-solid fa-user"></i>Siswa</a></li>
+                        <li><a href="{{ route('admin')}}" class="nav-link"><i class="fa-solid fa-user-tie"></i>Admin</a></li>
+                        <li><a href="{{ route('pengajar')}}" class="nav-link"><i class="fa-solid fa-chalkboard-user"></i>Pengajar</a></li>
+                        <li><a href="{{ route('siswa')}}" class="nav-link"><i class="fa-solid fa-user"></i>Siswa</a></li>
                     </ul>
                 </div>
             </li>
             
-            
             <!-- menu header -->
             <li class="menu-header">Keuangan</li>
             <li>
-                <a href=""><i class="fas fa-address-book"></i><span>Gaji</span></a>
+                <a href="{{ route('gaji')}} "><i class="fas fa-address-book"></i><span>Gaji</span></a>
             </li>
             <!-- menu header -->
             <li class="menu-header">Pembayaran</li>
