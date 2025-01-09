@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\gajiController;
 use App\Http\Controllers\kelasController;
+use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
@@ -34,6 +35,8 @@ Route::get('/data_siswa',[penggunaController::class,'datasiswa'])->name('siswa')
 
 // ========= Gaji ========= //
 Route::get('/gaji',[gajiController::class,'index'])->name('gaji');
+// ========= Pembayaran ========= //
+Route::get('/pembayaran',[pembayaranController::class,'index'])->name('pembayaran');
 
 Route::view('/x','main.layout');
 Route::view('/x','pages.konten');

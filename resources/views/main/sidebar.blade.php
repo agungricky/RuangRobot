@@ -57,7 +57,7 @@
             <!-- menu header -->
             <li class="menu-header">Pembayaran</li>
             <li>
-                <a href=""><i class="fas fa-money-bill-alt"></i><span>Pembayaran</span>
+                <a href="{{ route('pembayaran')}}"><i class="fas fa-money-bill-alt"></i><span>Pembayaran</span>
                     <div class="badge badge-pill badge-warning text-dark">
                     </div>
                 </a>
