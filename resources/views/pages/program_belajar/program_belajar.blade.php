@@ -1,9 +1,27 @@
 @extends('main.layout')
 @section('content')
+    <style>
+        #example_wrapper {
+            margin-bottom: 30px;
+        }
+
+        .level {
+            display: inline-block;
+            color: white;
+            width: 60px;
+            padding: 3px;
+            border-radius: 10px;
+            font-size: 14px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <x-title_halaman title="Daftar Sekolah / Mitra" />
+            <x-title_halaman title="Program Belajar" />
 
             <div class="section-body">
                 <div class="row">
@@ -14,14 +32,17 @@
                                     <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10%;" class="text-center">No.</th>
-                                                <th style="width: 20%;">Nama Sekolah</th>
-                                                <th style="width: 25%;">Penanggung Jawab Robotik</th>
-                                                <th style="width: 10%;">No-hp</th>
-                                                <th style="width: 65%;">Aksi</th>
+                                                <th style="width: 5%;" class="text-center">No.</th>
+                                                <th style="width: 10%;" class="text-center">Nama Program</th>
+                                                <th style="width: 10%;" class="text-center">Harga</th>
+                                                <th style="width: 20%;" class="text-center">Deskripsi</th>
+                                                <th style="width: 10%;" class="text-center">Level</th>
+                                                <th style="width: 10%;" class="text-center">Jenis Kelas</th>
+                                                <th style="width: 15%;" class="text-center">Poin</th>
+                                                <th style="width: 10%;" class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -75,7 +96,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('sekolah.json') }}",
+                    url: "{{ route('program_belajar.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -85,28 +106,66 @@
                         }
                     },
                     {
-                        data: 'nama_sekolah'
+                        data: 'nama_program',
+                        render: function(data, type, row) {
+                            return `<div class="fw-bold">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'harga',
+                        render: function(data, type, row) {
+                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
+                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
+                        }
+                    }, {
+                        data: 'deskripsi'
+                    },
+                    {
+                        data: 'level',
+                        render: function(data, type, row) {
+                            if (data == 'mudah') {
+                                color = 'success';
+                            }
+                            if (data == 'sedang') {
+                                color = 'warning';
+                            } else if (data == 'sulit') {
+                                color = 'danger';
+                            }
+                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                        }
+                    },
+                    {
+                        data: 'jenis_kelas'
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center">-</>`;
+                            return `
+                                    <div class="text-center text-nowrap text-success fw-bold">
+                                        M${row.mekanik} &#8226; E${row.elektronik} &#8226; P${row.pemrograman}
+                                    </div>
+                            `;
                         }
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center">-</>`;
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            return `<button class="btn btn-danger btn-sm delete-button" data-id="${row.id}">Hapus</button>`;
+                            return `
+                            <div class="d-flex gap-1">
+                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
+                                    <a href="" class="btn btn-primary btn-sm">Edit</a>
+                                    <form action="" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    </form>
+                            </div>
+                            `;
                         }
                     }
                 ]
             });
+
 
             // Menambahkan Field Form
             $('#addfild').click(function(e) {

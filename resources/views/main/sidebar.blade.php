@@ -34,7 +34,7 @@
                 </div>
             </li>
             <li>
-                <a href=""><i class="fa-solid fa-layer-group"></i><span>Program Belajar</span></a>
+                <a href="{{ route('program_belajar') }}"><i class="fa-solid fa-layer-group"></i><span>Program Belajar</span></a>
             </li>
             <li>
                 <a href="#pengguna" class="nav-link" data-bs-toggle="collapse">
