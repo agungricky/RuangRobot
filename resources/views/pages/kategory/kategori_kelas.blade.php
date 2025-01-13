@@ -49,7 +49,7 @@
                                 <div class="field d-flex gap-1">
                                     <input type="text" class="form-control border-2" id="nama_sekolah"
                                         name="nama_sekolah" required>
-                                    <x-form.input_text name="jenis_kelas" label="jenis kelas" >
+                                    {{-- <x-form.input_text name="jenis_kelas" label="jenis kelas" > --}}
                                     <button type="button" class="btn btn-danger removefield">X</button>
                                 </div>
                             </div>

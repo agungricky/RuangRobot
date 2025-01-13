@@ -38,26 +38,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kategori</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding-bottom: 0;">
                     <form action="" method="POST">
                         @csrf
-                        <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
-                                </div>
-                            </div>
+                        <div id="inputFieldsContainer" style="margin-bottom: 0;">
+                            <x-form.input_text label="Nama Kategori" name="kategori" placeholder="Kelas Ekskul | kelas Reguler | dll ...."/>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-info" id="addfild">Tambah Form</button>
+                <div class="modal-footer mt-0 pt-0">
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-success">Kirim</button>
@@ -66,6 +58,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         $(document).ready(function() {
@@ -84,7 +77,7 @@
                     },
                     {
                         data: 'nama_kategori',
-                       
+
                     },
                     {
                         data: null,

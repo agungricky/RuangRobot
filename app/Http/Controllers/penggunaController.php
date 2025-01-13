@@ -20,13 +20,23 @@ class penggunaController extends Controller
                 ->get();
         }
 
-        if ($id == 'pengajar') {
+        elseif ($id == 'pengajar') {
             $data = pengguna::join('akun', 'akun.id', 'profile.id')
             ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
             ->where('akun.role', 'Pengajar')
             ->get();
         }
 
+        elseif ($id == 'siswa') {
+            $data = pengguna::join('akun', 'akun.id', 'profile.id')
+            ->join('siswa', 'siswa.profiles_id', 'profile.id')
+            ->join('sekolah', 'sekolah.id', 'siswa.sekolahs_id')
+            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role', 'sekolah.nama_sekolah')
+            ->where('akun.role', 'Siswa')
+            ->get();
+        }
+        
+        // return response()->json($data);
 
         if ($request->ajax()) {
             return response()->json([
