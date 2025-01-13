@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\pengguna;
+use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\Request;
 
 class penggunaController extends Controller
@@ -9,19 +11,67 @@ class penggunaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function dataadmin()
+    public function pengguna($id, Request $request)
     {
-        return view('pages.pengguna.admin');
+        if ($id == 'admin') {
+            $data = pengguna::join('akun', 'akun.id', 'profile.id')
+                ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+                ->where('akun.role', 'Admin')
+                ->get();
+        }
+
+        if ($id == 'pengajar') {
+            $data = pengguna::join('akun', 'akun.id', 'profile.id')
+            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+            ->where('akun.role', 'Pengajar')
+            ->get();
+        }
+
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data,
+                'id' => $id
+            ]);
+        }
+
+        return view('pages.pengguna.admin', compact('data', 'id'));
     }
 
-    public function datapengajar()
+    public function datapengajar(Request $request)
     {
-        return view('pages.pengguna.pengajar');
+        $data = pengguna::join('akun', 'akun.id', 'profile.id')
+            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+            ->where('akun.role', 'Pengajar')
+            ->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+
+        return view('pages.pengguna.pengajar', compact('data'));
     }
 
-    public function datasiswa()
+    public function datasiswa(Request $request)
     {
-        return view('pages.pengguna.siswa');
+        $data = pengguna::join('akun', 'akun.id', 'profile.id')
+            ->join('siswa', 'siswa.profile_id', 'profile.id')
+            ->join('sekolah', 'sekolahs.id', 'siswa.sekolah_id')
+            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+            ->where('akun.role', 'Siswa')
+            ->get();
+
+        dd($data);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+
+        return view('pages.pengguna.siswa', compact('data'));
     }
 
     /**

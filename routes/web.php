@@ -24,13 +24,20 @@ Route::get('/program_belajar',[programbelajarController::class, 'index'])->name(
 Route::get('/program_belajar/json',[programbelajarController::class, 'index'])->name('program_belajar.json');
 
 // ========= Kelas ========= //
-Route::get('/kelas_ekskul',[kelasController::class,'index'])->name('kelas_ekskul');
-Route::get('/kelas_reguler',[kelasController::class,'index'])->name('kelas_reguler');
+Route::get('/kelas',[kelasController::class,'index'])->name('kelas');
+Route::get('/kelas/json',[kelasController::class,'index'])->name('kelas.json');
+
 
 // ========= Pengguna ========= //
-Route::get('/data_admin',[penggunaController::class,'dataadmin'])->name('admin');
+Route::get('/pengguna/{id}',[penggunaController::class, 'pengguna'])->name('admin');
+Route::get('/data_admin/{id}/json',[penggunaController::class, 'pengguna'])->name('admin.json');
+
 Route::get('/data_pengajar',[penggunaController::class,'datapengajar'])->name('pengajar');
+Route::get('/data_pengajar/json',[penggunaController::class,'datapengajar'])->name('pengajar.json');
+
 Route::get('/data_siswa',[penggunaController::class,'datasiswa'])->name('siswa');
+Route::get('/data_siswa/json',[penggunaController::class,'datasiswa'])->name('siswa.json');
+
 
 // ========= Gaji ========= //
 Route::get('/gaji',[gajiController::class,'index'])->name('gaji');

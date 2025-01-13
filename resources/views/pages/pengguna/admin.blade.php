@@ -1,23 +1,5 @@
 @extends('main.layout')
 @section('content')
-    <style>
-        #example_wrapper {
-            margin-bottom: 30px;
-        }
-
-        .level {
-            display: inline-block;
-            color: white;
-            width: 60px;
-            padding: 3px;
-            border-radius: 10px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -29,19 +11,18 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Admin" id="#form_kelas" />
+                                    <x-button.button_add_modal message="Tambah Admin" id="#form_admin" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 10%;" class="text-center">Nama Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Jenis Kelas</th>
-                                                <th style="width: 20%;" class="text-center">Tanggal Dibuat</th>
-                                                <th style="width: 10%;" class="text-center">Status</th>
-                                                <th style="width: 10%;" class="text-center">Detail Kelas</th>
-                                                <th style="width: 15%;" class="text-center">Opsi</th>
+                                                <th style="width: 20%;" class="text-center">Nama</th>
+                                                <th style="width: 10%;" class="text-center">Email</th>
+                                                <th style="width: 10%;" class="text-center">Alamat</th>
+                                                <th style="width: 10%;" class="text-center">No telp</th>
+                                                <th style="width: 25%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -55,7 +36,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="admin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -89,13 +70,13 @@
         </div>
     </div>
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('program_belajar.json') }}",
+                    url: "{{ route('admin.json', ['id'=>$id]) }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -105,53 +86,35 @@
                         }
                     },
                     {
-                        data: 'nama_program',
+                        data: 'nama',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-start text-tabel fw-bold">${data}</div>`;
                         }
                     },
                     {
-                        data: 'harga',
+                        data: 'email',
                         render: function(data, type, row) {
-                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
-                        }
-                    }, {
-                        data: 'deskripsi'
-                    },
-                    {
-                        data: 'level',
-                        render: function(data, type, row) {
-                            if (data == 'mudah') {
-                                color = 'success';
-                            }
-                            if (data == 'sedang') {
-                                color = 'warning';
-                            } else if (data == 'sulit') {
-                                color = 'danger';
-                            }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
                         }
                     },
                     {
-                        data: 'jenis_kelas'
+                        data: 'alamat',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
+                        }
                     },
                     {
-                        data: null,
+                        data: 'no_telp',
                         render: function(data, type, row) {
-                            return `
-                                    <div class="text-center text-nowrap text-success fw-bold">
-                                        M${row.mekanik} &#8226; E${row.elektronik} &#8226; P${row.pemrograman}
-                                    </div>
-                            `;
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
                         }
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
+                            <div class="d-flex justify-content-center gap-1">
+                                    <a href="" class="btn btn-info btn-sm">Reset Password</a>
                                     <a href="" class="btn btn-primary btn-sm">Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
@@ -164,22 +127,6 @@
                     }
                 ]
             });
-
-
-            // Menambahkan Field Form
-            $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
-                `);
-            });
-
-            // Menghapus Field Form dengan event delegation
-            $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
-            });
         });
-    </script> --}}
+    </script>
 @endsection

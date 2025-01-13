@@ -1,23 +1,5 @@
 @extends('main.layout')
 @section('content')
-    <style>
-        #example_wrapper {
-            margin-bottom: 30px;
-        }
-
-        .level {
-            display: inline-block;
-            color: white;
-            width: 60px;
-            padding: 3px;
-            border-radius: 10px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -36,12 +18,13 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 10%;" class="text-center">Nama Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Jenis Kelas</th>
-                                                <th style="width: 20%;" class="text-center">Tanggal Dibuat</th>
-                                                <th style="width: 10%;" class="text-center">Status</th>
-                                                <th style="width: 10%;" class="text-center">Detail Kelas</th>
-                                                <th style="width: 15%;" class="text-center">Opsi</th>
+                                                <th style="width: 25%;" class="text-center">Nama Kelas</th>
+                                                <th style="width: 5%;" class="text-center">Jenis Kelas</th>
+                                                <th style="width: 10%;" class="text-center">Gaji Pengajar</th>
+                                                <th style="width: 10%;" class="text-center">Gaji Transport</th>
+                                                <th style="width: 10%;" class="text-center">Status Kelas</th>
+                                                <th style="width: 10%;" class="text-center">Dibuat Tanggal</th>
+                                                <th style="width: 20%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -89,13 +72,13 @@
         </div>
     </div>
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('program_belajar.json') }}",
+                    url: "{{ route('kelas.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -105,24 +88,15 @@
                         }
                     },
                     {
-                        data: 'nama_program',
+                        data: 'nama_kelas',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-tabel fw-bold text-start">${data}</div>`;
                         }
                     },
                     {
-                        data: 'harga',
+                        data: 'jenis_kelas',
                         render: function(data, type, row) {
-                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
-                        }
-                    }, {
-                        data: 'deskripsi'
-                    },
-                    {
-                        data: 'level',
-                        render: function(data, type, row) {
-                            if (data == 'mudah') {
+                            if (data == 'Ekskul') {
                                 color = 'success';
                             }
                             if (data == 'sedang') {
@@ -132,18 +106,52 @@
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }
-                    },
-                    {
-                        data: 'jenis_kelas'
-                    },
-                    {
-                        data: null,
+                    }, {
+                        data: 'gaji_pengajar',
                         render: function(data, type, row) {
-                            return `
-                                    <div class="text-center text-nowrap text-success fw-bold">
-                                        M${row.mekanik} &#8226; E${row.elektronik} &#8226; P${row.pemrograman}
-                                    </div>
-                            `;
+                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                currencyDisplay: 'narrowSymbol',
+                                minimumFractionDigits: 0
+                            }).format(data);
+
+                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
+                        }
+                    },
+                    {
+                        data: 'gaji_transport',
+                        render: function(data, type, row) {
+                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                currencyDisplay: 'narrowSymbol',
+                                minimumFractionDigits: 0
+                            }).format(data);
+
+                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
+                        }
+                    },
+                    {
+                        data: 'status_kelas',
+                        render: function(data, type, row) {
+                            if (data == 'aktif') {
+                                color = 'warning';
+                            }
+                            else if (data == 'selesai') {
+                                color = 'success';
+                            }
+                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                        }
+                    },
+                    {
+                        data: 'updated_at',
+                        render: function(data, type, row) {
+                            var date = new Date(data);
+                            var day = String(date.getDate()).padStart(2, '0');
+                            var month = String(date.getMonth() + 1).padStart(2, '0');
+                            var year = date.getFullYear();
+                            return `<div class="text-center text-tabel">${day}-${month}-${year}</div>`;
                         }
                     },
                     {
@@ -151,12 +159,12 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
-                                    <a href="" class="btn btn-primary btn-sm">Edit</a>
+                                    <a href="" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right"></i>Selengkapnya</a>
+                                    <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i>Hapus</button>
                                     </form>
                             </div>
                             `;
@@ -164,22 +172,6 @@
                     }
                 ]
             });
-
-
-            // Menambahkan Field Form
-            $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
-                `);
-            });
-
-            // Menghapus Field Form dengan event delegation
-            $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
-            });
         });
-    </script> --}}
+    </script>
 @endsection

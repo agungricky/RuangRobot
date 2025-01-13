@@ -9,15 +9,15 @@ class kelasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = kelas::all();
 
-        // if ($request->ajax()) {
-        //     return response()->json([
-        //         'data' => $data
-        //     ]);
-        // }
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
 
         return view('pages.kelas.kelas',compact('data'));
     }
