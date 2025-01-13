@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\gajiController;
+use App\Http\Controllers\kategoriController;
 use App\Http\Controllers\kelasController;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\penggunaController;
@@ -16,8 +17,12 @@ Route::get('/login',[AuthController::class, 'showlogin'])->name('login');
 // ========= Admin ========= //
 Route::get('/dashboard',[dashboardController::class, 'index'])->name('dashboard');
 
-// ========= Kategori ========= //
+// ========= Kategori & Tipe Kelas ========= //
+Route::get('/kategori_kelas',[kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas');
+Route::get('/kategori_kelas/json',[kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas.json');
 
+Route::get('/tipe_kelas',[kategoriController::class, 'index_tipekelas'])->name('tipe_kelas');
+Route::get('/tipe_kelas/json',[kategoriController::class, 'index_tipekelas'])->name('tipe_kelas.json');
 
 // ========= Sekolah ========= //
 Route::get('/sekolah',[sekolahController::class, 'index'])->name('sekolah');
@@ -45,8 +50,12 @@ Route::get('/data_siswa/json',[penggunaController::class,'datasiswa'])->name('si
 
 // ========= Gaji ========= //
 Route::get('/gaji',[gajiController::class,'index'])->name('gaji');
+
 // ========= Pembayaran ========= //
 Route::get('/pembayaran',[pembayaranController::class,'index'])->name('pembayaran');
 
 Route::view('/x','main.layout');
 Route::view('/x','pages.konten');
+
+//route edit
+Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');

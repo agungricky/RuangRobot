@@ -3,28 +3,22 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <x-title_halaman title="Kelas" />
-
+            <x-title_halaman title="Kategori Kelas" />
             <div class="section-body">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
                                 <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
+                                    <x-button.button_add_modal message="Tambah Kategori Kelas" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 25%;" class="text-center">Nama Kelas</th>
-                                                <th style="width: 5%;" class="text-center">Jenis Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Gaji Pengajar</th>
-                                                <th style="width: 10%;" class="text-center">Gaji Transport</th>
-                                                <th style="width: 10%;" class="text-center">Status Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Dibuat Tanggal</th>
-                                                <th style="width: 20%;" class="text-center">Opsi</th>
+                                                <th style="width: 15%;" class="text-center">Jenis Kelas</th>
+                                                <th style="width: 80%;" class="text-start">Opsi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -55,6 +49,7 @@
                                 <div class="field d-flex gap-1">
                                     <input type="text" class="form-control border-2" id="nama_sekolah"
                                         name="nama_sekolah" required>
+                                    <x-form.input_text name="jenis_kelas" label="jenis kelas" >
                                     <button type="button" class="btn btn-danger removefield">X</button>
                                 </div>
                             </div>
@@ -78,7 +73,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('kelas.json') }}",
+                    url: "{{ route('kategori_kelas.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -88,78 +83,13 @@
                         }
                     },
                     {
-                        data: 'nama_kelas',
-                        render: function(data, type, row) {
-                            return `<div class="text-tabel fw-bold text-start">${data}</div>`;
-                        }
-                    },
-                    {
                         data: 'jenis_kelas',
-                        render: function(data, type, row) {
-                            if (data == 'Ekskul') {
-                                color = 'success';
-                            }
-                            if (data == 'sedang') {
-                                color = 'warning';
-                            } else if (data == 'sulit') {
-                                color = 'danger';
-                            }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
-                        }
-                    }, {
-                        data: 'gaji_pengajar',
-                        render: function(data, type, row) {
-                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR',
-                                currencyDisplay: 'narrowSymbol',
-                                minimumFractionDigits: 0
-                            }).format(data);
-
-                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
-                        }
-                    },
-                    {
-                        data: 'gaji_transport',
-                        render: function(data, type, row) {
-                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR',
-                                currencyDisplay: 'narrowSymbol',
-                                minimumFractionDigits: 0
-                            }).format(data);
-
-                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
-                        }
-                    },
-                    {
-                        data: 'status_kelas',
-                        render: function(data, type, row) {
-                            if (data == 'aktif') {
-                                color = 'warning';
-                            }
-                            else if (data == 'selesai') {
-                                color = 'success';
-                            }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
-                        }
-                    },
-                    {
-                        data: 'updated_at',
-                        render: function(data, type, row) {
-                            var date = new Date(data);
-                            var day = String(date.getDate()).padStart(2, '0');
-                            var month = String(date.getMonth() + 1).padStart(2, '0');
-                            var year = date.getFullYear();
-                            return `<div class="text-center text-tabel">${day}-${month}-${year}</div>`;
-                        }
-                    },
+                    }, 
                     {
                         data: null,
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right"></i>Selengkapnya</a>
                                     <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf

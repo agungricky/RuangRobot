@@ -2,27 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\programbelajar;
+use App\Models\Kategori;
+use App\Models\Tipekelas;
 use Illuminate\Http\Request;
 
-class programbelajarController extends Controller
+class kategoriController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index_jeniskelas(Request $request)
     {
-        $data = programbelajar::join('tipe_kelas','tipe_kelas.id', 'program_belajar.jenis_kelas_id')
-        ->select('program_belajar.*','tipe_kelas.*')->get();
+        $data = Kategori::all();
 
-        dd($data);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
             ]);
         }
+        return view('pages.kategory.kategori_kelas');
 
-        return view('pages.program_belajar.program_belajar', compact('data'));
+    }
+
+    public function index_tipekelas(Request $request)
+    {
+        $data = Tipekelas::all();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+        return view('pages.kategory.tipe_kelas');
+
     }
 
     /**
@@ -54,7 +66,7 @@ class programbelajarController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('pages.kategory.edit_kategori_kelas');
     }
 
     /**

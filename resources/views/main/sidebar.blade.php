@@ -25,8 +25,8 @@
                 </a>
                 <div class="collapse ps-4" id="kategori_menu">
                     <ul class="list-unstyled">
-                        <li><a href="" class="nav-link"><i class="fa-solid fa-minus"></i>Tipe Kelas</a></li>
-                        <li><a href="" class="nav-link"><i class="fa-solid fa-minus"></i>Kategory Kelas</a></li>
+                        <li><a href="{{ route('tipe_kelas')}}" class="nav-link"><i class="fa-solid fa-minus"></i>Tipe Kelas</a></li>
+                        <li><a href="{{ route('kategori_kelas')}}" class="nav-link"><i class="fa-solid fa-minus"></i>Kategory Kelas</a></li>
                     </ul>
                 </div>
             </li>
