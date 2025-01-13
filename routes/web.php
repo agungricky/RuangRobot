@@ -16,6 +16,9 @@ Route::get('/login',[AuthController::class, 'showlogin'])->name('login');
 // ========= Admin ========= //
 Route::get('/dashboard',[dashboardController::class, 'index'])->name('dashboard');
 
+// ========= Kategori ========= //
+
+
 // ========= Sekolah ========= //
 Route::get('/sekolah',[sekolahController::class, 'index'])->name('sekolah');
 Route::get('/sekolah/json', [sekolahController::class, 'index'])->name('sekolah.json');

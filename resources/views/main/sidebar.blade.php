@@ -20,23 +20,22 @@
             <li class="menu-header">Manage Pembelajaran</li>
             <!-- Dropdown Menu -->
             <li>
+                <a href="#kategori_menu" class="nav-link" data-bs-toggle="collapse">
+                    <i class="fa-solid fa-list"></i><span>Kategori</span>
+                </a>
+                <div class="collapse ps-4" id="kategori_menu">
+                    <ul class="list-unstyled">
+                        <li><a href="" class="nav-link"><i class="fa-solid fa-minus"></i>Tipe Kelas</a></li>
+                        <li><a href="" class="nav-link"><i class="fa-solid fa-minus"></i>Kategory Kelas</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
                 <a href="{{ route('sekolah') }}"><i class="fa-solid fa-font-awesome"></i><span>Sekolah</span></a>
             </li>
             <li>
                 <a href="{{ route('kelas') }}"><i class="fa-solid fa-book-open"></i><span>Kelas</span></a>
             </li>
-            {{-- <li>
-                <a href="#kelasMenu" class="nav-link" data-bs-toggle="collapse">
-                    <i class="fa-solid fa-book-open"></i><span>Kelas</span>
-                </a>
-                <div class="collapse ps-4" id="kelasMenu">
-                    <ul class="list-unstyled">
-                        <li><a href="{{ route('kelas_ekskul') }}" class="nav-link"><i class="fa-solid fa-hotel"></i>Kelas Ekskul</a></li>
-                        <li><a href="{{ route('kelas_reguler')}}" class="nav-link"><i class="fa-solid fa-house"></i>Kelas Reguler</a></li>
-                        <li><a href="{{ route('kelas_reguler')}}" class="nav-link"><i class="fa-solid fa-vihara"></i>Kelas Lomba</a></li>
-                    </ul>
-                </div>
-            </li> --}}
             <li>
                 <a href="{{ route('program_belajar') }}"><i class="fa-solid fa-layer-group"></i><span>Program Belajar</span></a>
             </li>
