@@ -40,7 +40,7 @@
     <!-- Modal -->
     <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
@@ -50,12 +50,33 @@
                     <form action="" method="POST">
                         @csrf
                         <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
+                            <div class="field-group mb-3 shadow p-3 rounded bg-white">
+                                <div class="field">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <x-form.input_text name="nama_kelas" label="Nama Kelas"
+                                                placeholder="Nama Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="jenis_kelas" label="Jelas Kelas"
+                                                placeholder="Jelas Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar" placeholder="Gaji Pengajar" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="gaji_transport" label="Gaji Transport" placeholder="Gaji Transport" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="status_kelas" label="Status Kelas" placeholder="Status Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="created_at" label="dibuat Tanggal" placeholder="Dibuat Tanggal" />
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="button" class="btn btn-danger removefield">X</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -172,6 +193,41 @@
                         }
                     }
                 ]
+            });
+
+             // Menambahkan Field Form
+             $('#addfild').click(function(e) {
+                $('#inputFieldsContainer').append(`
+                            <div class="field-group mb-3 shadow p-3 rounded bg-white">
+                                <div class="field">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <x-form.input_text name="nama_kelas" label="Nama Kelas"
+                                                placeholder="Nama Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="jenis_kelas" label="Jelas Kelas"
+                                                placeholder="Jelas Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar" placeholder="Gaji Pengajar" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="gaji_transport" label="Gaji Transport" placeholder="Gaji Transport" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="status_kelas" label="Status Kelas" placeholder="Status Kelas" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="created_at" label="dibuat Tanggal" placeholder="Dibuat Tanggal" />
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="button" class="btn btn-danger removefield">X</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                `);
             });
         });
     </script>
