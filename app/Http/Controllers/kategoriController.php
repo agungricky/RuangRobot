@@ -69,7 +69,7 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:jenis_kelas,jenis_kelas|max:20',
+            'kategori' => 'required|unique:jenis_kelas,jenis_kelas,' . $id . ',id|max:20',
         ], $messages);
 
         Kategori::where('id', $id)->update([
@@ -147,7 +147,7 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:tipe_kelas,nama_kategori|max:20',
+            'kategori' => 'required|unique:tipe_kelas,nama_kategori,' . $id . ',id|max:20',
         ], $messages);
 
         Tipekelas::where('id', $id)->update([
