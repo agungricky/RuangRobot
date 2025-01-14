@@ -90,17 +90,17 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="{{ url('/kategori_kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm">
-                                        <i class="fa-solid fa-pen-to-square"></i> Edit
-                                    </a>
-                                    <form action="{{ url('/kategori_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
-                                        <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fa-solid fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{{ url('/kategori_kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+                                <form action="{{ url('/kategori_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
                             `;
                         }
                     }

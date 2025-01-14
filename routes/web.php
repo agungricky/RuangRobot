@@ -36,6 +36,10 @@ Route::delete('/tipe_kelas/delete/{id}',[kategoriController::class, 'destroy_tip
 // ========= Sekolah ========= //
 Route::get('/sekolah',[sekolahController::class, 'index'])->name('sekolah');
 Route::get('/sekolah/json', [sekolahController::class, 'index'])->name('sekolah.json');
+Route::post('/sekolah/store',[sekolahController::class, 'store'])->name('sekolah.store');
+Route::get('/sekolah/edit/{id}', [sekolahController::class, 'edit'])->name('sekolah.edit');
+Route::patch('/sekolah/update/{id}', [sekolahController::class, 'update'])->name('sekolah.update');
+Route::delete('/sekolah/delete/{id}',[sekolahController::class, 'destroy'])->name('sekolah.delete');
 
 // ========= Sekolah ========= //
 Route::get('/program_belajar',[programbelajarController::class, 'index'])->name('program_belajar');
