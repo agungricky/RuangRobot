@@ -12,8 +12,10 @@ class programbelajarController extends Controller
      */
     public function index(Request $request)
     {
-        $data = programbelajar::all();
+        $data = programbelajar::join('tipe_kelas','tipe_kelas.id', 'program_belajar.jenis_kelas_id')
+        ->select('program_belajar.*','tipe_kelas.*')->get();
 
+        dd($data);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data

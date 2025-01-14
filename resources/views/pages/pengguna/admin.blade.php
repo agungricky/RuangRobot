@@ -19,6 +19,9 @@
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 20%;" class="text-center">Nama</th>
+                                                @if ($data[0]->role == 'Siswa')
+                                                    <th style="width: 20%;" class="text-center">Sekolah</th>
+                                                @endif
                                                 <th style="width: 10%;" class="text-center">Email</th>
                                                 <th style="width: 10%;" class="text-center">Alamat</th>
                                                 <th style="width: 10%;" class="text-center">No telp</th>
@@ -72,11 +75,12 @@
 
     <script>
         $(document).ready(function() {
+            var isSiswa = @json($data[0]->role == 'Siswa');
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('admin.json', ['id'=>$id]) }}",
+                    url: "{{ route('admin.json', ['id' => $id]) }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -91,6 +95,12 @@
                             return `<div class="text-start text-tabel fw-bold">${data}</div>`;
                         }
                     },
+                    ...(isSiswa ? [{
+                        data: 'nama_sekolah',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
+                        }
+                    }] : []),
                     {
                         data: 'email',
                         render: function(data, type, row) {

@@ -37,7 +37,7 @@
     <!-- Modal -->
     <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
@@ -47,12 +47,24 @@
                     <form action="" method="POST">
                         @csrf
                         <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
+                            <div class="field-group mb-3 shadow p-3 rounded bg-white">
+                                <div class="field">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <x-form.input_text name="nama_sekolah" label="Nama Sekolah"
+                                                placeholder="Sekolah" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="guru" label="Guru Penanggung Jawab"
+                                                placeholder="Guru" />
+                                        </div>
+                                        <div class="col-3">
+                                            <x-form.input_text name="no_hp" label="No HP" placeholder="No HP" />
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="button" class="btn btn-danger removefield">X</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -68,6 +80,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script>
         $(document).ready(function() {
@@ -88,22 +102,30 @@
                         data: 'nama_sekolah'
                     },
                     {
-                        data: null,
+                        data: 'guru',
                         render: function(data, type, row) {
-                            return `<div class="text-center">-</>`;
+                            return `<div class="text-center">${data}</>`;
+                        }
+                    },
+                    {
+                        data: 'no_hp',
+                        render: function(data, type, row) {
+                            return `<div class="text-center"><a href="https://wa.me/${data}" target="_blank">${data}</a></>`;
                         }
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center">-</>`;
+                            return `
+                            <button class="btn btn-primary btn-sm edit-button" data-id="${row.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-button" data-id="${row.id}">
+                                <i class="fas fa-trash-alt"></i> Hapus
+                            </button>
+                        `;
                         }
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            return `<button class="btn btn-danger btn-sm delete-button" data-id="${row.id}">Hapus</button>`;
-                        }
+
                     }
                 ]
             });
@@ -111,16 +133,30 @@
             // Menambahkan Field Form
             $('#addfild').click(function(e) {
                 $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
+                    <div class="field-group mb-3 shadow p-3 rounded bg-white">
+                                <div class="field">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <x-form.input_text name="nama_sekolah" label="Nama Sekolah" placeholder="Sekolah" />
+                                        </div>
+                                        <div class="col-4">
+                                            <x-form.input_text name="guru" label="Guru Penanggung Jawab" placeholder="Guru" />
+                                        </div>
+                                        <div class="col-3">
+                                            <x-form.input_text name="no_hp" label="No HP" placeholder="No HP" />
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="button" class="btn btn-danger removefield">X</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                 `);
             });
 
             // Menghapus Field Form dengan event delegation
             $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
+                $(this).closest('.field-group').remove();
             });
         });
     </script>

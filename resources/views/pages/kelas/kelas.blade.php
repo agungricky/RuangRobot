@@ -106,7 +106,8 @@
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }
-                    }, {
+                    }, 
+                    {
                         data: 'gaji_pengajar',
                         render: function(data, type, row) {
                             const formattedCurrency = new Intl.NumberFormat('id-ID', {
