@@ -38,27 +38,28 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kategori</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Tipe Kelas</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="padding-bottom: 0;">
-                    <form action="" method="POST">
+                    <form id="kategoriForm" method="POST">
                         @csrf
-                        <div id="inputFieldsContainer" style="margin-bottom: 0;">
-                            <x-form.input_text label="Nama Kategori" name="kategori" placeholder="Kelas Ekskul | kelas Reguler | dll ...."/>
+                        <div id="inputFieldsContainer" class="mb-0">
+                            <x-form.input_text label="Nama Kelas" name="kategori"
+                                placeholder="Kelas Ekskul | Kelas Reguler | dll ...." />
+                            <div id="errorMessages" style="color: red;"></div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer mt-0 pt-0">
+                <div class="modal-footer mt-2 pt-0">
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success">Kirim</button>
+                        <button type="button" id="submitKategori" class="btn btn-success">Kirim</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <script>
         $(document).ready(function() {
@@ -77,24 +78,63 @@
                     },
                     {
                         data: 'nama_kategori',
-
+                        render: function(data) {
+                            return `<div class="text-start text-tabel fw-bold">${data}</div>`;
+                        }
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
-                                    <form action="" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i>Hapus</button>
+                                <div class="d-flex gap-1">
+                                    <a href="/kategori_kelas/edit/${row.id}" class="btn btn-primary btn-sm">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form action="{{ url('/tipe_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fa-solid fa-trash"></i> Hapus
+                                        </button>
                                     </form>
-                            </div>
+                                </div>
                             `;
                         }
                     }
+
                 ]
+            });
+
+            // Menambahkan Data
+            $('#submitKategori').on('click', function() {
+                let form = $('#kategoriForm'); // Tangkap form
+                let formData = form.serialize(); // Ambil data dari form
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kategori_kelas.store') }}", // Pastikan rutenya sesuai
+                    data: formData,
+                    success: function(response) {
+                        form.trigger('reset'); // Reset form setelah berhasil
+                        $('#form_kelas').modal('hide'); // Tutup modal
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        // Menangkap error dari server dan menampilkan pesan error
+                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                        let errorMessages = '';
+
+                        // Loop melalui error dan tampilkan pesan kesalahan
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                errorMessages += '<p>' + errors[key].join(', ') + '</p>';
+                            }
+                        }
+
+                        // Menampilkan pesan error
+                        $('#errorMessages').html(errorMessages); // Pastikan ada elemen untuk menampilkan error
+                    }
+                });
             });
         });
     </script>

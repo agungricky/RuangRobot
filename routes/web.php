@@ -23,6 +23,9 @@ Route::get('/kategori_kelas/json',[kategoriController::class, 'index_jeniskelas'
 
 Route::get('/tipe_kelas',[kategoriController::class, 'index_tipekelas'])->name('tipe_kelas');
 Route::get('/tipe_kelas/json',[kategoriController::class, 'index_tipekelas'])->name('tipe_kelas.json');
+Route::post('/tipe_kelas/store',[kategoriController::class, 'store_tipeKelas'])->name('kategori_kelas.store');
+Route::delete('/tipe_kelas/delete/{id}',[kategoriController::class, 'destroy_tipeKelas'])->name('tipe_kelas.delete');
+
 
 // ========= Sekolah ========= //
 Route::get('/sekolah',[sekolahController::class, 'index'])->name('sekolah');

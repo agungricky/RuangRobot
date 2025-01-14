@@ -8,4 +8,5 @@ class Tipekelas extends Model
 {
     protected $table = 'tipe_kelas';
     protected $fillable = ['id', 'nama_kategori'];
+    public $timestamps = false;
 }

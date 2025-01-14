@@ -21,8 +21,12 @@ class kategoriController extends Controller
             ]);
         }
         return view('pages.kategory.kategori_kelas');
-
     }
+
+
+    // ============================================= //
+      // ************* TIPE KELAS ************** //
+    // ============================================= //
 
     public function index_tipekelas(Request $request)
     {
@@ -30,28 +34,32 @@ class kategoriController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'data' => $data
+                'data' => $data, 
             ]);
         }
+
         return view('pages.kategory.tipe_kelas');
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store_tipeKelas(Request $request)
     {
-        //
+        $messages = [
+            'required' => 'Wajib di isi',
+            'unique' => 'Data Sudah ada.',
+       ];
+       
+        $request->validate([
+            'kategori' => 'required|unique:tipe_kelas,nama_kategori|string|max:255',
+        ], $messages);
+    
+        Tipekelas::create([
+            'nama_kategori' => $request->kategori,
+        ]);
     }
+
 
     /**
      * Display the specified resource.
@@ -80,8 +88,9 @@ class kategoriController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy_tipeKelas(string $id)
     {
-        //
+        Tipekelas::find($id)->delete();
+        return redirect('tipe_kelas');
     }
 }
