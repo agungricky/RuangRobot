@@ -1,5 +1,8 @@
 @extends('main.layout')
 @section('content')
+    @if (session('success'))
+    <x-sweetalert.success/>
+    @endif
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -47,14 +50,14 @@
                         <div id="inputFieldsContainer" class="mb-0">
                             <x-form.input_text label="Nama Kelas" name="kategori"
                                 placeholder="Kelas Ekskul | Kelas Reguler | dll ...." />
-                            <div id="errorMessages" style="color: red;"></div>
+                            <div id="errorMessages" class="text-danger"></div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer mt-2 pt-0">
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" id="submitKategori" class="btn btn-success">Kirim</button>
+                        <button type="submit" id="submitKategori" class="btn btn-success">Kirim</button>
                     </div>
                 </div>
             </div>
@@ -87,7 +90,7 @@
                         render: function(data, type, row) {
                             return `
                                 <div class="d-flex gap-1">
-                                    <a href="/kategori_kelas/edit/${row.id}" class="btn btn-primary btn-sm">
+                                    <a href="{{ url('/tipe_kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                     </a>
                                     <form action="{{ url('/tipe_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
@@ -112,7 +115,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('kategori_kelas.store') }}", // Pastikan rutenya sesuai
+                    url: "{{ route('tipe_kelas.store') }}", // Pastikan rutenya sesuai
                     data: formData,
                     success: function(response) {
                         form.trigger('reset'); // Reset form setelah berhasil
@@ -132,7 +135,8 @@
                         }
 
                         // Menampilkan pesan error
-                        $('#errorMessages').html(errorMessages); // Pastikan ada elemen untuk menampilkan error
+                        $('#errorMessages').html(
+                            errorMessages); // Pastikan ada elemen untuk menampilkan error
                     }
                 });
             });
