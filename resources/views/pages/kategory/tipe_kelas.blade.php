@@ -57,7 +57,7 @@
                 <div class="modal-footer mt-2 pt-0">
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" id="submitKategori" class="btn btn-success">Kirim</button>
+                        <button type="button" id="submitKategori" class="btn btn-success">Kirim</button>
                     </div>
                 </div>
             </div>

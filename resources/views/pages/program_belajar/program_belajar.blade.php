@@ -11,7 +11,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Program Belajar" id="#form_kelas" />
+                                    <x-button.button_add_modal message="Tambah Program Belajar" id="#program_belajar" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="program_belajar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -46,44 +46,52 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Program Belajar</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="inputForm">
-                    <div class="modal-body">
-                        <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
-                            name="program_belajar" />
-
-                        <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
-
-                        <x-form.input_textArea label="Deskripsi" name="deskripsi" />
-
-                        @php
-                            $option = [
-                                'Meker' => 'meker',
-                                'Coding' => 'coding',
-                                'Game Programing' => 'gameprograming',
-                                'Lainya' => 'lainya',
-                            ];
-                        @endphp
-                        <x-form.input_dropdown label="Jenis Kelas" name="jenis_kelas" :option="$option" />
-
-                        <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
-
-                        <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
-
-                        <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
-
-                        @php
-                            $option = [
-                                'Beginner (Pemula)' => 'mudah',
-                                'Intermediate (Menengah)' => 'sedang',
-                                'Advanced (Lanjutan)' => 'sulit',
-                            ];
-                        @endphp
-                        <x-form.input_dropdown label="Level" name="level" :option="$option" />
-
+                <form id="programBelajar_Form" method="POST">
+                    @csrf
+                    <div class="modal-body pb-0">
+                        <div class="row">
+                            <div class="col-12 my-2">
+                                <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
+                                    name="nama_program" />
+                            </div>
+                            <div class="col-12 my-2">
+                                <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
+                            </div>
+                            <div class="col-12 my-2">
+                                <x-form.input_textArea label="Deskripsi" name="deskripsi" />
+                            </div>
+                            <div class="col-12 my-2">
+                                <label for="jenis_kelas">Jenis Kelas</label>
+                                <select class="form-control" name="jenis_kelas" id="jenis_kelas">
+                                    @foreach ($options_form as $value)
+                                        <option value="{{ $value->id }}">{{ $value->nama_kategori }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 my-2">
+                                <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
+                            </div>
+                            <div class="col-12 my-2">
+                                <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
+                            </div>
+                            <div class="col-12 my-2">
+                                <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
+                            </div>
+                            <div class="col-12 my-2">
+                                @php
+                                    $option = [
+                                        'mudah' => 'Beginner (Pemula)',
+                                        'sedang' => 'Intermediate (Menengah)',
+                                        'sulit' => 'Advanced (Lanjutan)',
+                                    ];
+                                @endphp
+                                <x-form.input_dropdown label="Level" name="level" :option="$option" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-footer d-flex">
+                    <div class="modal-footer d-flex pt-2">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success">Kirim</button>
+                        <button type="button" id="submitprogram_belajar" class="btn btn-success">Kirim</button>
                     </div>
                 </form>
             </div>
@@ -144,7 +152,7 @@
                         }
                     },
                     {
-                        data: 'jenis_kelas',
+                        data: 'nama_kategori',
                         render: function(data, type, row) {
                             return `<div class="text-tabel text-center">${data}</div>`;
                         }
@@ -175,6 +183,41 @@
                         }
                     }
                 ]
+            });
+
+            // Menambahkan Data
+            $('#submitprogram_belajar').on('click', function() {
+                let form = $('#programBelajar_Form'); // Tangkap form
+                let formData = form.serialize(); // Ambil data dari form
+                // alert(formData);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('program_belajar.store') }}", // Pastikan rutenya sesuai
+                    data: formData,
+                    success: function(response) {
+                        form.trigger('reset'); // Reset form setelah berhasil
+                        $('#program_belajar').modal('hide'); // Tutup modal
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
+                        // Menangkap error dari server dan menampilkan pesan error
+                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                        let errorMessages = '';
+
+                        // Loop melalui error dan tampilkan pesan kesalahan
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                errorMessages += '<p>' + errors[key].join(', ') + '</p>';
+                            }
+                        }
+
+                        // Menampilkan pesan error
+                        $('#errorMessages').html(
+                            errorMessages); // Pastikan ada elemen untuk menampilkan error
+                    }
+                });
             });
         });
     </script>
