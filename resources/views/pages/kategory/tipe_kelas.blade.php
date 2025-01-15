@@ -57,7 +57,7 @@
                 <div class="modal-footer mt-2 pt-0">
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" id="submitKategori" class="btn btn-success">Kirim</button>
+                        <button type="button" id="submitKategori" class="btn btn-success">Kirim</button>
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                                     <form action="{{ url('/tipe_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
                                         <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                         <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                             <i class="fa-solid fa-trash"></i> Hapus
                                         </button>
                                     </form>

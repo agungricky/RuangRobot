@@ -1,4 +1,3 @@
-<div class="form-group">
     <label for="{{$name}}">{{$label}}</label><br>
     <div class="row col-md-12">
         <div class="col-sm-3">
@@ -30,4 +29,3 @@
             </div>
         </div>
     </div>
-</div>
