@@ -124,6 +124,8 @@ class kategoriController extends Controller
         Tipekelas::create([
             'nama_kategori' => $request->kategori,
         ]);
+
+        return redirect()->back()->with('success', 'Data Berhasil ditambahkan');
     }
 
     /**
