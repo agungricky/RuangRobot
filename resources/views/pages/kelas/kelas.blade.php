@@ -43,7 +43,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Kelas</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -52,29 +52,64 @@
                         <div id="inputFieldsContainer">
                             <div class="field-group mb-3 shadow p-3 rounded bg-white">
                                 <div class="field">
-                                    <div class="row">
-                                        <div class="col-4">
+                                    <div class="row m">
+                                        <div class="col-12 mb-3">
                                             <x-form.input_text name="nama_kelas" label="Nama Kelas"
-                                                placeholder="Nama Kelas" />
+                                                placeholder="nama kelas" />
                                         </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="jenis_kelas" label="Jelas Kelas"
-                                                placeholder="Jelas Kelas" />
+
+                                        <div class="col-12 mb-3">
+                                            <x-form.input_text name="durasi_belajar" label="Durasi Belajar"
+                                                placeholder="durasi belajar" />
                                         </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar" placeholder="Gaji Pengajar" />
+                                        <div class="col-12 mb-3">
+                                            {{-- <x-form.input_dropdown name="program_belajar" label="Program Belajar" placeholder="Program Belajar" /> --}}
+                                            <label for="">Program Belajar</label>
+                                            <select class="form-control" name="program_belajar">
+                                                <option value="">Pilih Program Belajar</option>
+                                                <option value="program1">Maker</option>
+                                                <option value="program2">Programming</option>
+                                                <option value="program3">Lomba</option>
+                                            </select>
                                         </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="gaji_transport" label="Gaji Transport" placeholder="Gaji Transport" />
+                                        <div class="col-12 mb-3">
+                                            {{-- <x-form.input_dropdown name="jenis_kelas" label="jenis Kelas" placeholder="Jenis Kelas" /> --}}
+                                            <label for="">Jenis Kelas</label>
+                                            <select class="form-control" name="jenis_kelas">
+                                                <option value="">Pilih Jenis Kelas</option>
+                                                <option value="program1">Kelas Ekskul</option>
+                                                <option value="program2">Kelas Reguler</option>
+                                                <option value="program3">Kelas Lomba</option>
+                                                <option value="program4">Kelas Maker</option>
+                                                <option value="program5">Kelas Programming</option>
+                                                <option value="program6">Kelas Game Programming</option>
+                                                <option value="program7">Kelas Project</option>
+                                            </select>
+                                        </div> 
+                                        <div class="col-12 mb-3">
+                                            <x-form.input_text name="penanggung_jawab" label="Penanggung Jawab"
+                                                placeholder="Penanggung jawab" />
                                         </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="status_kelas" label="Status Kelas" placeholder="Status Kelas" />
+                                        <div class="col-12 mb-3">
+                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar"
+                                                placeholder="gaji_pengajar" />
                                         </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="created_at" label="dibuat Tanggal" placeholder="Dibuat Tanggal" />
+                                        <div class="col-12 mb-3">
+                                            <x-form.input_text name="gaji_transport" label="Gaji Transport"
+                                                placeholder="gaji_transport" />
                                         </div>
-                                        <div class="col-1 d-flex align-items-center">
-                                            <button type="button" class="btn btn-danger removefield">X</button>
+                                        <div class="col-12 mb-3">
+                                            {{-- <x-form.input_dropdown name="status_kelas" label="Status Kelas" placeholder="Status Kelas" /> --}}
+                                            <label for="">Status form_kelas</label>
+                                            <select class="form-control" name="program_belajar">
+                                                <option value="">Pilih Status Kelas</option>
+                                                <option value="program1">Selesai</option>
+                                                <option value="program2">belum selesai</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <x-form.input_text name="create_at" label="Dibuat Pada"
+                                                placeholder="tanggal" type="date" />
                                         </div>
                                     </div>
                                 </div>
@@ -83,7 +118,6 @@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-info" id="addfild">Tambah Form</button>
                     <div>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-success">Kirim</button>
@@ -195,40 +229,6 @@
                 ]
             });
 
-             // Menambahkan Field Form
-             $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                            <div class="field-group mb-3 shadow p-3 rounded bg-white">
-                                <div class="field">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <x-form.input_text name="nama_kelas" label="Nama Kelas"
-                                                placeholder="Nama Kelas" />
-                                        </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="jenis_kelas" label="Jelas Kelas"
-                                                placeholder="Jelas Kelas" />
-                                        </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar" placeholder="Gaji Pengajar" />
-                                        </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="gaji_transport" label="Gaji Transport" placeholder="Gaji Transport" />
-                                        </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="status_kelas" label="Status Kelas" placeholder="Status Kelas" />
-                                        </div>
-                                        <div class="col-4">
-                                            <x-form.input_text name="created_at" label="dibuat Tanggal" placeholder="Dibuat Tanggal" />
-                                        </div>
-                                        <div class="col-1 d-flex align-items-center">
-                                            <button type="button" class="btn btn-danger removefield">X</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                `);
-            });
         });
     </script>
 @endsection
