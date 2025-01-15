@@ -172,7 +172,9 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-primary btn-sm">Edit</a>
+                                     <a href="{{ url('/program_belajar/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')

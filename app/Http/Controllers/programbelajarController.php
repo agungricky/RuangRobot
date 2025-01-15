@@ -68,7 +68,11 @@ class programbelajarController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = programbelajar::where('id', $id)->first();
+        dd($data);
+        $options = programbelajar::join('jenis_kelas','jenis_kelas.id', 'program_belajar.Jenis_kelas_id')
+        ->select('program_belajar.*', 'jenis_kelas.*')->get();
+        return view('pages.program_belajar.edit_programbelajar',compact('data','options'));
     }
 
     /**

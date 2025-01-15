@@ -45,6 +45,8 @@ Route::delete('/sekolah/delete/{id}', [sekolahController::class, 'destroy'])->na
 Route::get('/program_belajar', [programbelajarController::class, 'index'])->name('program_belajar');
 Route::get('/program_belajar/json', [programbelajarController::class, 'index'])->name('program_belajar.json');
 Route::post('/program_belajar/store', [programbelajarController::class, 'store'])->name('program_belajar.store');
+Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit'])->name('program_belajar.edit');
+
 
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
