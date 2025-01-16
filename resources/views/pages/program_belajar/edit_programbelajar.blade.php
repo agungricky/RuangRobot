@@ -10,7 +10,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="POST">
+                                <form action="{{ route('program_belajar.update',['id'=>$data->id])}}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="form-group">
@@ -33,19 +33,19 @@
                                             <div class="col-6">
                                                 <label for="">Level</label>
                                                 <select class="form-control" name="level">
-                                                    @foreach ($options as $value)
-                                                    <option value="{{ $value->id }}">{{ $value->level }}</option>
+                                                    @foreach ($level as $value)
+                                                    <option value="{{ $value->level }}">{{ $value->level }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-6">
+                                            {{-- <div class="col-6">
                                                 <label for="">Jenis Kelas</label>
                                                 <select class="form-control" name="jenis_kelas_id">
                                                     @foreach ($options as $value)
                                                     <option value="{{ $value->id }}">{{ $value->jenis_kelas}}</option>
                                                     @endforeach
                                                 </select>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-4">
                                                 <x-form_edit.edit_text name="mekanik" label="mekanik"
                                                     :value="$data->mekanik" />
