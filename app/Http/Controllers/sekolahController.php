@@ -54,6 +54,7 @@ class sekolahController extends Controller
     public function edit(string $id)
     {
         $data = sekolah::where('id', $id)->first();
+        // dd($data);
         return view('pages.sekolah.edit_sekolah', compact('data'));
     }
 

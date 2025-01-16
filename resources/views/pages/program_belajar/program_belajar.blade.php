@@ -1,105 +1,108 @@
 @extends('main.layout')
 @section('content')
-    <!-- Main Content -->
-    <div class="main-content">
-        <section class="section">
-            <x-title_halaman title="Program Belajar" />
+    @if (session('success'))
+    <x-sweetalert.success />
+    @endif
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <x-title_halaman title="Program Belajar" />
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Program Belajar" id="#program_belajar" />
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 15%;" class="text-center">Program belajar</th>
-                                                <th style="width: 10%;" class="text-center">Harga</th>
-                                                <th style="width: 30%;" class="text-center">Deskripsi</th>
-                                                <th style="width: 10%;" class="text-center">Level</th>
-                                                <th style="width: 10%;" class="text-center">Jenis Kelas</th>
-                                                <th style="width: 15%;" class="text-center">Poin</th>
-                                                <th style="width: 10%;" class="text-center">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="add-items d-flex">
+                                <x-button.button_add_modal message="Tambah Program Belajar" id="#program_belajar" />
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%;" class="text-center">No.</th>
+                                            <th style="width: 15%;" class="text-center">Program belajar</th>
+                                            <th style="width: 10%;" class="text-center">Harga</th>
+                                            <th style="width: 30%;" class="text-center">Deskripsi</th>
+                                            <th style="width: 10%;" class="text-center">Level</th>
+                                            <th style="width: 10%;" class="text-center">Jenis Kelas</th>
+                                            <th style="width: 15%;" class="text-center">Poin</th>
+                                            <th style="width: 10%;" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="program_belajar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Program Belajar</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="programBelajar_Form" method="POST">
-                    @csrf
-                    <div class="modal-body pb-0">
-                        <div class="row">
-                            <div class="col-12 my-2">
-                                <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
-                                    name="nama_program" />
-                            </div>
-                            <div class="col-12 my-2">
-                                <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
-                            </div>
-                            <div class="col-12 my-2">
-                                <x-form.input_textArea label="Deskripsi" name="deskripsi" />
-                            </div>
-                            <div class="col-12 my-2">
-                                <label for="jenis_kelas">Jenis Kelas</label>
-                                <select class="form-control" name="jenis_kelas" id="jenis_kelas">
-                                    @foreach ($options_form as $value)
-                                        <option value="{{ $value->id }}">{{ $value->nama_kategori }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-12 my-2">
-                                <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
-                            </div>
-                            <div class="col-12 my-2">
-                                <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
-                            </div>
-                            <div class="col-12 my-2">
-                                <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
-                            </div>
-                            <div class="col-12 my-2">
-                                @php
-                                    $option = [
-                                        'mudah' => 'Beginner (Pemula)',
-                                        'sedang' => 'Intermediate (Menengah)',
-                                        'sulit' => 'Advanced (Lanjutan)',
-                                    ];
-                                @endphp
-                                <x-form.input_dropdown label="Level" name="level" :option="$option" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer d-flex pt-2">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" id="submitprogram_belajar" class="btn btn-success">Kirim</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
+    </section>
+</div>
 
-    <script>
-        $(document).ready(function() {
+<!-- Modal -->
+<div class="modal fade" id="program_belajar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Program Belajar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="programBelajar_Form" method="POST">
+                @csrf
+                <div class="modal-body pb-0">
+                    <div class="row">
+                        <div class="col-12 my-2">
+                            <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
+                                name="nama_program" />
+                        </div>
+                        <div class="col-12 my-2">
+                            <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
+                        </div>
+                        <div class="col-12 my-2">
+                            <x-form.input_textArea label="Deskripsi" name="deskripsi" />
+                        </div>
+                        <div class="col-12 my-2">
+                            <label for="jenis_kelas">Jenis Kelas</label>
+                            <select class="form-control" name="jenis_kelas" id="jenis_kelas">
+                                @foreach ($options_form as $value)
+                                <option value="{{ $value->id }}">{{ $value->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 my-2">
+                            <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
+                        </div>
+                        <div class="col-12 my-2">
+                            <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
+                        </div>
+                        <div class="col-12 my-2">
+                            <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
+                        </div>
+                        <div class="col-12 my-2">
+                            @php
+                            $option = [
+                            'mudah' => 'Beginner (Pemula)',
+                            'sedang' => 'Intermediate (Menengah)',
+                            'sulit' => 'Advanced (Lanjutan)',
+                            ];
+                            @endphp
+                            <x-form.input_dropdown label="Level" name="level" :option="$option" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex pt-2">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="submitprogram_belajar" class="btn btn-success">Kirim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
@@ -172,16 +175,18 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                     <a href="{{ url('/program_belajar/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                <a href="{{ url('/program_belajar/edit/${row.id}') }}" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-pen-to-square"></i> Edit
                                 </a>
-                                    <form action="" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                    </form>
+                                <form action="{{ url('/program_belajar/delete/${row.id}') }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </form>
                             </div>
-                            `;
+                        `;
                         }
                     }
                 ]
@@ -222,5 +227,5 @@
                 });
             });
         });
-    </script>
+</script>
 @endsection
