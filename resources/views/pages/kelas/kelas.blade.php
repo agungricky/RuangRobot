@@ -46,86 +46,78 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Kelas</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form action="" method="POST">
+                <div class="modal-body pb-0">
+                    <form id="data_form" method="POST">
                         @csrf
                         <div id="inputFieldsContainer">
-                            <div class="field-group mb-3 shadow p-3 rounded bg-white">
-                                <div class="field">
-                                    <div class="row m">
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="nama_kelas" label="Nama Kelas"
-                                                placeholder="nama kelas" />
-                                        </div>
-
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="durasi_belajar" label="Durasi Belajar"
-                                                placeholder="durasi belajar" />
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            {{-- <x-form.input_dropdown name="program_belajar" label="Program Belajar" placeholder="Program Belajar" /> --}}
-                                            <label for="">Program Belajar</label>
-                                            <select class="form-control" name="program_belajar">
-                                                <option value="">Pilih Program Belajar</option>
-                                                <option value="program1">Maker</option>
-                                                <option value="program2">Programming</option>
-                                                <option value="program3">Lomba</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            {{-- <x-form.input_dropdown name="jenis_kelas" label="jenis Kelas" placeholder="Jenis Kelas" /> --}}
-                                            <label for="">Jenis Kelas</label>
-                                            <select class="form-control" name="jenis_kelas">
-                                                <option value="">Pilih Jenis Kelas</option>
-                                                <option value="program1">Kelas Ekskul</option>
-                                                <option value="program2">Kelas Reguler</option>
-                                                <option value="program3">Kelas Lomba</option>
-                                                <option value="program4">Kelas Maker</option>
-                                                <option value="program5">Kelas Programming</option>
-                                                <option value="program6">Kelas Game Programming</option>
-                                                <option value="program7">Kelas Project</option>
-                                            </select>
-                                        </div> 
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="penanggung_jawab" label="Penanggung Jawab"
-                                                placeholder="Penanggung jawab" />
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="gaji_pengajar" label="Gaji Pengajar"
-                                                placeholder="gaji_pengajar" />
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="gaji_transport" label="Gaji Transport"
-                                                placeholder="gaji_transport" />
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            {{-- <x-form.input_dropdown name="status_kelas" label="Status Kelas" placeholder="Status Kelas" /> --}}
-                                            <label for="">Status form_kelas</label>
-                                            <select class="form-control" name="program_belajar">
-                                                <option value="">Pilih Status Kelas</option>
-                                                <option value="program1">Selesai</option>
-                                                <option value="program2">belum selesai</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <x-form.input_text name="create_at" label="Dibuat Pada"
-                                                placeholder="tanggal" type="date" />
-                                        </div>
+                            <div class="field">
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_text name="nama_kelas" label="Nama Kelas"
+                                            placeholder="Masukan Nama Kelas" />
                                     </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_text name="penanggung_jawab" label="Penanggung Jawab"
+                                            placeholder="Masukan Penanggung jawab Kelas" />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_clock name="durasi_belajar" id="mulai" label="Durasi Belajar"
+                                            placeholder="Jam Mulai" />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_clock name="durasi_belajar" id="selesai" label="Durasi Belajar"
+                                            placeholder="Jam Selesai" />
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="autocomplete_program_belajar">Program Belajar</label>
+                                        <input type="text" id="programInput" class="form-control"
+                                            placeholder="Masukan Program Belajar" />
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="">Jenis Kelas</label>
+                                        <select class="form-control" name="jenis_kelas">
+                                            @foreach ($kategori as $item)
+                                                <option value="{{ $item->id }}">{{ $item->jenis_kelas }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_number name="gaji_pengajar" label="Gaji Pengajar"
+                                            placeholder="masukan nominal gaji pengajar" />
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_number name="gaji_transport" label="Gaji Transport"
+                                            placeholder="masukan nominal gaji transport" />
+                                    </div>
+
+                                    <input type="hidden" class="form-control" name="status_kelas" value="aktif" />
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success">Kirim</button>
-                    </div>
+                <div class="modal-footer pt-2">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="submit" class="btn btn-success">Kirim</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .clockpicker-popover {
+            z-index: 2050 !important;
+        }
+
+        /* Pastikan dropdown muncul di atas elemen lain */
+        .ui-autocomplete {
+            z-index: 9999;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+    </style>
 
     <script>
         $(document).ready(function() {
@@ -161,7 +153,7 @@
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }
-                    }, 
+                    },
                     {
                         data: 'gaji_pengajar',
                         render: function(data, type, row) {
@@ -193,8 +185,7 @@
                         render: function(data, type, row) {
                             if (data == 'aktif') {
                                 color = 'warning';
-                            }
-                            else if (data == 'selesai') {
+                            } else if (data == 'selesai') {
                                 color = 'success';
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
@@ -229,6 +220,85 @@
                 ]
             });
 
+            $('#mulai').clockpicker({
+                autoclose: true,
+                placement: 'top',
+            });
+
+            $('#selesai').clockpicker({
+                autoclose: true,
+                placement: 'top',
+            });
+
+            // Auto Complate program Belajar
+            $.ajax({
+                url: "{{ route('form_programbelajar.json') }}",
+                method: "GET",
+                success: function(response) {
+                    var programs = response.data.map(function(item) {
+                        return item.nama_program;
+                    });
+
+                    $('#programInput').autocomplete({
+                        source: programs,
+                        minLength: 1,
+                        autoFocus: true
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                }
+            });
+
+            // Auto Complate pengajar
+            $.ajax({
+                url: "{{ route('pengajar.json') }}",
+                method: "GET",
+                success: function(response) {
+                    alert(response);
+                    var programs = response.data.map(function(item) {
+                        return item.nama_program;
+                    });
+
+                    $('#programInput').autocomplete({
+                        source: programs,
+                        minLength: 1,
+                        autoFocus: true
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                }
+            });
+
+            // Menambahkan Data
+            $('#submit').on('click', function() {
+                let form = $('#data_form'); // Tangkap form
+                let formData = form.serialize(); // Ambil data dari form
+                alert(formData);
+
+                // $.ajax({
+                //     type: "POST",
+                //     url: "{{ route('program_belajar.store') }}", // Pastikan rutenya sesuai
+                //     data: formData,
+                //     success: function(response) {
+                //         form.trigger('reset'); // Reset form setelah berhasil
+                //         $('#program_belajar').modal('hide'); // Tutup modal
+                //         location.reload();
+                //     },
+                //     error: function(xhr) {
+                //         // alert(xhr.responseText);
+                //         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+
+                //         for (let key in errors) {
+                //             if (errors.hasOwnProperty(key)) {
+                //                 let errorMessage = errors[key].join(', ');
+                //                 $('#error-' + key).text(errorMessage);
+                //             }
+                //         }
+                //     }
+                // });
+            });
         });
     </script>
 @endsection

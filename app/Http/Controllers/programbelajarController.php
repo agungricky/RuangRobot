@@ -33,16 +33,26 @@ class programbelajarController extends Controller
      */
     public function store(Request $request)
     {
-        // $validatedData = $request->validate([
-        //     'nama_program' => 'required',
-        //     'harga' => 'required',
-        //     'deskripsi' => 'required',
-        //     'level' => 'required',
-        //     'jenis_kelas_id' => 'required',
-        //     'mekanik' => 'required',
-        //     'elektronik' => 'required',
-        //     'pemrograman' => 'required',
-        // ]);
+        $message = [
+            'nama_program.required' => 'Nama program wajib diisi.',
+            'harga.required' => 'Harga wajib diisi.',
+            'deskripsi.required' => 'Deskripsi wajib diisi.',
+            'level.required' => 'Level wajib diisi.',
+            'mekanik.required' => 'Mekanik wajib diisi.',
+            'elektronik.required' => 'Elektronik wajib diisi.',
+            'pemrograman.required' => 'Pemrograman wajib diisi.',
+        ];
+
+        $request->validate([
+            'nama_program' => 'required',
+            'harga' => 'required',
+            'deskripsi' => 'required',
+            'level' => 'required',
+            'mekanik' => 'required',
+            'elektronik' => 'required',
+            'pemrograman' => 'required',
+        ], $message);
+
         programbelajar::create([
             'nama_program' => $request->nama_program,
             'harga' => $request->harga,
