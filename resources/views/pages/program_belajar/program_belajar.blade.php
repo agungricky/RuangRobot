@@ -53,12 +53,15 @@
                             <div class="col-12 my-2">
                                 <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
                                     name="nama_program" />
+                                <div id="error-nama_program" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
+                                <div id="error-harga" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <x-form.input_textArea label="Deskripsi" name="deskripsi" />
+                                <div id="error-deskripsi" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <label for="jenis_kelas">Jenis Kelas</label>
@@ -67,15 +70,19 @@
                                         <option value="{{ $value->id }}">{{ $value->nama_kategori }}</option>
                                     @endforeach
                                 </select>
+                                <div id="error-jenis_kelas" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <x-form.input_radiopoin label="Bobot Nilai Mekanik" name="mekanik" />
+                                <div id="error-mekanik" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <x-form.input_radiopoin label="Bobot Nilai Elektronik" name="elektronik" />
+                                <div id="error-elektronik" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
+                                <div id="error-pemrograman" class="text-danger"></div>
                             </div>
                             <div class="col-12 my-2">
                                 @php
@@ -86,6 +93,7 @@
                                     ];
                                 @endphp
                                 <x-form.input_dropdown label="Level" name="level" :option="$option" />
+                                <div id="error-level" class="text-danger"></div>
                             </div>
                         </div>
                     </div>
@@ -203,21 +211,15 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        alert(xhr.responseText);
-                        // Menangkap error dari server dan menampilkan pesan error
+                        // alert(xhr.responseText);
                         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
-                        let errorMessages = '';
 
-                        // Loop melalui error dan tampilkan pesan kesalahan
                         for (let key in errors) {
                             if (errors.hasOwnProperty(key)) {
-                                errorMessages += '<p>' + errors[key].join(', ') + '</p>';
+                                let errorMessage = errors[key].join(', ');
+                                $('#error-' + key).text(errorMessage);
                             }
                         }
-
-                        // Menampilkan pesan error
-                        $('#errorMessages').html(
-                            errorMessages); // Pastikan ada elemen untuk menampilkan error
                     }
                 });
             });

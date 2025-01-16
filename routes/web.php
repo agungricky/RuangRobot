@@ -9,6 +9,7 @@ use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
+use App\Models\kelas;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'index');
@@ -51,6 +52,11 @@ Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
 Route::get('/kelas/json', [kelasController::class, 'index'])->name('kelas.json');
+Route::get('/form_programbelajar/json', [kelasController::class, 'program_belajar'])->name('form_programbelajar.json');
+Route::get('/pengajar/json', [kelasController::class, 'pengajar'])->name('pengajar.json');
+Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.store');
+Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
+Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
 
 
 // ========= Pengguna ========= //
