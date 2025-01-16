@@ -9,7 +9,6 @@ use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
-use App\Models\kelas;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'index');
@@ -46,6 +45,10 @@ Route::delete('/sekolah/delete/{id}', [sekolahController::class, 'destroy'])->na
 Route::get('/program_belajar', [programbelajarController::class, 'index'])->name('program_belajar');
 Route::get('/program_belajar/json', [programbelajarController::class, 'index'])->name('program_belajar.json');
 Route::post('/program_belajar/store', [programbelajarController::class, 'store'])->name('program_belajar.store');
+Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit'])->name('program_belajar.edit');
+Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
+Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
+
 
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
