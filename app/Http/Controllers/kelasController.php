@@ -1,7 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\akun;
+use App\Models\Kategori;
 use App\Models\kelas;
+use App\Models\pengguna;
+use App\Models\programbelajar;
 use Illuminate\Http\Request;
 
 class kelasController extends Controller
@@ -11,7 +16,10 @@ class kelasController extends Controller
      */
     public function index(Request $request)
     {
-        $data = kelas::all();
+        $data = kelas::join('jenis_kelas', 'jenis_kelas.id', '=', 'kelas.jenis_kelas_id')
+        ->select('kelas.*', 'jenis_kelas.jenis_kelas')
+        ->get();
+        $kategori = Kategori::all();  
 
         if ($request->ajax()) {
             return response()->json([
@@ -19,15 +27,21 @@ class kelasController extends Controller
             ]);
         }
 
-        return view('pages.kelas.kelas',compact('data'));
+        return view('pages.kelas.kelas', compact('data', 'kategori'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function program_belajar()
     {
-        //
+        $program_belajar = programbelajar::select('id', 'nama_program')->get();
+        return response()->json(['data' => $program_belajar]);
+    }
+
+    public function pengajar()
+    {
+        $pengajar = pengguna::where('akun.role', 'pengajar')
+        ->join('akun', 'akun.id', '=', 'profile.id')
+        ->select('profile.id', 'profile.nama', 'akun.role')->get();
+        return response()->json(['data' => $pengajar]);
     }
 
     /**
@@ -35,7 +49,42 @@ class kelasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = [
+            'nama_kelas.required' => 'Nama Kelas harus diisi.',
+            'mulai.required' => 'Tanggal Mulai harus diisi.',
+            'selesai.required' => 'Tanggal Selesai harus diisi.',
+            'program_id.required' => 'Program Belajar harus diisi.',
+            'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
+            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
+            'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
+            'gaji_transport.required' => 'Gaji Transport harus diisi.',
+            'status_kelas.required' => 'Status Kelas harus diisi.',
+        ];
+
+        $request->validate([
+            'nama_kelas' => 'required',
+            'mulai' => 'required',
+            'selesai' => 'required',
+            'program_id' => 'required',
+            'jenis_kelas' => 'required',
+            'penanggung_jawab' => 'required',
+            'gaji_pengajar' => 'required',
+            'gaji_transport' => 'required',
+            'status_kelas' => 'required',
+        ], $message);
+
+        $durasi_belajar = $request->mulai . '-' . $request->selesai;
+
+        kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+            'durasi_belajar' => $durasi_belajar,
+            'program_belajar_id' => $request->program_id,
+            'jenis_kelas_id' => $request->jenis_kelas,
+            'penanggung_jawab' => $request->penanggung_jawab,
+            'gaji_pengajar' => $request->gaji_pengajar,
+            'gaji_transport' => $request->gaji_transport,
+            'status_kelas' => $request->status_kelas,
+        ]);
     }
 
     /**
@@ -51,7 +100,15 @@ class kelasController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = kelas::where('kelas.id', $id)
+        ->join('program_belajar', 'program_belajar.id', '=', 'kelas.program_belajar_id')
+        ->join('jenis_kelas', 'jenis_kelas.id', '=', 'kelas.jenis_kelas_id')
+        ->select('kelas.*', 'program_belajar.nama_program', 'jenis_kelas.jenis_kelas')
+        ->first();
+
+        $kategori = Kategori::all();
+        // dd($data);
+        return view('pages.kelas.edit_kelas', compact('data', 'kategori'));
     }
 
     /**
@@ -59,7 +116,44 @@ class kelasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // $message = [
+        //     'nama_kelas.required' => 'Nama Kelas harus diisi.',
+        //     'mulai.required' => 'Tanggal Mulai harus diisi.',
+        //     'selesai.required' => 'Tanggal Selesai harus diisi.',
+        //     'program_id.required' => 'Program Belajar harus diisi.',
+        //     'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
+        //     'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
+        //     'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
+        //     'gaji_transport.required' => 'Gaji Transport harus diisi.',
+        //     'status_kelas.required' => 'Status Kelas harus diisi.',
+        // ];
+
+        // $request->validate([
+        //     'nama_kelas' => 'required',
+        //     'mulai' => 'required',
+        //     'selesai' => 'required',
+        //     'program_id' => 'required',
+        //     'jenis_kelas' => 'required',
+        //     'penanggung_jawab' => 'required',
+        //     'gaji_pengajar' => 'required',
+        //     'gaji_transport' => 'required',
+        //     'status_kelas' => 'required',
+        // ], $message);
+
+        // dd($request);
+        kelas::where('id', $id)->update([
+            'nama_kelas' => $request->nama_kelas,
+            'durasi_belajar' => $request->durasi_belajar,
+            'program_belajar_id' => $request->programId,
+            'jenis_kelas_id' => $request->jenis_kelas,
+            'penanggung_jawab' => $request->penanggung_jawab,
+            'gaji_pengajar' => $request->gaji_pengajar,
+            'gaji_transport' => $request->gaji_transport,
+            'status_kelas' => $request->status_kelas,
+        ]);
+
+        return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
+
     }
 
     /**

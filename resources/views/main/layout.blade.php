@@ -36,7 +36,13 @@
     <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
+    {{-- Style CSS Custom --}}
     <link rel="stylesheet" href="{{ asset('css_custom/style.css') }}">
+
+    <!-- CSS Clock Picker -->
+    <link rel="stylesheet" href="{{ url('https://cdn.jsdelivr.net/npm/clockpicker/dist/jquery-clockpicker.min.css') }}">
+    {{-- Css jquery ui untuk auto complate --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/jquery-ui.css') }}">
 </head>
 
 <body>
@@ -63,7 +69,7 @@
     </script>
     <script src="{{ asset('assets/js/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('assets/js/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/js/stisla.js') }}"></script>    
+    <script src="{{ asset('assets/js/stisla.js') }}"></script>
 
     <!-- JS Libraies -->
 
@@ -74,6 +80,12 @@
     {{-- datatable --}}
     <script src="{{ url('https://cdn.datatables.net/2.1.0/js/dataTables.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- Clock Picker JS -->
+    <script src="{{ url('https://cdn.jsdelivr.net/npm/clockpicker/dist/jquery-clockpicker.min.js') }}"></script>
+
+    {{-- jquery ui untuk auto complate --}}
+    <script src="{{ asset('assets/js/jquery-ui.min.js') }}"></script>
 
     <!-- Page Specific JS File -->
     {{-- @stack('script-js') --}}

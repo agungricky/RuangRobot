@@ -1,7 +1,6 @@
 <label for="{{ $name }}">{{ $label }}</label>
-<input type="text" class="form-control" id="{{ $name }}" placeholder="{{ $placeholder }}"
-    oninput="formatToRupiah(this)">
-<input type="hidden" id="hidden_{{ $name }}" name="{{ $name }}">
+<input type="text" class="form-control" id="{{ $name }}" value="{{$value}}" oninput="formatToRupiah(this)">
+<input type="hidden" id="hidden_{{ $name }}" name="{{ $name }}" value="{{ $value }}">
 
 <script>
     function formatToRupiah(element) {
@@ -17,4 +16,10 @@
         // Update nilai input hidden dengan angka asli tanpa format
         document.getElementById("hidden_" + element.id).value = rawValue;
     }
+
+    // Pastikan input hidden terisi saat halaman dimuat
+    window.onload = function() {
+        const value = document.getElementById("{{ $name }}").value.replace(/[^0-9]/g, ""); // Ambil angka murni
+        document.getElementById("hidden_{{ $name }}").value = value; // Isi hidden input
+    };
 </script>
