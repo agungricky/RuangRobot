@@ -52,26 +52,33 @@
                         <div id="inputFieldsContainer">
                             <div class="field">
                                 <div class="row">
-                                    <div class="col-6 mb-3">
+                                    <div class="col-12 mb-3">
                                         <x-form.input_text name="nama_kelas" label="Nama Kelas"
                                             placeholder="Masukan Nama Kelas" />
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_text name="penanggung_jawab" label="Penanggung Jawab"
-                                            placeholder="Masukan Penanggung jawab Kelas" />
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_clock name="durasi_belajar" id="mulai" label="Durasi Belajar"
-                                            placeholder="Jam Mulai" />
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_clock name="durasi_belajar" id="selesai" label="Durasi Belajar"
-                                            placeholder="Jam Selesai" />
+                                        <div id="error-nama_kelas" class="text-danger"></div>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <label for="autocomplete_program_belajar">Program Belajar</label>
-                                        <input type="text" id="programInput" class="form-control"
+                                        <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
+                                        <input type="text" id="penanggung_jawab" name="penanggung_jawab"
+                                            class="form-control" placeholder="Masukan Penanggung jawab Kelas" />
+                                        <div id="error-penanggung_jawab" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_clock name="mulai" id="mulai" label="Durasi Belajar"
+                                            placeholder="Jam Mulai" />
+                                        <div id="error-mulai" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <x-form.input_clock name="selesai" id="selesai" label="Durasi Belajar"
+                                            placeholder="Jam Selesai" />
+                                        <div id="error-selesai" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="autocomplete_program_belajar"></label>
+                                        <input type="text" id="programInput" name="program_belajar" class="form-control"
                                             placeholder="Masukan Program Belajar" />
+                                        <input type="hidden" id="programId" name="program_id" />
+                                        <div id="error-program_id" class="text-danger"></div>
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="">Jenis Kelas</label>
@@ -80,14 +87,17 @@
                                                 <option value="{{ $item->id }}">{{ $item->jenis_kelas }}</option>
                                             @endforeach
                                         </select>
+                                        <div id="error-jenis_kelas" class="text-danger"></div>
                                     </div>
                                     <div class="col-6 mb-3">
                                         <x-form.input_number name="gaji_pengajar" label="Gaji Pengajar"
-                                            placeholder="masukan nominal gaji pengajar" />
+                                            placeholder="masukan nominal gaji pengajar"  :value="$item->gaji_pengajar" />
+                                        <div id="error-gaji_pengajar" class="text-danger"></div>
                                     </div>
                                     <div class="col-6 mb-3">
                                         <x-form.input_number name="gaji_transport" label="Gaji Transport"
-                                            placeholder="masukan nominal gaji transport" />
+                                            placeholder="masukan nominal gaji transport" :value="$item->gaji_transport" />
+                                        <div id="error-gaji_transport" class="text-danger"></div>
                                     </div>
 
                                     <input type="hidden" class="form-control" name="status_kelas" value="aktif" />
@@ -137,21 +147,13 @@
                     {
                         data: 'nama_kelas',
                         render: function(data, type, row) {
-                            return `<div class="text-tabel fw-bold text-start">${data}</div>`;
+                            return `<div class="text-tabel fw-bold text-start text-justify">${data}</div>`;
                         }
                     },
                     {
                         data: 'jenis_kelas',
                         render: function(data, type, row) {
-                            if (data == 'Ekskul') {
-                                color = 'success';
-                            }
-                            if (data == 'sedang') {
-                                color = 'warning';
-                            } else if (data == 'sulit') {
-                                color = 'danger';
-                            }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                            return `<div class="text-center text-tabel fw-bold">${data}</div>`;
                         }
                     },
                     {
@@ -192,13 +194,13 @@
                         }
                     },
                     {
-                        data: 'updated_at',
+                        data: 'created_at',
                         render: function(data, type, row) {
                             var date = new Date(data);
                             var day = String(date.getDate()).padStart(2, '0');
                             var month = String(date.getMonth() + 1).padStart(2, '0');
                             var year = date.getFullYear();
-                            return `<div class="text-center text-tabel">${day}-${month}-${year}</div>`;
+                            return `<div class="text-center text-tabel fw-bold">${day}-${month}-${year}</div>`;
                         }
                     },
                     {
@@ -206,12 +208,12 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right"></i>Selengkapnya</a>
-                                    <a href="" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
+                                    <a href="" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
+                                    <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i>Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i>Hapus</button>
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-lg"></i>Hapus</button>
                                     </form>
                             </div>
                             `;
@@ -220,11 +222,13 @@
                 ]
             });
 
+            // Jam Mulai
             $('#mulai').clockpicker({
                 autoclose: true,
                 placement: 'top',
             });
 
+            // Jam Selesai
             $('#selesai').clockpicker({
                 autoclose: true,
                 placement: 'top',
@@ -235,14 +239,23 @@
                 url: "{{ route('form_programbelajar.json') }}",
                 method: "GET",
                 success: function(response) {
+                    // Buat array objek dengan nama program dan ID
                     var programs = response.data.map(function(item) {
-                        return item.nama_program;
+                        return {
+                            label: item.nama_program, // Yang ditampilkan di autocomplete
+                            value: item.nama_program, // Nilai input teks
+                            id: item.id // ID yang disimpan
+                        };
                     });
 
                     $('#programInput').autocomplete({
                         source: programs,
                         minLength: 1,
-                        autoFocus: true
+                        autoFocus: true,
+                        select: function(event, ui) {
+                            // Ketika item dipilih, simpan ID-nya di input hidden
+                            $('#programId').val(ui.item.id);
+                        }
                     });
                 },
                 error: function(xhr) {
@@ -255,12 +268,12 @@
                 url: "{{ route('pengajar.json') }}",
                 method: "GET",
                 success: function(response) {
-                    alert(response);
+                    // alert(response);
                     var programs = response.data.map(function(item) {
-                        return item.nama_program;
+                        return item.nama;
                     });
 
-                    $('#programInput').autocomplete({
+                    $('#penanggung_jawab').autocomplete({
                         source: programs,
                         minLength: 1,
                         autoFocus: true
@@ -275,29 +288,29 @@
             $('#submit').on('click', function() {
                 let form = $('#data_form'); // Tangkap form
                 let formData = form.serialize(); // Ambil data dari form
-                alert(formData);
+                // alert(formData);
 
-                // $.ajax({
-                //     type: "POST",
-                //     url: "{{ route('program_belajar.store') }}", // Pastikan rutenya sesuai
-                //     data: formData,
-                //     success: function(response) {
-                //         form.trigger('reset'); // Reset form setelah berhasil
-                //         $('#program_belajar').modal('hide'); // Tutup modal
-                //         location.reload();
-                //     },
-                //     error: function(xhr) {
-                //         // alert(xhr.responseText);
-                //         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kelas.store') }}", // Pastikan rutenya sesuai
+                    data: formData,
+                    success: function(response) {
+                        form.trigger('reset'); // Reset form setelah berhasil
+                        $('#form_kelas').modal('hide'); // Tutup modal
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        // alert(xhr.responseText);
+                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
-                //         for (let key in errors) {
-                //             if (errors.hasOwnProperty(key)) {
-                //                 let errorMessage = errors[key].join(', ');
-                //                 $('#error-' + key).text(errorMessage);
-                //             }
-                //         }
-                //     }
-                // });
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                let errorMessage = errors[key].join(', ');
+                                $('#error-' + key).text(errorMessage);
+                            }
+                        }
+                    }
+                });
             });
         });
     </script>
