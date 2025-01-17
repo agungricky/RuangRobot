@@ -91,7 +91,7 @@
                                     </div>
                                     <div class="col-6 mb-3">
                                         <x-form.input_number name="gaji_pengajar" label="Gaji Pengajar"
-                                            placeholder="masukan nominal gaji pengajar"  :value="$item->gaji_pengajar" />
+                                            placeholder="masukan nominal gaji pengajar" :value="$item->gaji_pengajar" />
                                         <div id="error-gaji_pengajar" class="text-danger"></div>
                                     </div>
                                     <div class="col-6 mb-3">

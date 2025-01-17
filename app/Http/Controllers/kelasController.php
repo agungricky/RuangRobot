@@ -116,29 +116,27 @@ class kelasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // $message = [
-        //     'nama_kelas.required' => 'Nama Kelas harus diisi.',
-        //     'mulai.required' => 'Tanggal Mulai harus diisi.',
-        //     'selesai.required' => 'Tanggal Selesai harus diisi.',
-        //     'program_id.required' => 'Program Belajar harus diisi.',
-        //     'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
-        //     'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
-        //     'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
-        //     'gaji_transport.required' => 'Gaji Transport harus diisi.',
-        //     'status_kelas.required' => 'Status Kelas harus diisi.',
-        // ];
+        $message = [
+            'nama_kelas.required' => 'Nama Kelas harus diisi.',
+            'durasi_belajar.required' => 'Durasi Belajar harus diisi.',
+            'program_belajar.required' => 'Program Belajar harus diisi.',
+            'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
+            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
+            'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
+            'gaji_transport.required' => 'Gaji Transport harus diisi.',
+            'status_kelas.required' => 'Status Kelas harus diisi.',
+        ];
 
-        // $request->validate([
-        //     'nama_kelas' => 'required',
-        //     'mulai' => 'required',
-        //     'selesai' => 'required',
-        //     'program_id' => 'required',
-        //     'jenis_kelas' => 'required',
-        //     'penanggung_jawab' => 'required',
-        //     'gaji_pengajar' => 'required',
-        //     'gaji_transport' => 'required',
-        //     'status_kelas' => 'required',
-        // ], $message);
+        $request->validate([
+            'nama_kelas' => 'required',
+            'durasi_belajar' => 'required',
+            'program_belajar' => 'required',
+            'jenis_kelas' => 'required',
+            'penanggung_jawab' => 'required',
+            'gaji_pengajar' => 'required',
+            'gaji_transport' => 'required',
+            'status_kelas' => 'required',
+        ], $message);
 
         // dd($request);
         kelas::where('id', $id)->update([

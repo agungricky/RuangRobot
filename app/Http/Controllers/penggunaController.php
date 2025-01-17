@@ -15,14 +15,14 @@ class penggunaController extends Controller
     {
         if ($id == 'admin') {
             $data = pengguna::join('akun', 'akun.id', 'profile.id')
-                ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+                ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role', 'akun.username')
                 ->where('akun.role', 'Admin')
                 ->get();
         }
 
         elseif ($id == 'pengajar') {
             $data = pengguna::join('akun', 'akun.id', 'profile.id')
-            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role')
+            ->select('profile.id', 'profile.nama', 'profile.email', 'profile.alamat', 'profile.no_telp', 'akun.role', 'akun.username')
             ->where('akun.role', 'Pengajar')
             ->get();
         }
@@ -45,7 +45,7 @@ class penggunaController extends Controller
             ]);
         }
 
-        return view('pages.pengguna.admin', compact('data', 'id'));
+        return view('pages.pengguna.pengguna', compact('data', 'id'));
     }
 
     public function datapengajar(Request $request)
