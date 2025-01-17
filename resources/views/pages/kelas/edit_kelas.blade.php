@@ -19,18 +19,18 @@
                                                 <div class="col-12 mb-3">
                                                     <x-form_edit.edit_text name="nama_kelas" label="Nama Kelas"
                                                         :value="$data->nama_kelas" />
-                                                    <div id="error-nama_kelas" class="text-danger"></div>
+                                                    <x-validation_form.error name="nama_kelas" />
                                                 </div>
                                                 <div class="col-4 mb-3">
                                                     <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
                                                     <input type="text" id="penanggung_jawab" name="penanggung_jawab"
                                                         class="form-control" value="{{ $data->penanggung_jawab }}" />
-                                                    <div id="error-penanggung_jawab" class="text-danger"></div>
+                                                    <x-validation_form.error name="penanggung_jawab" />
                                                 </div>
                                                 <div class="col-3 mb-3">
                                                     <x-form_edit.edit_text name="durasi_belajar" id="durasi_belajar"
                                                         label="Durasi Belajar Selesai" :value="$data->durasi_belajar" />
-                                                    <div id="error-selesai" class="text-danger"></div>
+                                                    <x-validation_form.error name="durasi_belajar" />
                                                 </div>
                                                 <div class="col-5 mb-3">
                                                     <label for="autocomplete_program_belajar">Program Belajar</label>
@@ -38,7 +38,8 @@
                                                         class="form-control" value="{{ $data->nama_program }}" />
                                                     <input type="hidden" id="programId" name="programId"
                                                         value="{{ $data->program_id }}" />
-                                                    <div id="error-program_id" class="text-danger"></div>
+                                                    <x-validation_form.error name="programId" />
+                                                    <x-validation_form.error name="program_belajar" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     <label for="">Jenis Kelas</label>
@@ -49,7 +50,7 @@
                                                                 {{ $item->jenis_kelas }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div id="error-jenis_kelas" class="text-danger"></div>
+                                                    <x-validation_form.error name="jenis_kelas" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     @php
@@ -61,21 +62,18 @@
                                                     <label for="">Status Kelas</label>
                                                     <x-form_edit.edit_dropdown name="status_kelas" label="Status Kelas"
                                                         :option="$option" :data="$data->status_kelas" />
-                                                    <div id="error-jenis_kelas" class="text-danger"></div>
+                                                    <x-validation_form.error name="status_kelas" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     <x-form_edit.edit_number name="gaji_pengajar" label="Gaji Pengajar"
                                                         :value="$data->gaji_pengajar" />
-                                                    <div id="error-gaji_pengajar" class="text-danger"></div>
+                                                    <x-validation_form.error name="gaji_pengajar" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     <x-form_edit.edit_number name="gaji_transport" label="Gaji Transport"
                                                         :value="$data->gaji_transport" />
-                                                    <div id="error-gaji_transport" class="text-danger"></div>
+                                                    <x-validation_form.error name="gaji_transport" />
                                                 </div>
-
-                                                <input type="hidden" class="form-control" name="status_kelas"
-                                                    value="aktif" />
                                             </div>
                                         </div>
                                     </div>

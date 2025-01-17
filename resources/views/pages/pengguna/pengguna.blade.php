@@ -19,12 +19,13 @@
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 20%;" class="text-center">Nama</th>
-                                                @if ($data[0]->role == 'Siswa')
+                                                @if (!empty($data) && isset($data[0]) && $data[0]->role == 'Siswa')
                                                     <th style="width: 20%;" class="text-center">Sekolah</th>
                                                 @endif
                                                 <th style="width: 10%;" class="text-center">Email</th>
                                                 <th style="width: 10%;" class="text-center">Alamat</th>
                                                 <th style="width: 10%;" class="text-center">No telp</th>
+                                                <th style="width: 10%;" class="text-center">Username</th>
                                                 <th style="width: 25%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
@@ -75,8 +76,6 @@
 
     <script>
         $(document).ready(function() {
-            var isSiswa = @json($data[0]->role == 'Siswa');
-            // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
@@ -115,6 +114,12 @@
                     },
                     {
                         data: 'no_telp',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'username',
                         render: function(data, type, row) {
                             return `<div class="text-tabel fw-bold">${data}</div>`;
                         }

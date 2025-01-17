@@ -7,3 +7,15 @@
 #example_wrapper {
     margin-bottom: 30px;
 }
+
+.level {
+    display: inline-block;
+    color: white;
+    width: 60px;
+    padding: 3px;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
