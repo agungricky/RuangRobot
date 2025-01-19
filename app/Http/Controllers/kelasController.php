@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\akun;
 use App\Models\Kategori;
 use App\Models\kelas;
+use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
 use Illuminate\Http\Request;
@@ -92,7 +93,14 @@ class kelasController extends Controller
      */
     public function show(string $id)
     {
-        return view('pages.kelas.detail_kelas');
+        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+        ->join('jenis_kelas', 'jenis_kelas.id', 'kelas.jenis_kelas_id')
+        ->where('kelas.id', $id)->first();
+
+        $jp = pembelajaran::where('id', $id)->count();
+
+        // dd($data);
+        return view('pages.kelas.detail_kelas', compact('data', 'jp'));
     }
 
     /**
