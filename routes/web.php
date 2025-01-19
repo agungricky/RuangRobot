@@ -58,7 +58,7 @@ Route::get('/pengajar/json', [kelasController::class, 'pengajar'])->name('pengaj
 Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.store');
 Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
 Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
-
+Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
 
 // ========= Pengguna ========= //
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
