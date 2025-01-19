@@ -48,8 +48,8 @@
                     <form id="kategoriForm" method="POST">
                         @csrf
                         <div id="inputFieldsContainer" class="mb-0">
-                            <x-form.input_text label="Nama Kelas" name="kategori"
-                                placeholder="Kelas Ekskul | Kelas Reguler | dll ...." />
+                            <x-form.input_text label="Nama Kelas" name="tipe_kls"
+                                placeholder="Meker | Game Programing | dll ...." />
                             <div id="errorMessages" class="text-danger"></div>
                         </div>
                     </form>
@@ -80,7 +80,7 @@
                         }
                     },
                     {
-                        data: 'nama_kategori',
+                        data: 'tipe_kelas',
                         render: function(data) {
                             return `<div class="text-start text-tabel fw-bold">${data}</div>`;
                         }

@@ -10,7 +10,7 @@ class kategoriController extends Controller
 {
 
     // ============================================= //
-    // ************* TIPE KELAS ************** //
+    // ************* KATEGORY KELAS ************** //
     // ============================================= //
 
     /**
@@ -118,11 +118,11 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:tipe_kelas,nama_kategori|max:20',
+            'tipe_kls' => 'required|unique:tipe_kelas,tipe_kelas|max:20',
         ], $messages);
 
         Tipekelas::create([
-            'nama_kategori' => $request->kategori,
+            'tipe_kelas' => $request->tipe_kls,
         ]);
 
         return redirect()->back()->with('success', 'Data Berhasil ditambahkan');
@@ -149,11 +149,11 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:tipe_kelas,nama_kategori,' . $id . ',id|max:20',
+            'tipe_kls' => 'required|unique:tipe_kelas,tipe_kelas,' . $id . ',id|max:20',
         ], $messages);
 
         Tipekelas::where('id', $id)->update([
-            'nama_kategori' => $request->kategori
+            'tipe_kelas' => $request->tipe_kls
         ]);
 
         return redirect('tipe_kelas')->with('success', 'Data Berhasil diperbarui');
