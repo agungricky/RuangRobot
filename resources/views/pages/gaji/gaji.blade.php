@@ -1,130 +1,97 @@
 @extends('main.layout')
 @section('content')
-<style>
-    #example_wrapper {
-        margin-bottom: 30px;
-    }
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="section">
+            <x-title_halaman title="Gaji Pengajar" />
 
-    .level {
-        display: inline-block;
-        color: white;
-        width: 60px;
-        padding: 3px;
-        border-radius: 10px;
-        font-size: 14px;
-        text-align: center;
-        border: none;
-        cursor: pointer;
-    }
-</style>
-
-<!-- Main Content -->
-<div class="main-content">
-    <section class="section">
-        <x-title_halaman title="Kelas" />
-
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-header">
-                                <h4>Gaji Per Pengajar</h4>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 5%;" class="text-center">No.</th>
-                                            <th style="width: 10%;" class="text-center">Nama</th>
-                                            <th style="width: 10%;" class="text-center">Gaji Yang belum dibayarkan</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+            <div class="section-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="add-items d-flex">
+                                    {{-- <x-button.button_add_modal message="Tambah Sekolah" id="#form_sekolah" /> --}}
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 10%;" class="text-center">No.</th>
+                                                <th style="width: 20%;">Nama Pengajar</th>
+                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
+                                                <th style="width: 15%;" class="text-center">Gaji Transporrt</th>
+                                                <th style="width: 15%;" class="text-center">Gaji Custom</th>
+                                                <th style="width: 15%;" class="text-center">Total Gaji</th>
+                                                <th style="width: 10%;">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="section-body">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-header">
-                                <h4>Gaji Per Kelas</h4>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 5%;" class="text-center">No.</th>
-                                            <th style="width: 10%;" class="text-center">Nama Pengajar</th>
-                                            <th style="width: 10%;" class="text-center">Kelas</th>
-                                            <th style="width: 10%;" class="text-center">Kehadiran</th>
-                                            <th style="width: 10%;" class="text-center">Gaji per Pertemuan</th>
-                                            <th style="width: 10%;" class="text-center">Gaji Total</th>
-                                            <th style="width: 10%;" class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-       
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="" method="POST">
-                    @csrf
-                    <div id="inputFieldsContainer">
-                        <div class="mb-3">
-                            <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
-                            <div class="field d-flex gap-1">
-                                <input type="text" class="form-control border-2" id="nama_sekolah" name="nama_sekolah"
-                                    required>
-                                <button type="button" class="btn btn-danger removefield">X</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-info" id="addfild">Tambah Form</button>
-                <div>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success">Kirim</button>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
-</div>
 
-{{-- <script>
-    $(document).ready(function() {
+    <!-- Modal -->
+    {{-- <div class="modal fade" id="form_sekolah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-2">
+                    <form id="sekolah_form" method="POST">
+                        @csrf
+                        <div id="inputFieldsContainer">
+                            <div class="field">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <x-form.input_text name="nama_sekolah" label="Nama Sekolah"
+                                            placeholder="masukan nama Sekolah" />
+                                        <div id="error-nama_sekolah" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <x-form.input_text name="guru" label="Guru Penanggung Jawab"
+                                            placeholder="Nama Guru penanggung jawab" />
+                                        <div id="guru" class="text-danger"></div>
+                                        <div id="error-guru" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <x-form.input_text name="no_hp" label="No HP" placeholder="Gunakan +62....." />
+                                        <div id="no_hp" class="text-danger"></div>
+                                        <div id="error-no_hp" class="text-danger"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer pt-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" id="submit_sekolah" class="btn btn-success"><i
+                            class="fa-solid fa-floppy-disk fa-lg"></i> Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
+    {{-- <script>
+        $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('program_belajar.json') }}",
+                    url: "{{ route('sekolah.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -134,45 +101,21 @@
                         }
                     },
                     {
-                        data: 'nama_program',
+                        data: 'nama_sekolah',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-start fw-bold text-tabel">${data}</>`;
                         }
                     },
                     {
-                        data: 'harga',
+                        data: 'guru',
                         render: function(data, type, row) {
-                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
-                        }
-                    }, {
-                        data: 'deskripsi'
-                    },
-                    {
-                        data: 'level',
-                        render: function(data, type, row) {
-                            if (data == 'mudah') {
-                                color = 'success';
-                            }
-                            if (data == 'sedang') {
-                                color = 'warning';
-                            } else if (data == 'sulit') {
-                                color = 'danger';
-                            }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                            return `<div class="text-start fw-bold text-tabel">${data}</>`;
                         }
                     },
                     {
-                        data: 'jenis_kelas'
-                    },
-                    {
-                        data: null,
+                        data: 'no_hp',
                         render: function(data, type, row) {
-                            return `
-                                    <div class="text-center text-nowrap text-success fw-bold">
-                                        M${row.mekanik} &#8226; E${row.elektronik} &#8226; P${row.pemrograman}
-                                    </div>
-                            `;
+                            return `<div class="text-start"><a href="https://wa.me/${data}" target="_blank">${data}</a></>`;
                         }
                     },
                     {
@@ -180,35 +123,50 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
-                                    <a href="" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                    </form>
+                                <a href="{{ url('/sekolah/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+                                <form action="{{ url('/sekolah/delete/${row.id}') }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </form>
                             </div>
-                            `;
+                        `;
                         }
+
                     }
                 ]
             });
 
+            // Menambahkan Data
+            $('#submit_sekolah').on('click', function() {
+                let form = $('#sekolah_form'); // Tangkap form
+                let formData = form.serialize(); // Ambil data dari form
 
-            // Menambahkan Field Form
-            $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
-                `);
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('sekolah.store') }}", // Pastikan rutenya sesuai
+                    data: formData,
+                    success: function(response) {
+                        form.trigger('reset'); // Reset form setelah berhasil
+                        $('#form_sekolah').modal('hide'); // Tutup modal
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
-            // Menghapus Field Form dengan event delegation
-            $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                let errorMessage = errors[key].join(', ');
+                                $('#error-' + key).text(errorMessage);
+                            }
+                        }
+                    }
+                });
             });
         });
-</script> --}}
+    </script> --}}
 @endsection

@@ -15,10 +15,10 @@ class tipeKelasSeeder extends Seeder
     public function run(): void
     {
         Tipekelas::insert([
-            ['nama_kategori' => 'Meker'],
-            ['nama_kategori' => 'Programing'],
-            ['nama_kategori' => 'Game Programing'],
-            ['nama_kategori' => 'Project'],
+            ['tipe_kelas' => 'Meker'],
+            ['tipe_kelas' => 'Programing'],
+            ['tipe_kelas' => 'Game Programing'],
+            ['tipe_kelas' => 'Project'],
         ]);
     }
 }
