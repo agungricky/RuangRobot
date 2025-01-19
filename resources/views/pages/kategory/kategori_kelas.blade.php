@@ -80,7 +80,7 @@
                         }
                     },
                     {
-                        data: 'jenis_kelas',
+                        data: 'kategori_kelas',
                         render: function(data, type, row, meta) {
                             return `<div class="text-start fw-bold text-tabel">${data}</div>`;
                         }

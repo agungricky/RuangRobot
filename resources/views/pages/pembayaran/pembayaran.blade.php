@@ -59,7 +59,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Pembayaran</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -67,7 +67,7 @@
                         @csrf
                         <div id="inputFieldsContainer">
                             <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Sekolah</label>
+                                <label for="nama_sekolah" class="form-label">Nama Kelas</label>
                                 <div class="field d-flex gap-1">
                                     <input type="text" class="form-control border-2" id="nama_sekolah"
                                         name="nama_sekolah" required>
@@ -75,6 +75,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="inputFieldsContainer">
+                            <div class="mb-3">
+                                <label for="nama_sekolah" class="form-label">Terbayar</label>
+                                <div class="field d-flex gap-1">
+                                    <input type="text" class="form-control border-2" id="nama_sekolah"
+                                        name="nama_sekolah" required>
+                                    <button type="button" class="btn btn-danger removefield">X</button>
+                                </div>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
@@ -88,13 +99,13 @@
         </div>
     </div>
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('program_belajar.json') }}",
+                    url: "{{ route('pembayaran.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -104,47 +115,35 @@
                         }
                     },
                     {
-                        data: 'nama_program',
+                        data: 'nama_kelas',
                         render: function(data, type, row) {
                             return `<div class="fw-bold">${data}</div>`;
                         }
                     },
                     {
-                        data: 'harga',
+                        data: 'nama_siswa',
                         render: function(data, type, row) {
-                            return `<div class="text-success fw-bold">${new Intl.NumberFormat('id-ID', {
-                                    style: 'currency', currency: 'IDR'}).format(data)}</div>`;
+                            return `<div class="fw-bold">${data}</div>`;
                         }
-                    }, {
-                        data: 'deskripsi'
                     },
                     {
-                        data: 'level',
+                        data: 'terbayar',
                         render: function(data, type, row) {
-                            if (data == 'mudah') {
+                            return `<div class="fw-bold">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'status',
+                        render: function(data, type, row) {
+                            if (data == 'lunas') {
                                 color = 'success';
-                            }
-                            if (data == 'sedang') {
+                            } else if (data == 'belum') {
                                 color = 'warning';
-                            } else if (data == 'sulit') {
-                                color = 'danger';
                             }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                            return `<div class="fw-bold"><span class="level bg-${color}">${data}</span></div>`;
                         }
                     },
-                    {
-                        data: 'jenis_kelas'
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            return `
-                                    <div class="text-center text-nowrap text-success fw-bold">
-                                        M${row.mekanik} &#8226; E${row.elektronik} &#8226; P${row.pemrograman}
-                                    </div>
-                            `;
-                        }
-                    },
+
                     {
                         data: null,
                         render: function(data, type, row) {
@@ -180,5 +179,5 @@
                 $(this).closest('.field').remove();
             });
         });
-    </script> --}}
+    </script>
 @endsection

@@ -40,11 +40,11 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:jenis_kelas,jenis_kelas|max:20',
+            'kategori' => 'required|unique:kategori_kelas,kategori_kelas|max:20',
         ], $messages);
 
         Kategori::create([
-            'jenis_kelas' => $request->kategori,
+            'kategori_kelas' => $request->kategori,
         ]);
     }
 
@@ -69,11 +69,11 @@ class kategoriController extends Controller
         ];
 
         $request->validate([
-            'kategori' => 'required|unique:jenis_kelas,jenis_kelas,' . $id . ',id|max:20',
+            'kategori' => 'required|unique:kategori_kelas,kategori_kelas,' . $id . ',id|max:20',
         ], $messages);
 
         Kategori::where('id', $id)->update([
-            'jenis_kelas' => $request->kategori
+            'kategori_kelas' => $request->kategori
         ]);
 
         return redirect('kategori_kelas')->with('success', 'Data Berhasil diperbarui');

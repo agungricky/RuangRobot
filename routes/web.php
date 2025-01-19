@@ -76,6 +76,7 @@ Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
 
 // ========= Pembayaran ========= //
 Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
+Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
 
 Route::view('/x', 'main.layout');
 Route::view('/x', 'pages.konten');
