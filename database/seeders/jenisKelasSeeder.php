@@ -15,11 +15,11 @@ class jenisKelasSeeder extends Seeder
     public function run(): void
     {
         Kategori::insert([
-            ['jenis_kelas' => 'Kelas Reguler'],
-            ['jenis_kelas' => 'Kelas Ekskul'],
-            ['jenis_kelas' => 'Kelas Lomba'],
-            ['jenis_kelas' => 'Kelas Project'],
-            ['jenis_kelas' => 'Kelas Trial'],
+            ['kategori_kelas' => 'Kelas Reguler'],
+            ['kategori_kelas' => 'Kelas Ekskul'],
+            ['kategori_kelas' => 'Kelas Lomba'],
+            ['kategori_kelas' => 'Kelas Project'],
+            ['kategori_kelas' => 'Kelas Trial'],
         ]);
     }
 }

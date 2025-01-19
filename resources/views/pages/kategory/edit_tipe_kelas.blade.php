@@ -14,8 +14,8 @@
                                     @csrf
                                     @method('PATCH')
                                     <div class="form-group">
-                                        <x-form_edit.edit_text name="kategori" label="Nama Tipe Kelas" :value="$data->nama_kategori" />
-                                        <x-validation_form.error name="kategori"/>
+                                        <x-form_edit.edit_text name="tipe_kls" label="Nama Tipe Kelas" :value="$data->tipe_kelas" />
+                                        <x-validation_form.error name="tipe_kls"/>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </form>
