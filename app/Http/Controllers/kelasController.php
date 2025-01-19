@@ -92,7 +92,7 @@ class kelasController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view('pages.kelas.detail_kelas');
     }
 
     /**

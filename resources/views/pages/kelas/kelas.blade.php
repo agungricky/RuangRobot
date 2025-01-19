@@ -208,7 +208,7 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
+                                    <a href="{{ url('/kelas/detail/${row.id}')}}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
                                     <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i>Edit</a>
                                     <form action="" method="POST" class="d-inline">
                                         @csrf
