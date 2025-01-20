@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class pengguna extends Model
 {
     protected $table = 'profile';
-    protected $fillable = ['id','nama','email','alamat','no_telp'];
+    protected $fillable = ['id','nama','email','alamat','no_telp', 'sekolah_id', 'mekanik', 'elektronik', 'pemrograman'];
+    public $timestamps = false;
 }

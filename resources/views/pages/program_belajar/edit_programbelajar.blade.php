@@ -10,7 +10,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('program_belajar.update',['id'=>$data->id])}}" method="POST">
+                                <form action="{{ route('program_belajar.update', ['id' => $data->id]) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="form-group">
@@ -20,35 +20,31 @@
                                                     :value="$data->nama_program" />
                                                 <x-validation_form.error name="nama_program" />
                                             </div>
-                                            <div class="col-6">
-                                                <x-form_edit.edit_text name="harga" label="Harga"
-                                                    :value="$data->harga" />
-                                                <x-validation_form.error name="harga" />
+                                            <div class="col-3">
+                                                @php
+                                                    $option = [
+                                                        'mudah' => 'Beginner (Pemula)',
+                                                        'sedang' => 'Intermediate (Menengah)',
+                                                        'sulit' => 'Advanced (Lanjutan)',
+                                                    ];
+                                                @endphp
+                                                <x-form_edit.edit_dropdown label="Level" name="level" :option="$option" :data="$data->level" />
                                             </div>
-                                            <div class="col-12">
-                                                <x-form_edit.edit_text name="deskripsi" label="Deskripsi"
+                                            <div class="col-3">
+                                                <label for="">Tipe Kelas</label>
+                                                <select class="form-control" name="tipe_kelas_id">
+                                                    @foreach ($tipe_kelas as $value)
+                                                    <option value="{{ $value->id }}" {{$data->tipe_kelas == $value->tipe_kelas ? 'selected' : ''}}>{{ $value->tipe_kelas}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-12 my-3">
+                                                <x-form_edit.edit_textArea name="deskripsi" label="Deskripsi"
                                                     :value="$data->deskripsi" />
                                                 <x-validation_form.error name="deskripsi" />
                                             </div>
-                                            <div class="col-6">
-                                                <label for="">Level</label>
-                                                <select class="form-control" name="level">
-                                                    @foreach ($level as $value)
-                                                    <option value="{{ $value->level }}">{{ $value->level }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            {{-- <div class="col-6">
-                                                <label for="">Jenis Kelas</label>
-                                                <select class="form-control" name="jenis_kelas_id">
-                                                    @foreach ($options as $value)
-                                                    <option value="{{ $value->id }}">{{ $value->jenis_kelas}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div> --}}
                                             <div class="col-4">
-                                                <x-form_edit.edit_text name="mekanik" label="mekanik"
-                                                    :value="$data->mekanik" />
+                                                <x-form_edit.edit_text name="mekanik" label="mekanik" :value="$data->mekanik" />
                                                 <x-validation_form.error name="mekanik" />
                                             </div>
                                             <div class="col-4">

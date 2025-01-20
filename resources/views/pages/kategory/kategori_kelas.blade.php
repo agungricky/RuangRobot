@@ -49,7 +49,7 @@
                         @csrf
                         <div id="inputFieldsContainer" class="mb-0">
                             <x-form.input_text label="Nama Kategori" name="kategori"
-                                placeholder="Meker | Programing | dll ...." />
+                                placeholder="Kelas Reguler | Kelas Lomba | dll ...." />
                             <div id="errorMessages" class="text-danger"></div>
                         </div>
                     </form>

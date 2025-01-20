@@ -64,6 +64,10 @@ Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
 Route::get('/data_admin/{id}/json', [penggunaController::class, 'pengguna'])->name('admin.json');
 
+Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
+Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
+
+
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('pengajar.json');
 
