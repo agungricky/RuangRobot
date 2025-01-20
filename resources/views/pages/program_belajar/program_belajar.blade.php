@@ -22,7 +22,6 @@
                                         <tr>
                                             <th style="width: 5%;" class="text-center">No.</th>
                                             <th style="width: 15%;" class="text-center">Program belajar</th>
-                                            <th style="width: 10%;" class="text-center">Harga</th>
                                             <th style="width: 30%;" class="text-center">Deskripsi</th>
                                             <th style="width: 10%;" class="text-center">Level</th>
                                             <th style="width: 10%;" class="text-center">Jenis Kelas</th>
@@ -55,19 +54,26 @@
                     <div class="row">
                         <div class="col-12 my-2">
                             <x-form.input_text label="Nama Program Belajar" placeholder="Program Belajar"
-                                name="nama_program" />
+                                name="nama_program"/>
                         </div>
                         <div class="col-12 my-2">
-                            <x-form.input_number label="Harga" placeholder="Harga" name="harga" />
+                            @php
+                            $option = [
+                            'mudah' => 'Beginner (Pemula)',
+                            'sedang' => 'Intermediate (Menengah)',
+                            'sulit' => 'Advanced (Lanjutan)',
+                            ];
+                            @endphp
+                            <x-form.input_dropdown label="Level" name="level" :option="$option" />
                         </div>
                         <div class="col-12 my-2">
                             <x-form.input_textArea label="Deskripsi" name="deskripsi" />
                         </div>
                         <div class="col-12 my-2">
-                            <label for="jenis_kelas">Jenis Kelas</label>
-                            <select class="form-control" name="jenis_kelas" id="jenis_kelas">
+                            <label for="tipe_kelas">Tipe Kelas</label>
+                            <select class="form-control" name="tipe_kelas" id="tipe_kelas">
                                 @foreach ($options_form as $value)
-                                <option value="{{ $value->id }}">{{ $value->nama_kategori }}</option>
+                                <option value="{{ $value->id }}">{{ $value->tipe_kelas }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -79,16 +85,6 @@
                         </div>
                         <div class="col-12 my-2">
                             <x-form.input_radiopoin label="Bobot Nilai Pemrograman" name="pemrograman" />
-                        </div>
-                        <div class="col-12 my-2">
-                            @php
-                            $option = [
-                            'mudah' => 'Beginner (Pemula)',
-                            'sedang' => 'Intermediate (Menengah)',
-                            'sulit' => 'Advanced (Lanjutan)',
-                            ];
-                            @endphp
-                            <x-form.input_dropdown label="Level" name="level" :option="$option" />
                         </div>
                     </div>
                 </div>
@@ -123,18 +119,6 @@
                         }
                     },
                     {
-                        data: 'harga',
-                        render: function(data, type, row) {
-                            const formattedCurrency = new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR',
-                                currencyDisplay: 'narrowSymbol',
-                                minimumFractionDigits: 0
-                            }).format(data);
-
-                            return `<div class="text-success fw-bold">${formattedCurrency}</div>`;
-                        }
-                    }, {
                         data: 'deskripsi',
                         render: function(data, type, row) {
                             return `<div class="text-tabel text-start">${data}</div>`;
@@ -155,7 +139,7 @@
                         }
                     },
                     {
-                        data: 'nama_kategori',
+                        data: 'tipe_kelas',
                         render: function(data, type, row) {
                             return `<div class="text-tabel text-center">${data}</div>`;
                         }
@@ -208,7 +192,7 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        // alert(xhr.responseText);
+                        alert(xhr.responseText);
                         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
                         for (let key in errors) {

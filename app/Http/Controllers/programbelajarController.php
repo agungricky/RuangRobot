@@ -6,6 +6,7 @@ use App\Models\Kategori;
 use App\Models\programbelajar;
 use App\Models\Tipekelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class programbelajarController extends Controller
 {
@@ -14,8 +15,8 @@ class programbelajarController extends Controller
      */
     public function index(Request $request)
     {
-        $data = programbelajar::join('tipe_kelas','tipe_kelas.id', 'program_belajar.jenis_kelas_id')
-        ->select('program_belajar.*','tipe_kelas.nama_kategori')->get();
+        $data = programbelajar::join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
+            ->select('program_belajar.*', 'tipe_kelas.tipe_kelas')->get();
 
         $options_form = Tipekelas::all();
 
@@ -35,7 +36,6 @@ class programbelajarController extends Controller
     {
         $message = [
             'nama_program.required' => 'Nama program wajib diisi.',
-            'harga.required' => 'Harga wajib diisi.',
             'deskripsi.required' => 'Deskripsi wajib diisi.',
             'level.required' => 'Level wajib diisi.',
             'mekanik.required' => 'Mekanik wajib diisi.',
@@ -45,7 +45,6 @@ class programbelajarController extends Controller
 
         $request->validate([
             'nama_program' => 'required',
-            'harga' => 'required',
             'deskripsi' => 'required',
             'level' => 'required',
             'mekanik' => 'required',
@@ -55,10 +54,9 @@ class programbelajarController extends Controller
 
         programbelajar::create([
             'nama_program' => $request->nama_program,
-            'harga' => $request->harga,
             'deskripsi' => $request->deskripsi,
             'level' => $request->level,
-            'Jenis_kelas_id' => $request->jenis_kelas,
+            'tipe_kelas_id' => $request->tipe_kelas,
             'mekanik' => $request->mekanik,
             'elektronik' => $request->elektronik,
             'pemrograman' => $request->pemrograman,
@@ -78,11 +76,13 @@ class programbelajarController extends Controller
      */
     public function edit(string $id)
     {
-        $data = programbelajar::where('id', $id)->first();
-        $options = Kategori::all();
-        $level = programbelajar::all(); 
+        $data = programbelajar::join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
+            ->where('program_belajar.id', $id)
+            ->select('program_belajar.*', 'tipe_kelas.tipe_kelas')
+            ->first();
+        $tipe_kelas = Tipekelas::all();
 
-        return view('pages.program_belajar.edit_programbelajar',compact('data','options','level'));
+        return view('pages.program_belajar.edit_programbelajar', compact('data', 'tipe_kelas'));
     }
 
     /**
@@ -90,52 +90,48 @@ class programbelajarController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // $message = [
-        //     'nama_program.required' => 'Nama Program harus diisi.',
-        //     'nama_program.unique' => 'Sekolah sudah ada.',
-        //     'harga' => 'Harga harus diisi.',
-        //     'deskripsi' => 'Deskripsi harus diisi.',
-        //     'level' => 'Level harus diisi.',
-        //     'jenis_kelas_id' => 'Jenis kelas harus diisi.',
-        //     'mekanik' => 'Mekanik harus diisi.',
-        //     'elektronik' => 'Elektronik harus diisi.',
-        //     'pemrograman' => 'Pemrograman harus diisi.',
-        // ];
+        $message = [
+            'nama_program.required' => 'Nama Program harus diisi.',
+            'nama_program.unique' => 'Nama program sudah ada coba buat yag lain.',
+            'deskripsi.required' => 'Deskripsi harus diisi.',
+            'level.required' => 'Level harus diisi.',
+            'tipe_kelas_id.required' => 'Tipe kelas harus diisi.',
+            'mekanik.required' => 'Mekanik harus diisi.',
+            'elektronik.required' => 'Elektronik harus diisi.',
+            'pemrograman.required' => 'Pemrograman harus diisi.',
+        ];
 
-        // $request->validate([
-        //     'nama_program' => 'required.',
-        //     'nama_program' => 'required.',
-        //     'harga' => 'required.',
-        //     'deskripsi' => 'required.',
-        //     'level' => 'required.',
-        //     'jenis_kelas_id' => 'required.',
-        //     'mekanik' => 'required.',
-        //     'elektronik' => 'required.',
-        //     'pemrograman' => 'required.',
-        // ], $message);
-        //update data program belajar
-        programbelajar::where('id',$id)->update([
+        $request->validate([
+            'nama_program' => 'required|string|unique:program_belajar,nama_program,' . $id,
+            'deskripsi' => 'required',
+            'level' => 'required',
+            'tipe_kelas_id' => 'required',
+            'mekanik' => 'required',
+            'elektronik' => 'required',
+            'pemrograman' => 'required',
+        ], $message);
+
+        programbelajar::where('id', $id)->update([
             'nama_program' => $request->nama_program,
-            'harga' => $request->harga,
             'deskripsi' => $request->deskripsi,
             'level' => $request->level,
-            // 'Jenis_kelas_id' => $request->Jenis_kelas_id,
+            'tipe_kelas_id' => $request->tipe_kelas_id,
             'mekanik' => $request->mekanik,
             'elektronik' => $request->elektronik,
             'pemrograman' => $request->pemrograman,
         ]);
-        return redirect('program_belajar')->with('success','Data berhasil diperbarui');
-    } 
+
+        return redirect('program_belajar')->with('success', 'Data berhasil diperbarui');
+    }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-    //    programbelajar::find($id)->delete(); // AKU INGIN BERTANYA DIBAGIAN INI SAYANG, IKI PIE KOK WAYAH IKI GAK KENEK
-        programbelajar::where('id', $id)->delete(); // TP LEK CARANE NGENE KENEK
+        programbelajar::where('id', $id)->delete();
 
-        // dd($p);
         return redirect('program_belajar')->with('success', 'Data Berhasil dihapus');
     }
 }
