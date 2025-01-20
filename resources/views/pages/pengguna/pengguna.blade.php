@@ -39,7 +39,9 @@
                                                 @if ($id == 'Siswa')
                                                     <th style="width: 20%;" class="text-center">Sekolah</th>
                                                 @endif
-                                                <th style="width: 10%;" class="text-center">Email</th>
+                                                @if ($id == 'Admin' || $id == 'Pengajar')
+                                                    <th style="width: 10%;" class="text-center">Email</th>
+                                                @endif
                                                 <th style="width: 10%;" class="text-center">Alamat</th>
                                                 <th style="width: 10%;" class="text-center">No telp</th>
                                                 <th style="width: 10%;" class="text-center">Username</th>
@@ -175,14 +177,15 @@
                                 return `<div class="text-start text-tabel">${data}</div>`;
                             }
                         },
-                    @endif 
-                    {
-                        data: 'email',
-                        render: function(data, type, row) {
-                            return `<div class="text-start text-tabel">${data}</div>`;
-                        }
-                    },
-                    {
+                    @endif
+                    @if ($id == 'Pengajar' || $id == 'Admin')
+                        {
+                            data: 'email',
+                            render: function(data, type, row) {
+                                return `<div class="text-start text-tabel">${data}</div>`;
+                            }
+                        },
+                    @endif {
                         data: 'alamat',
                         render: function(data, type, row) {
                             return `<div class="text-start text-tabel">${data}</div>`;
