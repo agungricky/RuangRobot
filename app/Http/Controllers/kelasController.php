@@ -17,18 +17,19 @@ class kelasController extends Controller
      */
     public function index(Request $request)
     {
-        $data = kelas::join('jenis_kelas', 'jenis_kelas.id', '=', 'kelas.jenis_kelas_id')
-        ->select('kelas.*', 'jenis_kelas.jenis_kelas')
+        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
+        ->select('kelas.*', 'kategori_kelas.kategori_kelas')
         ->get();
-        $kategori = Kategori::all();  
-
+        $kategori = Kategori::all(); 
+        $programbelajar = programbelajar::all(); 
+        // dd($kategori);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
             ]);
         }
 
-        return view('pages.kelas.kelas', compact('data', 'kategori'));
+        return view('pages.kelas.kelas', compact('data','kategori','programbelajar'));
     }
 
     public function program_belajar()
@@ -52,11 +53,11 @@ class kelasController extends Controller
     {
         $message = [
             'nama_kelas.required' => 'Nama Kelas harus diisi.',
+            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
             'mulai.required' => 'Tanggal Mulai harus diisi.',
             'selesai.required' => 'Tanggal Selesai harus diisi.',
             'program_id.required' => 'Program Belajar harus diisi.',
             'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
-            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
             'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
             'gaji_transport.required' => 'Gaji Transport harus diisi.',
             'status_kelas.required' => 'Status Kelas harus diisi.',
@@ -64,11 +65,11 @@ class kelasController extends Controller
 
         $request->validate([
             'nama_kelas' => 'required',
+            'penanggung_jawab' => 'required',
             'mulai' => 'required',
             'selesai' => 'required',
             'program_id' => 'required',
             'jenis_kelas' => 'required',
-            'penanggung_jawab' => 'required',
             'gaji_pengajar' => 'required',
             'gaji_transport' => 'required',
             'status_kelas' => 'required',
@@ -94,7 +95,7 @@ class kelasController extends Controller
     public function show(string $id)
     {
         $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-        ->join('jenis_kelas', 'jenis_kelas.id', 'kelas.jenis_kelas_id')
+        ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
         ->where('kelas.id', $id)->first();
 
         $jp = pembelajaran::where('id', $id)->count();
