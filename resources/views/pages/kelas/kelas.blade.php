@@ -1,136 +1,140 @@
 @extends('main.layout')
 @section('content')
-    <!-- Main Content -->
-    <div class="main-content">
-        <section class="section">
-            <x-title_halaman title="Kelas" />
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <x-title_halaman title="Kelas" />
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 25%;" class="text-center">Nama Kelas</th>
-                                                <th style="width: 5%;" class="text-center">Jenis Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Gaji Pengajar</th>
-                                                <th style="width: 10%;" class="text-center">Gaji Transport</th>
-                                                <th style="width: 10%;" class="text-center">Status Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Dibuat Tanggal</th>
-                                                <th style="width: 20%;" class="text-center">Opsi</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="add-items d-flex">
+                                <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%;" class="text-center">No.</th>
+                                            <th style="width: 25%;" class="text-center">Nama Kelas</th>
+                                            <th style="width: 5%;" class="text-center">Jenis Kelas</th>
+                                            <th style="width: 10%;" class="text-center">Gaji Pengajar</th>
+                                            <th style="width: 10%;" class="text-center">Gaji Transport</th>
+                                            <th style="width: 10%;" class="text-center">Status Kelas</th>
+                                            <th style="width: 10%;" class="text-center">Dibuat Tanggal</th>
+                                            <th style="width: 20%;" class="text-center">Opsi</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+</div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Kelas</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body pb-0">
-                    <form id="data_form" method="POST">
-                        @csrf
-                        <div id="inputFieldsContainer">
-                            <div class="field">
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <x-form.input_text name="nama_kelas" label="Nama Kelas"
-                                            placeholder="Masukan Nama Kelas" />
-                                        <div id="error-nama_kelas" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
-                                        <input type="text" id="penanggung_jawab" name="penanggung_jawab"
-                                            class="form-control" placeholder="Masukan Penanggung jawab Kelas" />
-                                        <div id="error-penanggung_jawab" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_clock name="mulai" id="mulai" label="Durasi Belajar"
-                                            placeholder="Jam Mulai" />
-                                        <div id="error-mulai" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_clock name="selesai" id="selesai" label="Durasi Belajar"
-                                            placeholder="Jam Selesai" />
-                                        <div id="error-selesai" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="autocomplete_program_belajar"></label>
-                                        <input type="text" id="programInput" name="program_belajar" class="form-control"
-                                            placeholder="Masukan Program Belajar" />
-                                        <input type="hidden" id="programId" name="program_id" />
-                                        <div id="error-program_id" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="">Jenis Kelas</label>
-                                        <select class="form-control" name="jenis_kelas">
-                                            @foreach ($kategori as $item)
-                                                <option value="{{ $item->id }}">{{ $item->jenis_kelas }}</option>
-                                            @endforeach
-                                        </select>
-                                        <div id="error-jenis_kelas" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_number name="gaji_pengajar" label="Gaji Pengajar"
-                                            placeholder="masukan nominal gaji pengajar" :value="$item->gaji_pengajar" />
-                                        <div id="error-gaji_pengajar" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <x-form.input_number name="gaji_transport" label="Gaji Transport"
-                                            placeholder="masukan nominal gaji transport" :value="$item->gaji_transport" />
-                                        <div id="error-gaji_transport" class="text-danger"></div>
-                                    </div>
-
-                                    <input type="hidden" class="form-control" name="status_kelas" value="aktif" />
+<!-- Modal -->
+<div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Kelas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pb-0">
+                <form id="data_form" method="POST">
+                    @csrf
+                    <div id="inputFieldsContainer">
+                        <div class="field">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <x-form.input_text name="nama_kelas" label="Nama Kelas"
+                                        placeholder="Masukan Nama Kelas" />
+                                    <div id="error-nama_kelas" class="text-danger"></div>
                                 </div>
+                                <div class="col-12 mb-3">
+                                    <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
+                                    <input type="text" id="penanggung_jawab" name="penanggung_jawab"
+                                        class="form-control" placeholder="Masukan Penanggung jawab Kelas" />
+                                    <div id="error-penanggung_jawab" class="text-danger"></div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <x-form.input_clock name="mulai" id="mulai" label="Durasi Belajar"
+                                        placeholder="Jam Mulai" />
+                                    <div id="error-mulai" class="text-danger"></div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <x-form.input_clock name="selesai" id="selesai" label="Durasi Belajar"
+                                        placeholder="Jam Selesai" />
+                                    <div id="error-selesai" class="text-danger"></div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="">Program Belajar</label>
+                                    <select class="form-control" name="nama_program">
+                                        @foreach ($programbelajar as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama_program}}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="error-program_id" class="text-danger"></div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <label for="">Jenis Kelas</label>
+                                    <select class="form-control" name="kategori_kelas">
+                                        @foreach ($kategori as $item)
+                                        <option value="{{ $item->id }}">{{ $item->kategori_kelas}}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="error-jenis_kelas" class="text-danger"></div>
+                                </div>
+
+                                <div class="col-6 mb-3">
+                                    <x-form.input_number name="gaji_pengajar" label="Gaji Pengajar"
+                                        placeholder="masukan nominal gaji pengajar" :value="$item->gaji_pengajar" />
+                                    <div id="error-gaji_pengajar" class="text-danger"></div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <x-form.input_number name="gaji_transport" label="Gaji Transport"
+                                        placeholder="masukan nominal gaji transport" :value="$item->gaji_transport" />
+                                    <div id="error-gaji_transport" class="text-danger"></div>
+                                </div>
+
+                                <input type="hidden" class="form-control" name="status_kelas" value="aktif" />
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer pt-2">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="submit" class="btn btn-success">Kirim</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer pt-2">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="submit" class="btn btn-success">Kirim</button>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-        .clockpicker-popover {
-            z-index: 2050 !important;
-        }
+<style>
+    .clockpicker-popover {
+        z-index: 2050 !important;
+    }
 
-        /* Pastikan dropdown muncul di atas elemen lain */
-        .ui-autocomplete {
-            z-index: 9999;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: #fff;
-            border: 1px solid #ccc;
-        }
-    </style>
+    /* Pastikan dropdown muncul di atas elemen lain */
+    .ui-autocomplete {
+        z-index: 9999;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #fff;
+        border: 1px solid #ccc;
+    }
+</style>
 
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
@@ -151,7 +155,7 @@
                         }
                     },
                     {
-                        data: 'jenis_kelas',
+                        data: 'kategori_kelas',
                         render: function(data, type, row) {
                             return `<div class="text-center text-tabel fw-bold">${data}</div>`;
                         }
@@ -186,7 +190,7 @@
                         data: 'status_kelas',
                         render: function(data, type, row) {
                             if (data == 'aktif') {
-                                color = 'warning';
+                                color = 'primary';
                             } else if (data == 'selesai') {
                                 color = 'success';
                             }
@@ -313,5 +317,5 @@
                 });
             });
         });
-    </script>
+</script>
 @endsection

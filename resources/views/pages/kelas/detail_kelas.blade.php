@@ -137,7 +137,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
+                                    <x-button.button_add_modal message="Tambah Siswa" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
