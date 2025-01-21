@@ -53,6 +53,7 @@ class kelasSeeder extends Seeder
                     'gaji_pengajar' => $gaji[array_rand($gaji)],
                     'gaji_transport' => $gaji[array_rand($gaji)],
                     'status_kelas' => 'aktif',
+                    'jatuh_tempo' => now()->addDays(rand(1, 30)),
                     'created_at' => now(),
                     'updated_at' => now()
                 ]

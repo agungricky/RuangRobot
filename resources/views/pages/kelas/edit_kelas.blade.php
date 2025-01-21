@@ -34,23 +34,21 @@
                                                 </div>
                                                 <div class="col-5 mb-3">
                                                     <label for="autocomplete_program_belajar">Program Belajar</label>
-                                                    <input type="text" id="programInput" name="program_belajar"
-                                                        class="form-control" value="{{ $data->nama_program }}" />
-                                                    <input type="hidden" id="programId" name="programId"
-                                                        value="{{ $data->program_id }}" />
+                                                    <input type="text" id="programInput" name="program_belajar" class="form-control" value="{{ $data->nama_program }}" />
+                                                    <input type="hidden" id="programId" name="programId" value="{{ $data->program_id }}" />
                                                     <x-validation_form.error name="programId" />
                                                     <x-validation_form.error name="program_belajar" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     <label for="">Jenis Kelas</label>
-                                                    <select class="form-control" name="jenis_kelas">
+                                                    <select class="form-control" name="kategori_kelas">
                                                         @foreach ($kategori as $item)
                                                             <option value="{{ $item->id }}"
-                                                                {{ $data->jenis_kelas == $item->jenis_kelas ? 'selected' : '' }}>
-                                                                {{ $item->jenis_kelas }}</option>
+                                                                {{ $data->kategori_kelas == $item->kategori_kelas ? 'selected' : '' }}>
+                                                                {{ $item->kategori_kelas }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <x-validation_form.error name="jenis_kelas" />
+                                                    <x-validation_form.error name="kategori_kelas" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     @php
@@ -73,6 +71,16 @@
                                                     <x-form_edit.edit_number name="gaji_transport" label="Gaji Transport"
                                                         :value="$data->gaji_transport" />
                                                     <x-validation_form.error name="gaji_transport" />
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <x-form_edit.edit_number name="harga_kelas" label="Harga Kelas"
+                                                        :value="$data->harga" />
+                                                    <x-validation_form.error name="harga_kelas" />
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <x-form_edit.edit_number name="jatuh_tempo" label="Tanggal Jatuh tempo"
+                                                    :value="$data->jatuh_tempo" />
+                                                    <x-validation_form.error name="jatuh_tempo" />
                                                 </div>
                                             </div>
                                         </div>

@@ -60,10 +60,14 @@ Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.stor
 Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
 Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
+Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
+
 
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
 Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
+Route::get('siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
+
 
 // ========= Pengguna ========= //
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
@@ -74,7 +78,7 @@ Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('
 
 
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
-Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('pengajar.json');
+// Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
 
 Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
 Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');

@@ -231,7 +231,7 @@
                 let form = $('#pengguna_form');
                 let formData = form.serialize();
 
-                alert(formData);
+                // alert(formData);
 
                 $.ajax({
                     type: "POST",
@@ -243,7 +243,7 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        alert(xhr.responseText);
+                        // alert(xhr.responseText);
                         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
                         for (let key in errors) {

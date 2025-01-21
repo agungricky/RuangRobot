@@ -139,6 +139,34 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Tambah Siswa Kelas --}}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="add-items d-flex">
+                                    <x-button.button_add_modal message="Tambah Siswa" id="#tambah_siswa" />
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="examplee">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%;" class="text-center">No.</th>
+                                                <th style="width: 15%;" class="text-center">Nama Siswa</th>
+                                                <th style="width: 5%;" class="text-center">Nilai</th>
+                                                <th style="width: 10%;" class="text-center">No Sertivikat</th>
+                                                <th style="width: 10%;" class="text-center">Status Pembayaran</th>
+                                                <th style="width: 10%;" class="text-center">Jatuh Tempo</th>
+                                                <th style="width: 10%;" class="text-center">Opsi</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -173,6 +201,44 @@
         </div>
     </div>
 
+    <!-- Modal Tambah Siswa -->
+    <div class="modal fade" id="tambah_siswa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ $data->nama_kelas }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-2">
+                    <form id="sekolah_form" method="POST">
+                        @csrf
+                        <div class="table-responsive">
+                            <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="siswa_kelas">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%;" class="text-center">Pilih</th>
+                                        <th style="width: 5%;" class="text-center">No.</th>
+                                        <th style="width: 15%;" class="text-center">Nama Siswa</th>
+                                        <th style="width: 50%;" class="text-start">Sekolah</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer pt-3">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="submit_sekolah" class="btn btn-success"><i
+                            class="fa-solid fa-add fa-lg"></i> Tambahkan Siswa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel Pertemuan Kelas
@@ -205,7 +271,7 @@
                         render: function(data, type, row) {
                             if (data == null) {
                                 color = 'warning';
-                            }else{
+                            } else {
                                 color = 'success';
                             }
                             return `<div class="text-tabel text-start"><span class="level w-100 bg-${color}">${data ? data : 'Belum dilaksanakan'}</span></div>`;
@@ -235,6 +301,118 @@
                     }
                 ]
             });
+
+            // Menampilkan Data siswa/murid Kelas
+            // $('#siswa_kelas').DataTable({
+            //     ajax: {
+            //         type: "GET",
+            //         url: "{{ route('siswa_kelas.json') }}",
+            //         dataSrc: 'data',
+            //     },
+            //     columns: [{
+            //             data: null,
+            //             render: function(data, type, row, meta) {
+            //                 return `<div class="text-center">${meta.row + 1}</div>`;
+            //             }
+            //         },
+            //         {
+            //             data: 'nama',
+            //             render: function(data, type, row) {
+            //                 return `<div class="text-tabel fw-bold text-start">${data}</div>`;
+            //             }
+            //         },
+            //         {
+            //             data: 'nama_sekolah',
+            //             render: function(data, type, row) {
+            //                 return `<div class="text-body-secondary fw-bold text-start">${data}</div>`;
+            //             }
+            //         },
+            //     ]
+            // });
+
+            // Menampilkan Data siswa/murid Kelas
+            let siswaTable = $('#siswa_kelas').DataTable({
+                ajax: {
+                    type: "GET",
+                    url: "{{ route('siswa_kelas.json') }}",
+                    dataSrc: 'data',
+                },
+                columns: [{
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return `<input type="checkbox" class="select-checkbox" data-id="${row.id}" data-nama="${row.nama}" data-sekolah="${row.nama_sekolah}" />`;
+                        },
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return `<div class="text-center">${meta.row + 1}</div>`;
+                        },
+                    },
+                    {
+                        data: 'nama',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel fw-bold text-start">${data}</div>`;
+                        },
+                    },
+                    {
+                        data: 'nama_sekolah',
+                        render: function(data, type, row) {
+                            return `<div class="text-body-secondary fw-bold text-start">${data}</div>`;
+                        },
+                    },
+                ],
+            });
+
+            // Event klik untuk baris
+            $('#siswa_kelas tbody').on('click', 'tr', function(e) {
+                // Abaikan klik pada checkbox agar tidak memicu dua kali
+                if ($(e.target).is('input[type="checkbox"]')) return;
+
+                const checkbox = $(this).find('.select-checkbox');
+                checkbox.prop('checked', !checkbox.prop('checked')); // Toggle checkbox
+
+                // Tambahkan efek visual (highlight baris)
+                $(this).toggleClass('selected-row', checkbox.prop('checked'));
+            });
+
+            // Handle submit untuk data yang dipilih
+            $('#submit_sekolah').on('click', function() {
+                let selectedSiswa = [];
+                $('.select-checkbox:checked').each(function() {
+                    selectedSiswa.push({
+                        id: $(this).data('id'),
+                        nama: $(this).data('nama'),
+                        sekolah: $(this).data('sekolah'),
+                    });
+                });
+
+                if (selectedSiswa.length === 0) {
+                    alert('Tidak ada siswa yang dipilih!');
+                    return;
+                }
+
+                console.log(selectedSiswa); // Lihat data siswa yang dipilih di console
+                // Kirim data ke server
+                $.ajax({
+                    url: "", // Ganti dengan URL untuk menyimpan data
+                    method: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        siswa: selectedSiswa,
+                    },
+                    success: function(response) {
+                        alert('Siswa berhasil ditambahkan!');
+                        siswaTable.ajax.reload(); // Reload tabel setelah data disimpan
+                    },
+                    error: function(xhr) {
+                        console.error("Error:", xhr.responseText);
+                    },
+                });
+            });
+
+
 
             // Tambah data pertemuan kelas
             $('#submit').on('click', function() {

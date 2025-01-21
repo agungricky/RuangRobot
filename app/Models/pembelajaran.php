@@ -17,7 +17,6 @@ class pembelajaran extends Model
         'absensi',
         'status_tersimpan',
         'kelas_id',
-        'murid_kelas',
         'created_at',
         'updated_at',
     ];

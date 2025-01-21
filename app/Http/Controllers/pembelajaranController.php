@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
+use App\Models\pengguna;
 use App\Models\programbelajar;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,17 @@ class pembelajaranController extends Controller
     public function index($id)
     {
         $data = pembelajaran::where('kelas_id', $id)->get();
+        return response()->json(['data' => $data]);
+    }
+
+    public function siswa()
+    {
+        $data = pengguna::join('akun', 'akun.id', 'profile.id')
+            ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
+            ->select('profile.*', 'akun.role', 'sekolah.nama_sekolah')
+            ->where('akun.role', 'Siswa')
+            ->get();
+
         return response()->json(['data' => $data]);
     }
 
@@ -49,7 +61,6 @@ class pembelajaranController extends Controller
                 'absensi' => json_encode(new \stdClass()),
                 'status_tersimpan' => 'sementara',
                 'kelas_id' => $id_kelas,
-                'murid_kelas_id' => '',
             ]);
         }
     }
