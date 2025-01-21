@@ -252,7 +252,7 @@
                         location.reload();
                     },
                     error: function(xhr) {
-                        alert(xhr.responseJSON.message);
+                        alert(xhr.responseText);
                         let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
                         for (let key in errors) {

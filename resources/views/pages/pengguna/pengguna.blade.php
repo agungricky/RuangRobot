@@ -258,7 +258,7 @@
 
             // Auto Complate Sekolah
             $.ajax({
-                url: "{{ route('sekolah.json') }}",
+                url: "{{ route('sekolah_form.json') }}",
                 method: "GET",
                 success: function(response) {
                     // Periksa respons yang diterima

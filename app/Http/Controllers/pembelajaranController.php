@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\programbelajar;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class pembelajaranController extends Controller
                 'tanggal' => null,
                 'materi' => '',
                 'catatan_pengajar' => '',
-                'absensi' => '{}',
+                'absensi' => json_encode(new \stdClass()),
                 'status_tersimpan' => 'sementara',
                 'kelas_id' => $id_kelas,
                 'murid_kelas_id' => '',
