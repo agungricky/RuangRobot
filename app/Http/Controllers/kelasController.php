@@ -96,11 +96,13 @@ class kelasController extends Controller
     {
         $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
         ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+        ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
         ->where('kelas.id', $id)->first();
+
+        // dd($data);
 
         $jp = pembelajaran::where('id', $id)->count();
 
-        // dd($data);
         return view('pages.kelas.detail_kelas', compact('data', 'jp'));
     }
 

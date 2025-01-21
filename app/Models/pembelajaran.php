@@ -14,8 +14,10 @@ class pembelajaran extends Model
         'tanggal',
         'materi',
         'catatan_pengajar',
+        'absensi',
         'status_tersimpan',
         'kelas_id',
+        'murid_kelas',
         'created_at',
         'updated_at',
     ];

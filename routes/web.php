@@ -6,6 +6,7 @@ use App\Http\Controllers\gajiController;
 use App\Http\Controllers\kategoriController;
 use App\Http\Controllers\kelasController;
 use App\Http\Controllers\pembayaranController;
+use App\Http\Controllers\pembelajaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
@@ -59,6 +60,10 @@ Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.stor
 Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
 Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
+
+// ========= Pembelajaran ========= //
+Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
+Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
 
 // ========= Pengguna ========= //
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
