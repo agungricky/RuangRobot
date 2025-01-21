@@ -13,7 +13,6 @@ class sekolahController extends Controller
     public function index(Request $request)
     {
         $data = sekolah::all();
-        // dd($data);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\akun;
 use App\Models\Kategori;
 use App\Models\kelas;
+use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
@@ -53,39 +54,52 @@ class kelasController extends Controller
     {
         $message = [
             'nama_kelas.required' => 'Nama Kelas harus diisi.',
-            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
+            'harga_kelas.required' => 'Harga harus diisi.',
             'mulai.required' => 'Tanggal Mulai harus diisi.',
             'selesai.required' => 'Tanggal Selesai harus diisi.',
-            'program_id.required' => 'Program Belajar harus diisi.',
-            'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
+            'nama_program.required' => 'Program Belajar harus diisi.',
+            'nama_program.exists' => 'Program Belajar tidak ada di database.',
+            'kategori_kelas.required' => 'Kategori Kelas harus diisi.',
+            'penanggung_jawab.required' => 'Penanggung Jawab harus diisi.',
+            'penanggung_jawab.exists' => 'Penanggung Jawab tidak ada di database.',
             'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
             'gaji_transport.required' => 'Gaji Transport harus diisi.',
             'status_kelas.required' => 'Status Kelas harus diisi.',
+            'jatuh_tempo.required' => 'Jatuh Tempo harus diisi.',
         ];
 
         $request->validate([
             'nama_kelas' => 'required',
-            'penanggung_jawab' => 'required',
+            'harga_kelas' => 'required',
             'mulai' => 'required',
             'selesai' => 'required',
-            'program_id' => 'required',
-            'jenis_kelas' => 'required',
+            'nama_program' => 'required|exists:program_belajar,id',
+            'kategori_kelas' => 'required',
+            'penanggung_jawab' => 'required|exists:profile,nama',
             'gaji_pengajar' => 'required',
             'gaji_transport' => 'required',
             'status_kelas' => 'required',
+            'jatuh_tempo' => 'required',
         ], $message);
 
         $durasi_belajar = $request->mulai . '-' . $request->selesai;
 
-        kelas::create([
+        $kelas = kelas::create([
             'nama_kelas' => $request->nama_kelas,
+            'harga' => $request->harga_kelas,
             'durasi_belajar' => $durasi_belajar,
-            'program_belajar_id' => $request->program_id,
-            'jenis_kelas_id' => $request->jenis_kelas,
+            'program_belajar_id' => $request->nama_program,
+            'kategori_kelas_id' => $request->kategori_kelas,
             'penanggung_jawab' => $request->penanggung_jawab,
             'gaji_pengajar' => $request->gaji_pengajar,
             'gaji_transport' => $request->gaji_transport,
             'status_kelas' => $request->status_kelas,
+            'jatuh_tempo' => $request->jatuh_tempo,
+        ]);
+
+        muridKelas::create([
+            'kelas_id' => $kelas->id,
+            'murid' => json_encode(new \stdClass()),
         ]);
     }
 
@@ -111,10 +125,10 @@ class kelasController extends Controller
      */
     public function edit(string $id)
     {
-        $data = kelas::where('kelas.id', $id)
-        ->join('program_belajar', 'program_belajar.id', '=', 'kelas.program_belajar_id')
-        ->join('jenis_kelas', 'jenis_kelas.id', '=', 'kelas.jenis_kelas_id')
-        ->select('kelas.*', 'program_belajar.nama_program', 'jenis_kelas.jenis_kelas')
+        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+        ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+        ->select('kelas.*', 'program_belajar.nama_program', 'kategori_kelas.kategori_kelas')
+        ->where('kelas.id', $id)
         ->first();
 
         $kategori = Kategori::all();
@@ -136,17 +150,22 @@ class kelasController extends Controller
             'gaji_pengajar.required' => 'Gaji Pengajar harus diisi.',
             'gaji_transport.required' => 'Gaji Transport harus diisi.',
             'status_kelas.required' => 'Status Kelas harus diisi.',
+            'jatuh_tempo.required' => 'Jatuh Tempo harus diisi.',
+            'harga_kelas.required' => 'Harga Kelas harus diisi.',
+            'programId' => 'data tidak ada di database',
         ];
 
         $request->validate([
             'nama_kelas' => 'required',
             'durasi_belajar' => 'required',
-            'program_belajar' => 'required',
-            'jenis_kelas' => 'required',
-            'penanggung_jawab' => 'required',
+            'programId' => 'required|exists:program_belajar,id',
+            'kategori_kelas' => 'required',
+            'penanggung_jawab' => 'required|exists:profile,nama',
             'gaji_pengajar' => 'required',
             'gaji_transport' => 'required',
             'status_kelas' => 'required',
+            'jatuh_tempo' => 'required',
+            'harga_kelas' => 'required',
         ], $message);
 
         // dd($request);
@@ -154,11 +173,12 @@ class kelasController extends Controller
             'nama_kelas' => $request->nama_kelas,
             'durasi_belajar' => $request->durasi_belajar,
             'program_belajar_id' => $request->programId,
-            'jenis_kelas_id' => $request->jenis_kelas,
+            'kategori_kelas_id' => $request->kategori_kelas,
             'penanggung_jawab' => $request->penanggung_jawab,
             'gaji_pengajar' => $request->gaji_pengajar,
             'gaji_transport' => $request->gaji_transport,
             'status_kelas' => $request->status_kelas,
+            'jatuh_tempo' => $request->jatuh_tempo,
         ]);
 
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
@@ -170,6 +190,8 @@ class kelasController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        muridKelas::where('kelas_id', $id)->delete();
+        kelas::where('id', $id)->delete();
+        return redirect('kelas')->with('success', 'Data Kelas Berhasil Dihapus');
     }
 }
