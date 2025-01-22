@@ -134,7 +134,9 @@ class penggunaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = pengguna::where('id', $id)->first();
+
+        return view('pages.pengguna.edit_pengguna',compact('data'));
     }
 
     /**
@@ -142,7 +144,19 @@ class penggunaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        pengguna::where('id', $id)->update([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'alamat' => $request->alamat,
+            'no_telp' => $request->no_telp,
+            'sekolah_id' => $request->sekolah_id,
+            'elektronik' => $request->elektronik,
+            'mekanik' => $request->mekanik,
+            'pemrograman' => $request->pemrograman,
+
+        ]);
+
+        return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguan berhasil diUpdate');
     }
 
     /**
@@ -150,6 +164,8 @@ class penggunaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        pengguna::find($id)->delete();
+        return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguna berhasil dihapus');
+
     }
 }

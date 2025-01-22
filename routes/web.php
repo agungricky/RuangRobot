@@ -81,6 +81,10 @@ Route::get('/data_admin/{id}/json', [penggunaController::class, 'pengguna'])->na
 Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
 Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
 
+// Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
+Route::get('/pengguna/edit/{id}', [penggunaController::class, 'edit'])->name('pengguna.edit');
+Route::patch('/pengguna/update/{id}', [penggunaController::class, 'update'])->name('pengguna.update');
+Route::delete('/pengguna/delete/{id}', [penggunaController::class,'destroy'])->name('pengguna.delete');
 
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
