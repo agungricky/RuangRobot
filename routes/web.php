@@ -67,6 +67,8 @@ Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
 Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
 Route::get('siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
+Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
+Route::get('datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
 
 
 // ========= Pengguna ========= //

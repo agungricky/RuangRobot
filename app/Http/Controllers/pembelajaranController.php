@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
@@ -30,6 +31,18 @@ class pembelajaranController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    public function datasiswa($id)
+    {
+        $data = muridKelas::where('kelas_id', $id)->first();
+        return response()->json(['data' => $data]);
+    }
+
+    // public function kelas($id)
+    // {
+    //     $data = kelas::all();
+    //     return response()->json(['data' => $data]);
+    // }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -53,7 +66,7 @@ class pembelajaranController extends Controller
 
         for ($i = $kelas; $i < $tambah_pertemuan; $i++) {
             pembelajaran::create([
-                'pertemuan' => $i+1,
+                'pertemuan' => $i + 1,
                 'pengajar' => '',
                 'tanggal' => null,
                 'materi' => '',
@@ -84,10 +97,31 @@ class pembelajaranController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function addSiswa(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'siswa' => 'required|array', // Pastikan `siswa` adalah array
+        ]);
+
+        $kelas = MuridKelas::where('kelas_id', $id)->first();
+
+        if (!$kelas) {
+            return response()->json(['message' => 'Kelas tidak ditemukan!'], 404);
+        }
+
+        // Decode data siswa yang sudah ada
+        $existingSiswa = json_decode($kelas->murid, true) ?? [];
+
+        // Tambahkan data baru
+        $newSiswa = array_merge($existingSiswa, $validatedData['siswa']);
+
+        // Simpan data yang diperbarui
+        $kelas->murid = json_encode($newSiswa);
+        $kelas->save();
+
+        return response()->json(['message' => 'Data siswa berhasil ditambahkan!'], 201);
     }
+
 
     /**
      * Remove the specified resource from storage.
