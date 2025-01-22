@@ -16,7 +16,9 @@ class pembelajaranController extends Controller
      */
     public function index($id)
     {
-        $data = pembelajaran::where('kelas_id', $id)->get();
+        $data = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->select('pembelajaran.*', 'kelas.durasi_belajar')
+            ->where('kelas_id', $id)->get();
         return response()->json(['data' => $data]);
     }
 
@@ -81,6 +83,15 @@ class pembelajaranController extends Controller
     /**
      * Display the specified resource.
      */
+    public function detailPertemuan(string $id)
+    {
+        $data = pembelajaran::where('id', $id)->first();
+        return response()->json(['data' => $data]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(string $id)
     {
         //
@@ -93,6 +104,29 @@ class pembelajaranController extends Controller
     {
         //
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function update(Request $request, $id)
+    {
+        // Validasi input
+        $request->validate([
+            'pertemuan' => 'required|integer|min:1', // Sesuaikan validasi sesuai kebutuhan
+        ]);
+
+        // Update data
+        $pembelajaran = pembelajaran::findOrFail($id);
+        $pembelajaran->update([
+            'pertemuan' => $request->pertemuan,
+        ]);
+
+        return response()->json([
+            'message' => 'Data berhasil diperbarui!',
+        ]);
+    }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -112,11 +146,19 @@ class pembelajaranController extends Controller
         // Decode data siswa yang sudah ada
         $existingSiswa = json_decode($kelas->murid, true) ?? [];
 
-        // Tambahkan data baru
-        $newSiswa = array_merge($existingSiswa, $validatedData['siswa']);
+        // Konversi harga dan tagihan menjadi integer
+        $newSiswa = array_map(function ($siswa) {
+            $siswa['id'] = isset($siswa['id']) ? (int) $siswa['id'] : 0;
+            $siswa['tagihan'] = isset($siswa['tagihan']) ? (int) $siswa['tagihan'] : 0;
+            $siswa['pembayaran'] = isset($siswa['pembayaran']) ? (int) $siswa['pembayaran'] : 0;
+            return $siswa;
+        }, $validatedData['siswa']);
+
+        // Gabungkan data siswa baru dengan data siswa yang sudah ada
+        $mergedSiswa = array_merge($existingSiswa, $newSiswa);
 
         // Simpan data yang diperbarui
-        $kelas->murid = json_encode($newSiswa);
+        $kelas->murid = json_encode($mergedSiswa);
         $kelas->save();
 
         return response()->json(['message' => 'Data siswa berhasil ditambahkan!'], 201);
@@ -128,6 +170,7 @@ class pembelajaranController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        pembelajaran::where('id', $id)->delete();
+        return back()->with('success', 'Data berhasil diperbarui!');
     }
 }

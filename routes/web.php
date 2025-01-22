@@ -50,7 +50,6 @@ Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit
 Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
 Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
 
-
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
 Route::get('/kelas/json', [kelasController::class, 'index'])->name('kelas.json');
@@ -69,6 +68,10 @@ Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])-
 Route::get('siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
 Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
 Route::get('datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
+Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detailPertemuan'])->name('detail_pertemuan.json');
+Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
+Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
+
 
 
 // ========= Pengguna ========= //
