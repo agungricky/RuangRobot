@@ -1,5 +1,8 @@
 @extends('main.layout')
 @section('content')
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -149,14 +152,16 @@
                                     <x-button.button_add_modal message="Tambah Siswa" id="#tambah_siswa" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="examplee">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="data_siswa">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 15%;" class="text-center">Nama Siswa</th>
-                                                <th style="width: 5%;" class="text-center">Nilai</th>
-                                                <th style="width: 10%;" class="text-center">No Sertivikat</th>
-                                                <th style="width: 10%;" class="text-center">Status Pembayaran</th>
+                                                <th style="width: 15%;" class="text-center">Sekolah</th>
+                                                {{-- <th style="width: 5%;" class="text-center">Nilai</th> --}}
+                                                {{-- <th style="width: 10%;" class="text-center">No Sertivikat</th> --}}
+                                                {{-- <th style="width: 10%;" class="text-center">Status Pembayaran</th> --}}
+                                                <th style="width: 10%;" class="text-center">Tagihan</th>
                                                 <th style="width: 10%;" class="text-center">Jatuh Tempo</th>
                                                 <th style="width: 10%;" class="text-center">Opsi</th>
                                             </tr>
@@ -236,9 +241,6 @@
         </div>
     </div>
 
-
-
-
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel Pertemuan Kelas
@@ -302,33 +304,61 @@
                 ]
             });
 
-            // Menampilkan Data siswa/murid Kelas
-            // $('#siswa_kelas').DataTable({
-            //     ajax: {
-            //         type: "GET",
-            //         url: "{{ route('siswa_kelas.json') }}",
-            //         dataSrc: 'data',
-            //     },
-            //     columns: [{
-            //             data: null,
-            //             render: function(data, type, row, meta) {
-            //                 return `<div class="text-center">${meta.row + 1}</div>`;
-            //             }
-            //         },
-            //         {
-            //             data: 'nama',
-            //             render: function(data, type, row) {
-            //                 return `<div class="text-tabel fw-bold text-start">${data}</div>`;
-            //             }
-            //         },
-            //         {
-            //             data: 'nama_sekolah',
-            //             render: function(data, type, row) {
-            //                 return `<div class="text-body-secondary fw-bold text-start">${data}</div>`;
-            //             }
-            //         },
-            //     ]
-            // });
+            $('#data_siswa').DataTable({
+                ajax: {
+                    type: "GET",
+                    url: "{{ route('datasiswa_kelas.json', ['id' => $data->id]) }}",
+                    dataSrc: function(response) {
+                        // Parse murid JSON untuk setiap baris data
+                        return JSON.parse(response.data.murid || '[]');
+                    },
+                },
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return `<div class="text-center">${meta.row + 1}</div>`;
+                        }
+                    },
+                    {
+                        data: 'nama',
+                        render: function(data, type, row) {
+                            return `<div class="text-start fw-bold text-primary">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'sekolah',
+                        render: function(data, type, row) {
+                            return `<div class="text-body-secondary text-start">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'tagihan',
+                        render: function(data, type, row) {
+                            return `<div class="text-center">Rp ${parseInt(data).toLocaleString()}</div>`;
+                        }
+                    },
+                    {
+                        data: 'jatuh_tempo',
+                        render: function(data, type, row) {
+                            if (!data) {
+                                return `<div class="text-center text-warning">Belum Ditentukan</div>`;
+                            }
+                            return `<div class="text-center">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <button class="btn btn-warning btn-sm">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="hapusSiswa('${row.id}')">Hapus</button>
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
 
             // Menampilkan Data siswa/murid Kelas
             let siswaTable = $('#siswa_kelas').DataTable({
@@ -377,14 +407,42 @@
                 $(this).toggleClass('selected-row', checkbox.prop('checked'));
             });
 
-            // Handle submit untuk data yang dipilih
+            // submit untuk data yang dipilih
             $('#submit_sekolah').on('click', function() {
                 let selectedSiswa = [];
                 $('.select-checkbox:checked').each(function() {
+
+                    let no_invoice = $(this).data('no_invoice') ||
+                        ''; // Mendapatkan no_invoice terlebih dahulu
+
+                    // Jika no_invoice kosong, buat invoice baru
+                    if (!no_invoice) {
+                        let currentDate = new Date();
+                        let year = currentDate.getFullYear();
+                        let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+                        let day = ('0' + currentDate.getDate()).slice(-2);
+                        let randomNum = Math.floor(1000 + Math.random() * 9000);
+                        no_invoice = 'RR' + year + '-' + month + day +
+                            randomNum; // Mengubah nilai no_invoice
+                    }
+
+                    // Format tanggal
+                    let currentDate = new Date(); // Mendapatkan tanggal dan waktu saat ini
+                    let formattedDate = currentDate.toISOString();
+
                     selectedSiswa.push({
                         id: $(this).data('id'),
                         nama: $(this).data('nama'),
                         sekolah: $(this).data('sekolah'),
+                        tagihan: $(this).data('harga') || '{{ $data->harga }}',
+                        no_invoice: no_invoice,
+                        jatuh_tempo: $(this).data('jatuh_tempo') ||
+                            '{{ $data->jatuh_tempo }}',
+                        no_sertiv: $(this).data('no_sertiv') || '',
+                        status_sertiv: $(this).data('status_sertiv') || 'Belum Terbit',
+                        nilai: $(this).data('nilai') || '',
+                        created_at: formattedDate,
+                        updated_at: formattedDate,
                     });
                 });
 
@@ -393,26 +451,28 @@
                     return;
                 }
 
-                console.log(selectedSiswa); // Lihat data siswa yang dipilih di console
-                // Kirim data ke server
+                console.log(selectedSiswa);
                 $.ajax({
-                    url: "", // Ganti dengan URL untuk menyimpan data
-                    method: "POST",
+                    url: "{{ route('add_siswa.update', ['id' => $data->id]) }}", // Endpoint untuk membuat data baru
+                    method: "POST", // Gunakan POST untuk operasi CREATE
                     data: {
-                        _token: '{{ csrf_token() }}',
-                        siswa: selectedSiswa,
+                        _token: '{{ csrf_token() }}', // Token CSRF untuk keamanan
+                        siswa: selectedSiswa, // Data siswa yang akan ditambahkan
                     },
                     success: function(response) {
-                        alert('Siswa berhasil ditambahkan!');
-                        siswaTable.ajax.reload(); // Reload tabel setelah data disimpan
+                        $('#tambah_siswa').modal('hide'); // Tutup modal
+                        location.reload();
+                        console.log("Data baru berhasil dibuat:", response);
+                        alert('Data siswa berhasil ditambahkan!');
+                        siswaTable.ajax.reload(); // Reload tabel untuk memperbarui data
                     },
                     error: function(xhr) {
-                        console.error("Error:", xhr.responseText);
+                        alert(xhr.responseText);
+                        console.error("Error:", xhr
+                            .responseText); // Tampilkan pesan error di console
                     },
                 });
             });
-
-
 
             // Tambah data pertemuan kelas
             $('#submit').on('click', function() {
