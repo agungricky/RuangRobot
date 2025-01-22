@@ -3,6 +3,9 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
+    <!-- Custom Alert Notifikasi -->
+    <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!"/>
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -132,7 +135,8 @@
                                                 <th style="width: 8%;" class="text-center">Pertemuan Ke</th>
                                                 <th style="width: 15%;" class="text-center">Pengajar</th>
                                                 <th style="width: 15%;" class="text-center">Taggal Pertemuan</th>
-                                                <th style="width: 20%;" class="text-center">Materi Ajar</th>
+                                                <th style="width: 10%;" class="text-center">Jam</th>
+                                                <th style="width: 10%;" class="text-center">Selegkapnya</th>
                                                 <th style="width: 10%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
@@ -241,6 +245,69 @@
         </div>
     </div>
 
+    <!-- Modal detail pertemuan -->
+    <div class="modal fade modal-fullscreen" id="detailModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Kelas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item border-bottom">
+                            <b><i class="fas fa-user"></i> Pengajar </b>
+                            <div class="profile-desc-item pull-right">
+                                <span id="pengajar"></span>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-bottom">
+                            <b><i class="fas fa-clock"></i> Waktu Pertemuan </b>
+                            <div class="profile-desc-item pull-right">
+                                <span id="tanggal"></span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <b><i class="fas fa-book"></i> Materi </b>
+                            <div class="profile-desc-item pull-right">
+                                <span id="materi"></span>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6 class="mt-3 mb-3">Siswa Yang Hadir :</h6>
+                    <div class="inimasuksiswahadir"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal edit pertemuan -->
+    <div class="modal fade" id="editPertemuanModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Pertemuan Kelas</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit_pertemuan_form">
+                        @csrf
+                        <x-form.input_angka label="Pertemuan Ke" name="pertemuan"
+                            placeholder="Rubahan Pertemuan ke berapa?" />
+                        <div id="pertemuanError" class="text-danger"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="Editsubmit" class="btn btn-success">Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel Pertemuan Kelas
@@ -259,7 +326,7 @@
                     {
                         data: 'pertemuan',
                         render: function(data, type, row) {
-                            return `<div class="text-tabel text-start"><a href="" class="fw-bold text-primary">Pertemuan Ke ${data}<a/></div>`;
+                            return `<div class="text-tabel text-start fw-bold text-primary">Pertemuan Ke ${data}</div>`;
                         }
                     },
                     {
@@ -271,16 +338,24 @@
                     {
                         data: 'tanggal',
                         render: function(data, type, row) {
-                            if (data == null) {
-                                color = 'warning';
-                            } else {
-                                color = 'success';
+                            let color = data == null ? 'warning' : 'success';
+                            let formattedDate = 'Belum dilaksanakan';
+
+                            if (data) {
+                                let date = new Date(data);
+                                formattedDate = date.toLocaleDateString('id-ID', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                });
                             }
-                            return `<div class="text-tabel text-start"><span class="level w-100 bg-${color}">${data ? data : 'Belum dilaksanakan'}</span></div>`;
+
+                            return `<div class="text-tabel text-start"><span class="level w-100 bg-${color}">${formattedDate}</span></div>`;
                         }
                     },
                     {
-                        data: 'materi',
+                        data: 'durasi_belajar',
                         render: function(data, type, row) {
                             return `<div class="text-tabel text-center">${data}</div>`;
                         }
@@ -289,8 +364,21 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button class="btn btn-success btn-sm" ${data.tanggal != null ? '' : 'disabled'} 
+                                            data-id="${row.id}">Selengkapnya</button>
+                                    </div>
+                            `;
+                        }
+                    },
+
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
                             <div class="d-flex gap-1">
-                                <form action="{{ url('/program_belajar/delete/${row.id}') }}" method="POST" class="d-inline">
+                                <button class="btn btn-warning btn-sm" id="editBtn" data-bs-toggle="modal" data-bs-target="#editPertemuanModal" data-id="${row.id}">Edit</button>
+                                <form action="{{ url('/pertemuan/delete/${row.id}') }}" method="POST" class="d-inline">
                                     <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
@@ -304,6 +392,7 @@
                 ]
             });
 
+            // Menampilkan Data Tabel Siswa Kelas
             $('#data_siswa').DataTable({
                 ajax: {
                     type: "GET",
@@ -395,6 +484,9 @@
                 ],
             });
 
+
+
+
             // Event klik untuk baris
             $('#siswa_kelas tbody').on('click', 'tr', function(e) {
                 // Abaikan klik pada checkbox agar tidak memicu dua kali
@@ -406,6 +498,67 @@
                 // Tambahkan efek visual (highlight baris)
                 $(this).toggleClass('selected-row', checkbox.prop('checked'));
             });
+
+            // Button Selengkapnya untuk detail Pertemuan kelas
+            $('#example').on('click', '.btn-success', function() {
+                let id = $(this).data('id'); // Ambil ID dari tombol
+                let url = "{{ route('detail_pertemuan.json', ['id' => ':id']) }}".replace(':id', id);
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        let data = response.data;
+
+                        console.log(data);
+
+                        // Mendapatkan nama Hari
+                        let date = new Date(data.tanggal);
+                        let hari = date.toLocaleDateString('id-ID', {
+                            weekday: 'long'
+                        });
+                        let tanggal =
+                            `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+
+                        // Isi data ke dalam elemen modal
+                        $('#pengajar').text(data.pengajar);
+                        $('#tanggal').text(`${hari}, ${tanggal}`);
+                        $('#materi').text(data.materi);
+
+                        // Proses data absensi
+                        let absensi = JSON.parse(data.absensi);
+                        let absensiHTML = '';
+
+                        absensi.forEach(item => {
+                            absensiHTML += `
+                                <div class="d-flex align-items-center border mb-2 rounded shadow-sm" style="background: #fff;">
+                                    <div class="p-2 text-white d-flex align-items-center justify-content-center" 
+                                         style="background: linear-gradient(135deg, ${item.presensi === 'H' ? 'rgba(40, 167, 69, 0.7)' : 'rgba(220, 53, 69, 0.7)'}, ${item.presensi === 'H' ? 'rgba(102, 217, 159, 0.5)' : 'rgba(248, 169, 183, 0.5)'}); color: ${item.presensi === 'H' ? '#fff' : '#fff'}; width: 50px; height: 50px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
+                                        <i class="fas ${item.presensi === 'H' ? 'fa-check' : 'fa-times'}" style="font-size: 20px;"></i>
+                                    </div>
+                                    <div class="p-2 flex-grow-1" style="color: #495057; font-weight: 500;">
+                                        ${item.nama}
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+
+
+                        // Tambahkan HTML ke dalam div.inimasuksiswahadir
+                        $('.inimasuksiswahadir').html(absensiHTML);
+
+                        // Tampilkan modal
+                        $('#detailModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Terjadi kesalahan:", error);
+                        alert('Terjadi kesalahan dalam pengambilan data');
+                    }
+                });
+            });
+
+
 
             // submit untuk data yang dipilih
             $('#submit_sekolah').on('click', function() {
@@ -422,7 +575,7 @@
                         let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
                         let day = ('0' + currentDate.getDate()).slice(-2);
                         let randomNum = Math.floor(1000 + Math.random() * 9000);
-                        no_invoice = 'RR' + year + '-' + month + day +
+                        no_invoice = 'INV' + '-' + month + year + '-' +
                             randomNum; // Mengubah nilai no_invoice
                     }
 
@@ -434,7 +587,8 @@
                         id: $(this).data('id'),
                         nama: $(this).data('nama'),
                         sekolah: $(this).data('sekolah'),
-                        tagihan: $(this).data('harga') || '{{ $data->harga }}',
+                        tagihan: $(this).data('harga') || {{ $data->harga }},
+                        pembayaran: $(this).data('pembayaran') || 0,
                         no_invoice: no_invoice,
                         jatuh_tempo: $(this).data('jatuh_tempo') ||
                             '{{ $data->jatuh_tempo }}',
@@ -500,6 +654,71 @@
                             }
                         }
                     }
+                });
+            });
+
+            // Edit data Pertemuan 
+            $(document).ready(function() {
+                let selectedId = null;
+
+                // Ketika tombol Edit ditekan
+                $(document).on('click', '#editBtn', function() {
+                    selectedId = $(this).data('id'); // Ambil ID dari data-id
+                    console.log('ID yang dipilih:', selectedId);
+                });
+
+                // Ketika tombol Kirim ditekan
+                $('#Editsubmit').on('click', function() {
+                    const pertemuanKe = $('input[name="pertemuan"]').val();
+
+                    $.ajax({
+                        url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
+                            .replace('__selectedId__',
+                                selectedId), // Ubah URL dengan menggantikan selectedId
+                        type: 'POST',
+                        data: {
+                            _method: 'PATCH',
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            pertemuan: pertemuanKe,
+                        },
+                        success: function(response) {
+                            $('#editPertemuanModal').modal('hide'); // Menutup modal
+
+                            // Menampilkan notifikasi
+                            const notification = $('<div>')
+                                .text('Pertemuan berhasil diupdate!')
+                                .css({
+                                    position: 'fixed',
+                                    top: '20px',
+                                    right: '20px',
+                                    padding: '10px 40px',
+                                    background: '#4CAF50',
+                                    color: '#fff',
+                                    borderRadius: '5px',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                    zIndex: 9999,
+                                    
+                                })
+                                .appendTo('body');
+
+                            // Menghilangkan notifikasi setelah 3 detik dan reload halaman
+                            setTimeout(function() {
+                                notification.fadeOut(300, function() {
+                                    $(this).remove();
+                                    const form = $('#edit_pertemuan_form');
+                                    form.trigger('reset');
+                                    location.reload();
+                                });
+                            }, 2000);
+                        },
+                        error: function(xhr) {
+                            // alert(xhr.responseText);
+                            const errors = xhr.responseJSON.errors;
+                            if (errors.pertemuan) {
+                                $('#pertemuanError').text(errors.pertemuan[0]);
+                            }
+                        },
+                    });
                 });
             });
         });
