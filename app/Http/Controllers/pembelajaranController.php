@@ -8,9 +8,43 @@ use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class pembelajaranController extends Controller
 {
+    public function kuy()
+    {
+        // Ambil data dari database
+        $data = pembelajaran::where('kelas_id', 14)->get();
+
+        // Inisialisasi array untuk menyimpan total presensi
+        $totalPresensi = [];
+
+        // Proses setiap pertemuan
+        foreach ($data as $pertemuan) {
+            $absensiList = json_decode($pertemuan->absensi, true) ?? [];
+
+            // Hitung kehadiran "H"
+            foreach ($absensiList as $absensi) {
+                if (isset($absensi['presensi']) && $absensi['presensi'] === 'H') {
+                    $id = $absensi['id'];
+                    if (isset($totalPresensi[$id])) {
+                        $totalPresensi[$id]++;
+                    } else {
+                        $totalPresensi[$id] = 1;
+                    }
+                }
+            }
+        }
+
+        // Tambahkan total presensi ke data respons
+        return response()->json([
+            'data' => $data,
+            'total_presensi' => $totalPresensi,
+        ]);
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -126,6 +160,18 @@ class pembelajaranController extends Controller
         ]);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        pembelajaran::where('id', $id)->delete();
+        return back()->with('success', 'Data berhasil diperbarui!');
+    }
+
+    // ======================================== //
+    // ============= MURID KELAS ============== //
+    // ======================================== //
 
 
     /**
@@ -164,13 +210,30 @@ class pembelajaranController extends Controller
         return response()->json(['message' => 'Data siswa berhasil ditambahkan!'], 201);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function hapus(Request $request)
     {
-        pembelajaran::where('id', $id)->delete();
-        return back()->with('success', 'Data berhasil diperbarui!');
+
+        $id = $request->id; // ID murid yang ingin dihapus
+        $id_kelas = $request->kelas_id; // ID kelas
+
+        // Ambil data murid dari kolom murid di tabel murid_kelas
+        $muridData = DB::table('murid_kelas')
+            ->where('kelas_id', $id_kelas)
+            ->value('murid');
+
+        // Ubah JSON menjadi array
+        $muridArray = json_decode($muridData, true);
+
+        if (is_array($muridArray)) {
+            // Hapus murid berdasarkan ID
+            $muridArray = array_filter($muridArray, function ($siswa) use ($id) {
+                return $siswa['id'] != $id;
+            });
+
+            // Simpan kembali ke database dalam bentuk JSON
+            DB::table('murid_kelas')
+                ->where('kelas_id', $id_kelas)
+                ->update(['murid' => json_encode(array_values($muridArray))]);
+        }
     }
 }
