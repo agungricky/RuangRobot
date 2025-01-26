@@ -11,6 +11,7 @@ class gajiController extends Controller
      */
     public function index()
     {
+        // $gaji_ngajar =  
         return view('pages.gaji.gaji');
     }
 

@@ -4,8 +4,9 @@
         <x-sweetalert.success />
     @endif
     <!-- Custom Alert Notifikasi -->
-    <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!"/>
+    <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!" />
 
+    {{-- {{ dd($result) }} --}}
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -162,11 +163,8 @@
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 15%;" class="text-center">Nama Siswa</th>
                                                 <th style="width: 15%;" class="text-center">Sekolah</th>
-                                                {{-- <th style="width: 5%;" class="text-center">Nilai</th> --}}
-                                                {{-- <th style="width: 10%;" class="text-center">No Sertivikat</th> --}}
-                                                {{-- <th style="width: 10%;" class="text-center">Status Pembayaran</th> --}}
-                                                <th style="width: 10%;" class="text-center">Tagihan</th>
-                                                <th style="width: 10%;" class="text-center">Jatuh Tempo</th>
+                                                <th style="width: 10%;" class="text-center">Kehadiran</th>
+                                                <th style="width: 10%;" class="text-center">Nilai</th>
                                                 <th style="width: 10%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
@@ -223,7 +221,8 @@
                     <form id="sekolah_form" method="POST">
                         @csrf
                         <div class="table-responsive">
-                            <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="siswa_kelas">
+                            <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="siswa_kelas"
+                                data-page-length="100">
                                 <thead>
                                     <tr>
                                         <th style="width: 5%;" class="text-center">Pilih</th>
@@ -296,7 +295,7 @@
                     <form id="edit_pertemuan_form">
                         @csrf
                         <x-form.input_angka label="Pertemuan Ke" name="pertemuan"
-                            placeholder="Rubahan Pertemuan ke berapa?" />
+                            placeholder="Rubah Pertemuan ke berapa?" />
                         <div id="pertemuanError" class="text-danger"></div>
                     </form>
                 </div>
@@ -371,7 +370,6 @@
                             `;
                         }
                     },
-
                     {
                         data: null,
                         render: function(data, type, row) {
@@ -392,13 +390,13 @@
                 ]
             });
 
-            // Menampilkan Data Tabel Siswa Kelas
+            // Menampilkan Tabel Siswa diKelas
             $('#data_siswa').DataTable({
                 ajax: {
                     type: "GET",
                     url: "{{ route('datasiswa_kelas.json', ['id' => $data->id]) }}",
                     dataSrc: function(response) {
-                        // Parse murid JSON untuk setiap baris data
+                        console.log(response);
                         return JSON.parse(response.data.murid || '[]');
                     },
                 },
@@ -421,35 +419,67 @@
                         }
                     },
                     {
-                        data: 'tagihan',
+                        data: 'null', // Properti total presensi
                         render: function(data, type, row) {
-                            return `<div class="text-center">Rp ${parseInt(data).toLocaleString()}</div>`;
+                            let result = @json($result);
+                            if (result[row.id]) {
+                                let persentase = result[row.id].persentase;
+                                return `
+                                        <div class="text-center">
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>${persentase} %</span>
+                                        </div>
+                                    `;
+                            } else {
+                                return `<div class="text-center">Data tidak ditemukan</div>`;
+                            }
                         }
                     },
                     {
-                        data: 'jatuh_tempo',
+                        data: 'nilai',
                         render: function(data, type, row) {
                             if (!data) {
-                                return `<div class="text-center text-warning">Belum Ditentukan</div>`;
+                                return `
+                                        <div class="text-center bg-info text-light py-1" 
+                                           style="border-radius: 8px; font-size: 12px;">Belum di Nilai
+                                         </div>`;
+                            } else if (data === 'Gagal') {
+                                return `
+                                        <div class="text-center bg-danger text-white py-1" 
+                                            style="border-radius: 8px; font-size: 14px;">${data}
+                                        </div>`;
+                            } else if (data === 'B') {
+                                return `
+                                        <div class="text-center bg-warning text-dark py-1" 
+                                            style="border-radius: 8px; font-size: 14px;">${data}
+                                        </div>`;
+                            } else if (data === 'A') {
+                                return `
+                                        <div class="text-center bg-success text-white py-1" 
+                                            style="border-radius: 8px; font-size: 14px;">${data}
+                                        </div>`;
                             }
-                            return `<div class="text-center">${data}</div>`;
+                            return `
+                                    <div class="text-center py-1" 
+                                        style="border-radius: 8px; font-size: 14px;">${data}
+                                    </div>`;
                         }
+
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `
-                                <div class="d-flex gap-1 justify-content-center">
-                                    <button class="btn btn-warning btn-sm">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="hapusSiswa('${row.id}')">Hapus</button>
-                                </div>
-                            `;
+                            return '<button class="btn btn-danger btn-sm btn-hapus" ' +
+                                'data-id="' + row.id + '" ' + 'data-kelas-id="' + <?= $data->id ?> +
+                                '">' + 'Hapus</button>';
                         }
                     }
                 ]
             });
 
-            // Menampilkan Data siswa/murid Kelas
+            // Menampilkan modal Data siswa/murid yang akan di add dikelas
             let siswaTable = $('#siswa_kelas').DataTable({
                 ajax: {
                     type: "GET",
@@ -645,7 +675,8 @@
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);
-                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                        let errors = xhr.responseJSON
+                            .errors; // Ambil error dari response JSON
 
                         for (let key in errors) {
                             if (errors.hasOwnProperty(key)) {
@@ -697,7 +728,7 @@
                                     borderRadius: '5px',
                                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                     zIndex: 9999,
-                                    
+
                                 })
                                 .appendTo('body');
 
@@ -705,7 +736,8 @@
                             setTimeout(function() {
                                 notification.fadeOut(300, function() {
                                     $(this).remove();
-                                    const form = $('#edit_pertemuan_form');
+                                    const form = $(
+                                        '#edit_pertemuan_form');
                                     form.trigger('reset');
                                     location.reload();
                                 });
@@ -719,6 +751,33 @@
                             }
                         },
                     });
+                });
+            });
+
+            // Hapus Siswa di kelas
+            $(document).on('click', '.btn-hapus', function() {
+                var murid_id = $(this).data('id');
+                var kelas_id = $(this).data('kelas-id');
+
+                console.log('Murid ID: ' + murid_id);
+                console.log('Kelas ID: ' + kelas_id);
+
+
+                $.ajax({
+                    url: '{{ route('murid.hapus') }}',
+                    type: 'POST',
+                    data: {
+                        id: murid_id,
+                        kelas_id: kelas_id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        alert("Data berhasil dihapus");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert(xhr.responseText);
+                    }
                 });
             });
         });

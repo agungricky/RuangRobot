@@ -65,12 +65,14 @@ Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
 Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
-Route::get('siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
+Route::get('/siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
 Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
-Route::get('datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
+Route::get('/datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
 Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detailPertemuan'])->name('detail_pertemuan.json');
 Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
 Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
+Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
+
 
 
 
@@ -105,3 +107,4 @@ Route::view('/x', 'pages.konten');
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
+Route::get('kuy/json', [pembelajaranController::class, 'kuy'])->name('kuy.json');

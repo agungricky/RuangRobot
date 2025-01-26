@@ -40,51 +40,6 @@
         </section>
     </div>
 
-    <!-- Modal -->
-    {{-- <div class="modal fade" id="form_sekolah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Sekolah</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body pb-2">
-                    <form id="sekolah_form" method="POST">
-                        @csrf
-                        <div id="inputFieldsContainer">
-                            <div class="field">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <x-form.input_text name="nama_sekolah" label="Nama Sekolah"
-                                            placeholder="masukan nama Sekolah" />
-                                        <div id="error-nama_sekolah" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <x-form.input_text name="guru" label="Guru Penanggung Jawab"
-                                            placeholder="Nama Guru penanggung jawab" />
-                                        <div id="guru" class="text-danger"></div>
-                                        <div id="error-guru" class="text-danger"></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <x-form.input_text name="no_hp" label="No HP" placeholder="Gunakan +62....." />
-                                        <div id="no_hp" class="text-danger"></div>
-                                        <div id="error-no_hp" class="text-danger"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer pt-0">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" id="submit_sekolah" class="btn btn-success"><i
-                            class="fa-solid fa-floppy-disk fa-lg"></i> Kirim</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     {{-- <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel

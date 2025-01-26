@@ -8,9 +8,60 @@ use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class pembelajaranController extends Controller
 {
+    public function kuy()
+    {
+       // Ambil data pembelajaran berdasarkan kelas_id
+       $data = Pembelajaran::where('kelas_id', 14)->get();
+
+       $totalAbsensi = [];
+       $totalPertemuan = $data->count(); // Hitung total pertemuan
+
+       // Loop melalui setiap pertemuan
+       foreach ($data as $pertemuan) {
+           // Decode data absensi, pastikan JSON valid
+           $absensiList = json_decode($pertemuan->absensi, true) ?? [];
+
+           // Loop setiap siswa di absensi
+           foreach ($absensiList as $absen) {
+               $id = $absen['id'];
+               $nama = $absen['nama'];
+
+               // Pastikan setiap siswa ada di totalAbsensi dengan nilai awal
+               if (!isset($totalAbsensi[$id])) {
+                   $totalAbsensi[$id] = [
+                       'id' => $id,
+                       'nama' => $nama,
+                       'kehadiran' => 0
+                   ];
+               }
+
+               // Tambahkan jika presensi 'H'
+               if ($absen['presensi'] === 'H') {
+                   $totalAbsensi[$id]['kehadiran']++;
+               }
+           }
+       }
+
+       // Hitung persentase kehadiran
+       $result = array_map(function ($absen) use ($totalPertemuan) {
+           $absen['persentase'] = $totalPertemuan > 0 
+               ? round(($absen['kehadiran'] / $totalPertemuan) * 100, 2)
+               : 0;
+           return $absen;
+       }, $totalAbsensi);
+
+       // Tampilkan hasil dalam bentuk JSON
+       return response()->json([
+           'total_pertemuan' => $totalPertemuan,
+           'data' => array_values($result),
+       ]);
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -126,6 +177,18 @@ class pembelajaranController extends Controller
         ]);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        pembelajaran::where('id', $id)->delete();
+        return back()->with('success', 'Data berhasil diperbarui!');
+    }
+
+    // ======================================== //
+    // ============= MURID KELAS ============== //
+    // ======================================== //
 
 
     /**
@@ -164,13 +227,30 @@ class pembelajaranController extends Controller
         return response()->json(['message' => 'Data siswa berhasil ditambahkan!'], 201);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function hapus(Request $request)
     {
-        pembelajaran::where('id', $id)->delete();
-        return back()->with('success', 'Data berhasil diperbarui!');
+
+        $id = $request->id; // ID murid yang ingin dihapus
+        $id_kelas = $request->kelas_id; // ID kelas
+
+        // Ambil data murid dari kolom murid di tabel murid_kelas
+        $muridData = DB::table('murid_kelas')
+            ->where('kelas_id', $id_kelas)
+            ->value('murid');
+
+        // Ubah JSON menjadi array
+        $muridArray = json_decode($muridData, true);
+
+        if (is_array($muridArray)) {
+            // Hapus murid berdasarkan ID
+            $muridArray = array_filter($muridArray, function ($siswa) use ($id) {
+                return $siswa['id'] != $id;
+            });
+
+            // Simpan kembali ke database dalam bentuk JSON
+            DB::table('murid_kelas')
+                ->where('kelas_id', $id_kelas)
+                ->update(['murid' => json_encode(array_values($muridArray))]);
+        }
     }
 }
