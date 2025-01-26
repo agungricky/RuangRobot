@@ -19,10 +19,10 @@ class kelasController extends Controller
     public function index(Request $request)
     {
         $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
-        ->select('kelas.*', 'kategori_kelas.kategori_kelas')
-        ->get();
-        $kategori = Kategori::all(); 
-        $programbelajar = programbelajar::all(); 
+            ->select('kelas.*', 'kategori_kelas.kategori_kelas')
+            ->get();
+        $kategori = Kategori::all();
+        $programbelajar = programbelajar::all();
         // dd($kategori);
         if ($request->ajax()) {
             return response()->json([
@@ -30,7 +30,7 @@ class kelasController extends Controller
             ]);
         }
 
-        return view('pages.kelas.kelas', compact('data','kategori','programbelajar'));
+        return view('pages.kelas.kelas', compact('data', 'kategori', 'programbelajar'));
     }
 
     public function program_belajar()
@@ -42,8 +42,8 @@ class kelasController extends Controller
     public function pengajar()
     {
         $pengajar = pengguna::where('akun.role', 'pengajar')
-        ->join('akun', 'akun.id', '=', 'profile.id')
-        ->select('profile.id', 'profile.nama', 'akun.role')->get();
+            ->join('akun', 'akun.id', '=', 'profile.id')
+            ->select('profile.id', 'profile.nama', 'akun.role')->get();
         return response()->json(['data' => $pengajar]);
     }
 
@@ -109,15 +109,59 @@ class kelasController extends Controller
     public function show(string $id)
     {
         $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-        ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-        ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
-        ->where('kelas.id', $id)->first();
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
+            ->where('kelas.id', $id)->first();
 
-        // dd($data);
-
+        // Jumlah Pembelajaran
         $jp = pembelajaran::where('id', $id)->count();
 
-        return view('pages.kelas.detail_kelas', compact('data', 'jp'));
+
+        // =============================================== // 
+        // Jumlah Pembelajaran Total Absensi Siswa //
+        // =============================================== // 
+
+        // Ambil data pembelajaran berdasarkan kelas_id
+        $total_kelas = Pembelajaran::where('kelas_id', $id)->get();
+
+        $totalAbsensi = [];
+        $totalPertemuan = $total_kelas->count(); // Hitung total pertemuan
+
+        // Loop melalui setiap pertemuan
+        foreach ($total_kelas as $pertemuan) {
+            // Decode data absensi, pastikan JSON valid
+            $absensiList = json_decode($pertemuan->absensi, true) ?? [];
+
+            // Loop setiap siswa di absensi
+            foreach ($absensiList as $absen) {
+                $id = $absen['id'];
+                $nama = $absen['nama'];
+
+                // Pastikan setiap siswa ada di totalAbsensi dengan nilai awal
+                if (!isset($totalAbsensi[$id])) {
+                    $totalAbsensi[$id] = [
+                        'id' => $id,
+                        'nama' => $nama,
+                        'kehadiran' => 0
+                    ];
+                }
+
+                // Tambahkan jika presensi 'H'
+                if ($absen['presensi'] === 'H') {
+                    $totalAbsensi[$id]['kehadiran']++;
+                }
+            }
+        }
+
+        // Hitung persentase kehadiran
+        $result = array_map(function ($absen) use ($totalPertemuan) {
+            $absen['persentase'] = $totalPertemuan > 0
+                ? round(($absen['kehadiran'] / $totalPertemuan) * 100, 2)
+                : 0;
+            return $absen;
+        }, $totalAbsensi);
+
+        return view('pages.kelas.detail_kelas', compact('data', 'jp', 'result'));
     }
 
     /**
@@ -126,10 +170,10 @@ class kelasController extends Controller
     public function edit(string $id)
     {
         $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-        ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-        ->select('kelas.*', 'program_belajar.nama_program', 'kategori_kelas.kategori_kelas')
-        ->where('kelas.id', $id)
-        ->first();
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.*', 'program_belajar.nama_program', 'kategori_kelas.kategori_kelas')
+            ->where('kelas.id', $id)
+            ->first();
 
         $kategori = Kategori::all();
         // dd($data);
@@ -182,7 +226,6 @@ class kelasController extends Controller
         ]);
 
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
-
     }
 
     /**

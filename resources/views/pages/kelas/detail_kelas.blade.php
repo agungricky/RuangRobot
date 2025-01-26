@@ -6,6 +6,7 @@
     <!-- Custom Alert Notifikasi -->
     <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!" />
 
+    {{-- {{ dd($result) }} --}}
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -162,9 +163,6 @@
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 15%;" class="text-center">Nama Siswa</th>
                                                 <th style="width: 15%;" class="text-center">Sekolah</th>
-                                                {{-- <th style="width: 5%;" class="text-center">Nilai</th> --}}
-                                                {{-- <th style="width: 10%;" class="text-center">No Sertivikat</th> --}}
-                                                {{-- <th style="width: 10%;" class="text-center">Status Pembayaran</th> --}}
                                                 <th style="width: 10%;" class="text-center">Kehadiran</th>
                                                 <th style="width: 10%;" class="text-center">Nilai</th>
                                                 <th style="width: 10%;" class="text-center">Opsi</th>
@@ -297,7 +295,7 @@
                     <form id="edit_pertemuan_form">
                         @csrf
                         <x-form.input_angka label="Pertemuan Ke" name="pertemuan"
-                            placeholder="Rubahan Pertemuan ke berapa?" />
+                            placeholder="Rubah Pertemuan ke berapa?" />
                         <div id="pertemuanError" class="text-danger"></div>
                     </form>
                 </div>
@@ -423,7 +421,20 @@
                     {
                         data: 'null', // Properti total presensi
                         render: function(data, type, row) {
-                            return `<div class="text-center">${data || 0} kali</div>`;
+                            let result = @json($result);
+                            if (result[row.id]) {
+                                let persentase = result[row.id].persentase;
+                                return `
+                                        <div class="text-center">
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>${persentase} %</span>
+                                        </div>
+                                    `;
+                            } else {
+                                return `<div class="text-center">Data tidak ditemukan</div>`;
+                            }
                         }
                     },
                     {

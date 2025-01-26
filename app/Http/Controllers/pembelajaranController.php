@@ -14,34 +14,51 @@ class pembelajaranController extends Controller
 {
     public function kuy()
     {
-        // Ambil data dari database
-        $data = pembelajaran::where('kelas_id', 14)->get();
+       // Ambil data pembelajaran berdasarkan kelas_id
+       $data = Pembelajaran::where('kelas_id', 14)->get();
 
-        // Inisialisasi array untuk menyimpan total presensi
-        $totalPresensi = [];
+       $totalAbsensi = [];
+       $totalPertemuan = $data->count(); // Hitung total pertemuan
 
-        // Proses setiap pertemuan
-        foreach ($data as $pertemuan) {
-            $absensiList = json_decode($pertemuan->absensi, true) ?? [];
+       // Loop melalui setiap pertemuan
+       foreach ($data as $pertemuan) {
+           // Decode data absensi, pastikan JSON valid
+           $absensiList = json_decode($pertemuan->absensi, true) ?? [];
 
-            // Hitung kehadiran "H"
-            foreach ($absensiList as $absensi) {
-                if (isset($absensi['presensi']) && $absensi['presensi'] === 'H') {
-                    $id = $absensi['id'];
-                    if (isset($totalPresensi[$id])) {
-                        $totalPresensi[$id]++;
-                    } else {
-                        $totalPresensi[$id] = 1;
-                    }
-                }
-            }
-        }
+           // Loop setiap siswa di absensi
+           foreach ($absensiList as $absen) {
+               $id = $absen['id'];
+               $nama = $absen['nama'];
 
-        // Tambahkan total presensi ke data respons
-        return response()->json([
-            'data' => $data,
-            'total_presensi' => $totalPresensi,
-        ]);
+               // Pastikan setiap siswa ada di totalAbsensi dengan nilai awal
+               if (!isset($totalAbsensi[$id])) {
+                   $totalAbsensi[$id] = [
+                       'id' => $id,
+                       'nama' => $nama,
+                       'kehadiran' => 0
+                   ];
+               }
+
+               // Tambahkan jika presensi 'H'
+               if ($absen['presensi'] === 'H') {
+                   $totalAbsensi[$id]['kehadiran']++;
+               }
+           }
+       }
+
+       // Hitung persentase kehadiran
+       $result = array_map(function ($absen) use ($totalPertemuan) {
+           $absen['persentase'] = $totalPertemuan > 0 
+               ? round(($absen['kehadiran'] / $totalPertemuan) * 100, 2)
+               : 0;
+           return $absen;
+       }, $totalAbsensi);
+
+       // Tampilkan hasil dalam bentuk JSON
+       return response()->json([
+           'total_pertemuan' => $totalPertemuan,
+           'data' => array_values($result),
+       ]);
     }
 
 
