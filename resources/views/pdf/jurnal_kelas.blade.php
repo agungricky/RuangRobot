@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Absensi : {{ $kelas->nama_kelas }}</title>
+    <title>Absensi : {{ $data->nama_kelas }}</title>
     <style>
         .table {
             width: 100%;
@@ -27,7 +27,7 @@
 
 <body>
     <center>
-        <h3 style="text-transform: uppercase">Jurnal Kelas {{ $kelas->nama_kelas }}</h3>
+        <h3 style="text-transform: uppercase">Jurnal Kelas {{ $data->nama_kelas }}</h3>
     </center>
     <center>
         <h4>Ruang Robot Perum Mojoroto Indah Blok AA-6, Kota Kediri 085655770506</h4>
@@ -37,11 +37,11 @@
     <table style="border:0px !important;">
         <tr>
             <td style="width: 100px;font-weoght:bold;font-size:19px;">Program Belajar</td>
-            <td>: {{ $kelas->program_belajar->nama_program_belajar }}</td>
+            <td>: {{ $data->nama_program }}</td>
         </tr>
         <tr>
             <td style="width: 100px;font-weoght:bold;font-size:19px;">Pengajar</td>
-            <td>: {{ $kelas->pengajar->nama_pengajar }}</td>
+            <td>: {{ $data->penanggung_jawab }}</td>
         </tr>
     </table>
     <br>
@@ -54,9 +54,12 @@
                 <th>Materi</th>
                 <th>Tanda Tangan</th>
             </tr>
-            @foreach ($slot_kelas as $key => $item)
+        </thead>
+        <tbody>
+            {{-- {{dd($data_pertemuan)}} --}}
+            @foreach ($data_pertemuan as $item)
                 <tr>
-                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $item->pertemuan }}</td>
                     <td>
                         @php
                             $daftar_hari = [
@@ -68,22 +71,32 @@
                                 'Friday' => 'Jumat',
                                 'Saturday' => 'Sabtu',
                             ];
-                            $namahari = date('l', strtotime($item->tanggal));
-                            echo $daftar_hari[$namahari] . ', ' . date('d-m-Y', strtotime($item->tanggal));
+    
+                            // Validasi tanggal sebelum digunakan
+                            if (!empty($item->tanggal)) {
+                                $namahari = date('l', strtotime($item->tanggal));
+                                echo $daftar_hari[$namahari] . ', ' . date('d-m-Y', strtotime($item->tanggal));
+                            } else {
+                                echo '-'; // Tampilkan '-' jika tanggal kosong
+                            }
                         @endphp
                     </td>
-                    <td>{{ $item->jamm . ' - ' . $item->jams }}</td>
-                    <td>{{ $item->materi == '' ? '-' : $item->materi }}</td>
-                    <td></td>
+                    <td>
+                        {{-- Tampilkan jam jika ada --}}
+                        {{ $item->jamm ?? '-' }} - {{ $item->jams ?? '-' }}
+                    </td>
+                    <td>{{ $item->materi ?: '-' }}</td>
+                    <td></td> <!-- Kolom tanda tangan -->
                 </tr>
             @endforeach
-        </thead>
+        </tbody>
     </table>
+    
     <div style="page-break-after: always;"></div>
     <center>
         <h3>Absensi Siswa</h3>
     </center>
-    <table class="table table-bordered">
+    {{-- <table class="table table-bordered">
         <tr>
             <th>No</th>
             <th>Nama Siswa</th>
@@ -100,7 +113,7 @@
                 @endforeach
             </tr>
         @endforeach
-    </table>
+    </table> --}}
 </body>
 
 </html>

@@ -237,4 +237,16 @@ class kelasController extends Controller
         kelas::where('id', $id)->delete();
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Dihapus');
     }
+
+    public function jurnalkelas(string $id){
+        $data = kelas::where('kelas.id', $id)
+        ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+        ->select('kelas.*', 'program_belajar.nama_program')
+        ->first();
+
+        $data_pertemuan = pembelajaran::where('kelas_id', $id)->get();
+        // dd($data_pertemuan);
+        return $data_pertemuan;
+        // return view('pdf.jurnal_kelas', compact('data', 'data_pertemuan'));
+    }
 }

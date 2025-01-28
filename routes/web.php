@@ -68,6 +68,9 @@ Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('ke
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
 Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
 
+// Jurnal Kelas
+Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
+
 
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
