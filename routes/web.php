@@ -12,8 +12,15 @@ use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'index');
+Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
+Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
+Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
+
+Route::view('/x', 'main.layout');
+// Route::view('/x', 'pages.konten');
+
+
 
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
@@ -61,6 +68,9 @@ Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('ke
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
 Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
 
+// Jurnal Kelas
+Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
+
 
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
@@ -72,8 +82,6 @@ Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detai
 Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
 Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
 Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
-
-
 
 
 // ========= Pengguna ========= //
@@ -92,18 +100,20 @@ Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name(
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
 
 Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
-Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
+// Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
 
 
 // ========= Gaji ========= //
 Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
+Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
+
+
+
 
 // ========= Pembayaran ========= //
 Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
 Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
 
-Route::view('/x', 'main.layout');
-Route::view('/x', 'pages.konten');
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');

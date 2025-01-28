@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\akun;
+use App\Models\gajiUtama;
 use Illuminate\Http\Request;
 
 class gajiController extends Controller
@@ -9,10 +11,20 @@ class gajiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $gaji_ngajar =  
-        return view('pages.gaji.gaji');
+        $data = akun::where('role', 'Pengajar')
+        ->join('profile', 'profile.id', 'akun.id')
+        ->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+
+        // dd($data);
+        return view('pages.gaji.gaji', compact('data'));
     }
 
     /**

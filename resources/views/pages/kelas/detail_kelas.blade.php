@@ -6,7 +6,7 @@
     <!-- Custom Alert Notifikasi -->
     <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!" />
 
-    {{-- {{ dd($result) }} --}}
+    {{-- {{ dd($data) }} --}}
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -15,7 +15,7 @@
             {{-- Button --}}
             <div class="row">
                 <div class="col">
-                    <a href="" class="btn btn-success mb-4 mr-3"><i class="fas fa-file"></i>
+                    <a href="{{ route('jurnal_kelas', ['id'=> $data->id]) }}" class="btn btn-success mb-4 mr-3"><i class="fas fa-file"></i>
                         Generate Report</a>
                     <a href="" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</a>
                     <a href="" class="btn btn-primary mb-4"><i class="fas fa-print"></i>
@@ -426,10 +426,10 @@
                                 let persentase = result[row.id].persentase;
                                 return `
                                         <div class="text-center">
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
+                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
-                                            <span>${persentase} %</span>
+                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;">${persentase} %</span>
                                         </div>
                                     `;
                             } else {

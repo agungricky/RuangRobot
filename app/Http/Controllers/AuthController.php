@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\akun;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -12,6 +16,26 @@ class AuthController extends Controller
     public function showlogin()
     {
         return view('auth.login');
+    }
+
+    public function Authenticate(Request $request)
+    {
+        $credential = $request->only('username', 'password');
+
+        if (Auth::attempt($credential)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('dashboard'));
+        } else {
+            return back()->with('gagal', 'Password atau username salah');
+        }
+    }
+
+    public function Logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('login');
     }
 
     /**

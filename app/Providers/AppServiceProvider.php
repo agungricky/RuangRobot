@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\akun;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('main.navbar', function ($view) {
+            $id = Auth::user()->id;
+            $dataLogin= akun::where('akun.id', $id)
+            ->join('profile', 'profile.id', 'akun.id')
+            ->first();
+            $view->with('dataLogin', $dataLogin);
+        });
     }
 }
