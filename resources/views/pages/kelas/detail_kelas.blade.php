@@ -426,10 +426,10 @@
                                 let persentase = result[row.id].persentase;
                                 return `
                                         <div class="text-center">
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
+                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
-                                            <span>${persentase} %</span>
+                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;">${persentase} %</span>
                                         </div>
                                     `;
                             } else {

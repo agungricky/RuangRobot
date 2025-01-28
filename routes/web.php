@@ -12,8 +12,15 @@ use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'index');
+Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
+Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
+Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
+
+Route::view('/x', 'main.layout');
+// Route::view('/x', 'pages.konten');
+
+
 
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
@@ -74,8 +81,6 @@ Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy
 Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
 
 
-
-
 // ========= Pengguna ========= //
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
 Route::get('/data_admin/{id}/json', [penggunaController::class, 'pengguna'])->name('admin.json');
@@ -92,18 +97,20 @@ Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name(
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
 
 Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
-Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
+// Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
 
 
 // ========= Gaji ========= //
 Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
+Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
+
+
+
 
 // ========= Pembayaran ========= //
 Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
 Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
 
-Route::view('/x', 'main.layout');
-Route::view('/x', 'pages.konten');
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
