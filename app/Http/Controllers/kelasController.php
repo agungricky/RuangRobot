@@ -9,7 +9,15 @@ use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\PDF;
+use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
+use GDText\Box;
+use GDText\Color;
+use Illuminate\Support\Facades\File;
+
+
 
 class kelasController extends Controller
 {
@@ -20,6 +28,7 @@ class kelasController extends Controller
     {
         $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
             ->select('kelas.*', 'kategori_kelas.kategori_kelas')
+            ->orderByDesc('created_at') 
             ->get();
         $kategori = Kategori::all();
         $programbelajar = programbelajar::all();
@@ -228,6 +237,14 @@ class kelasController extends Controller
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
     }
 
+    public function kelasselesai($id){
+        kelas::where('id', $id)->update([
+            'status_kelas' => 'selesai'
+        ]);
+
+        return back()->with('success', 'Status kelas berhasil di perbarui');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -238,15 +255,113 @@ class kelasController extends Controller
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Dihapus');
     }
 
-    public function jurnalkelas(string $id){
+    public function jurnalkelas(string $id)
+    {
         $data = kelas::where('kelas.id', $id)
-        ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-        ->select('kelas.*', 'program_belajar.nama_program')
-        ->first();
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->select('kelas.*', 'program_belajar.nama_program')
+            ->first();
 
-        $data_pertemuan = pembelajaran::where('kelas_id', $id)->get();
-        // dd($data_pertemuan);
-        return $data_pertemuan;
-        // return view('pdf.jurnal_kelas', compact('data', 'data_pertemuan'));
+        $data_pertemuan = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->select('pembelajaran.pertemuan', 'pembelajaran.tanggal', 'pembelajaran.materi', 'pembelajaran.pengajar', 'kelas.durasi_belajar')
+            ->get();
+
+        $absensi_siswa = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->select('pertemuan', 'absensi')
+            ->get();
+
+        $absensi_siswa->each(function ($item) {
+            $item->absensi = json_decode($item->absensi, true);
+        });
+
+        // Kirim data ke view PDF
+        $pdf = FacadePdf::loadView('pdf.jurnal_kelas', compact('data', 'data_pertemuan', 'absensi_siswa'));
+
+        // Tampilkan terlebih dahulu
+        return $pdf->stream('jurnal_kelas.pdf');
+    }
+
+
+    public function sertifikat(string $id)
+    {
+        // Path template sertifikat
+        $templatePath = public_path('assets/certificate.jpg');
+
+        // Cek apakah file template tersedia
+        if (!file_exists($templatePath)) {
+            abort(404, "Template sertifikat tidak ditemukan.");
+        }
+
+        // Load template gambar
+        $template = imagecreatefromjpeg($templatePath);
+
+        // Array bulan dalam format Romawi
+        $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $bln = $array_bln[date('n')];
+
+        // Buat teks di atas sertifikat menggunakan GDText\Box
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(24); // Ukuran font
+        $box->setBox(680, 240, 450, 120); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'top');
+        $box->draw("No : " . $id . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+
+        // Teks Nama
+        $box = new Box($template); // Gunakan $template
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(55); // Ukuran font
+        $box->setBox(500, 330, 800, 160); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'center');
+        $box->draw(ucwords('Ricky Agung Sumiranto')); // Nama
+
+        // Teks Pelatihan
+        $box = new Box($template); // Gunakan $template
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(24); // Ukuran font
+        $box->setBox(500, 490, 800, 200); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'top');
+        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper('Program Belajar Arduino Dasar') . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
+
+        $box = new Box($template);
+        $box->setFontFace('assets/arial.ttf');
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(25);
+        $box->setStrokeColor(new Color(0, 0, 0)); // Set stroke color
+        $box->setStrokeSize(.6); // Stroke size in pixels
+        $box->setBox(750, 610, 300, 70);
+        $box->setTextAlign('center', 'center');
+        $box->draw('SANGAT BAIK');
+
+        $box = new Box($template);
+        $box->setFontFace('assets/arial.ttf');
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(25);
+        $box->setBox(880, 690, 400, 460);
+        $box->setTextAlign('center', 'top');
+        $box->draw("Kediri, " . 29-04-00 . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
+
+        $nama_ser = 14 . "_" . 'Arduino Dasar' . '_' . 'Ricky' . '.jpeg';
+        // header('Content-Disposition: attachment; filename="'.$nama_ser.'.jpeg"');
+        // imagejpeg($im);
+        // $path = public_path('cert');
+        // if (!\file()::isDirectory($path)) {
+        //     \file()::makeDirectory($path, 0777, true, true);
+        // }
+
+
+        // Path untuk menyimpan sertifikat yang sudah diberi teks
+        $outputPath = public_path('generated/sertifikat_' . $id . '.jpg');
+
+        // Simpan gambar hasil edit
+        imagejpeg($template, $outputPath);
+        imagedestroy($template); // Bersihkan memori
+
+        // Return file ke browser agar bisa di-preview
+        return response()->file($outputPath);
     }
 }

@@ -11,8 +11,7 @@ class dashboardUserController extends Controller
      */
     public function index()
     {
-        return view('pages.pengajar.dashboardUser');
-
+        return view('pages.dashboard.dashboard_pengajar');
     }
 
     /**

@@ -21,7 +21,7 @@ class kelaspengajarController extends Controller
 
         // dd($kelas); 
 
-        return view('pages.pengajar.kelas_saya', compact('kelas'));
+        return view('pages.kelas.kelas_pengajar', compact('kelas'));
     }
 
     /**

@@ -23,11 +23,6 @@ Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 Route::view('/x', 'main.layout');
 // Route::view('/x', 'pages.konten');
 
-Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('dashboard_user');
-Route::get('/kelas_saya', [kelaspengajarController::class, 'index'])->name('kelas_saya');
-
-
-
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
 
@@ -73,9 +68,13 @@ Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.ed
 Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
 Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
+Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
 
-// Jurnal Kelas
+
+
+// ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
+Route::get('/sertifikat/{id}', [kelasController::class, 'sertifikat'])->name('sertifikat');
 
 
 // ========= Pembelajaran ========= //
@@ -114,8 +113,6 @@ Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
 Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
 
 
-
-
 // ========= Pembayaran ========= //
 Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
 Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
@@ -123,4 +120,8 @@ Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pe
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
-Route::get('kuy/json', [pembelajaranController::class, 'kuy'])->name('kuy.json');
+Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');
+
+// ========= Dashboard Pengajar ========= //
+Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('dashboard_pengajar');
+Route::get('/kelas_saya', [kelaspengajarController::class, 'index'])->name('kelas_saya');

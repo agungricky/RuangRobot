@@ -6,7 +6,6 @@
     <!-- Custom Alert Notifikasi -->
     <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!" />
 
-    {{-- {{ dd($data) }} --}}
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -14,12 +13,17 @@
 
             {{-- Button --}}
             <div class="row">
-                <div class="col">
-                    <a href="{{ route('jurnal_kelas', ['id'=> $data->id]) }}" class="btn btn-success mb-4 mr-3"><i class="fas fa-file"></i>
+                <div class="col d-flex">
+                    <a href="{{ route('jurnal_kelas', ['id' => $data->id]) }}" class="btn btn-success mb-4 mr-3"><i
+                            class="fas fa-file"></i>
                         Generate Report</a>
-                    <a href="" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</a>
-                    <a href="" class="btn btn-primary mb-4"><i class="fas fa-print"></i>
+                    <a href="{{ route('sertifikat', ['id'=> $data->id]) }}" class="btn btn-primary mb-4 mr-3"><i class="fas fa-print"></i>
                         Generate Sertifikat</a>
+                    <form action="{{ route('kelas.selesai', ['id'=>$data->id]) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</button>
+                    </form>
                 </div>
             </div>
 
@@ -433,7 +437,7 @@
                                         </div>
                                     `;
                             } else {
-                                return `<div class="text-center">Data tidak ditemukan</div>`;
+                                return `<div class="text-center">Belum ada pembelajaran</div>`;
                             }
                         }
                     },
@@ -646,9 +650,8 @@
                     success: function(response) {
                         $('#tambah_siswa').modal('hide'); // Tutup modal
                         location.reload();
-                        console.log("Data baru berhasil dibuat:", response);
+                        // console.log(response);
                         alert('Data siswa berhasil ditambahkan!');
-                        siswaTable.ajax.reload(); // Reload tabel untuk memperbarui data
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);
