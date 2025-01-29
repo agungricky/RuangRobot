@@ -2,63 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\akun;
+use App\Models\invoice;
 use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class pembelajaranController extends Controller
 {
-    public function kuy()
+    public function kuy($id)
     {
-       // Ambil data pembelajaran berdasarkan kelas_id
-       $data = Pembelajaran::where('kelas_id', 14)->get();
+        $data = pengguna::where('profile.id', $id)
+            ->join('akun', 'akun.id', 'profile.id')
+            ->first();
 
-       $totalAbsensi = [];
-       $totalPertemuan = $data->count(); // Hitung total pertemuan
+        $pembelajaran = kelas::where('kelas.id', 3)->first();
 
-       // Loop melalui setiap pertemuan
-       foreach ($data as $pertemuan) {
-           // Decode data absensi, pastikan JSON valid
-           $absensiList = json_decode($pertemuan->absensi, true) ?? [];
+        // dd($data);
 
-           // Loop setiap siswa di absensi
-           foreach ($absensiList as $absen) {
-               $id = $absen['id'];
-               $nama = $absen['nama'];
+        $response = Http::withHeaders([
+            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+        ])->post('https://api.fonnte.com/send', [
+            'target' => $data->no_telp,
+            'message' => "
+*💡 #Invoice Tagihan Pembayaran 📚*
 
-               // Pastikan setiap siswa ada di totalAbsensi dengan nilai awal
-               if (!isset($totalAbsensi[$id])) {
-                   $totalAbsensi[$id] = [
-                       'id' => $id,
-                       'nama' => $nama,
-                       'kehadiran' => 0
-                   ];
-               }
+Halo 👋 $data->nama,
+Sehubungan dengan pembelajaran dalam Kelas $pembelajaran->nama_kelas, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
 
-               // Tambahkan jika presensi 'H'
-               if ($absen['presensi'] === 'H') {
-                   $totalAbsensi[$id]['kehadiran']++;
-               }
-           }
-       }
+Pembelajaran : *$pembelajaran->nama_kelas*
+Tagihan : Rp. $pembelajaran->harga
+Tanggal Jatuh Tempo: $pembelajaran->jatuh_tempo
+Nomor Tagihan: INV-202312121212
+Total Terbayar: Rp. 0
 
-       // Hitung persentase kehadiran
-       $result = array_map(function ($absen) use ($totalPertemuan) {
-           $absen['persentase'] = $totalPertemuan > 0 
-               ? round(($absen['kehadiran'] / $totalPertemuan) * 100, 2)
-               : 0;
-           return $absen;
-       }, $totalAbsensi);
+Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
+Bank: BCA (Bank Central Asia)
+Nomor Rekening: 9203123456
+Atas Nama: Julian Sahertian
+                            
+Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+📞 https://wa.me/+6281276435511
 
-       // Tampilkan hasil dalam bentuk JSON
-       return response()->json([
-           'total_pertemuan' => $totalPertemuan,
-           'data' => array_values($result),
-       ]);
+Untuk pemantauan pembelajaran dapat dilihat di:
+🌐 ruangrobot.id
+▶ username : $data->username
+▶ password : ruangrobot
+                            
+Kami siap membantu Anda! 😊
+Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+                            
+Salam hangat,
+*Ruang Robot*,
+Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
+            'countryCode' => '62',
+            'filename' => 'Tagihanku',
+            'schedule' => 0,
+            'typing' => false,
+            'delay' => '0',
+            'followup' => 0,
+        ]);
+
+        if ($response->successful()) {
+            // Response berhasil
+            return $response->body();
+        } else {
+            // Response gagal
+            return $response->status();
+        }
     }
 
 
@@ -224,12 +241,94 @@ class pembelajaranController extends Controller
         $kelas->murid = json_encode($mergedSiswa);
         $kelas->save();
 
-        return response()->json(['message' => 'Data siswa berhasil ditambahkan!'], 201);
+        // ======================================= //
+        //  ============= Buat Invoice =========== //
+        // ======================================= //
+        $siswaList = $request->input('siswa');
+        $responses = [];
+
+        foreach ($siswaList as $siswa) {
+            invoice::create([
+                'profile_id' => $siswa['id'], // ID siswa
+                'kelas_id' => $id, // ID kelas dari URL
+            ]);
+
+            $data = pengguna::where('profile.id', $siswa['id'])
+                ->join('akun', 'akun.id', 'profile.id')
+                ->first();
+
+            $pembelajaran = kelas::where('kelas.id', $id)->first();
+            
+            $muridkelas = muridKelas::where('kelas_id', $id)->first();
+            $murid = json_decode($muridkelas->murid, true);
+            $datasiswa = null;
+            foreach ($murid as $key => $value) {
+                if ($value['id'] == $siswa['id']) {
+                    $datasiswa = $value;
+                    break;
+                }
+            }
+
+            Carbon::setLocale('id'); // Pastikan bahasa Indonesia digunakan
+            $tanggalJatuhTempo = Carbon::parse($pembelajaran->jatuh_tempo)->translatedFormat('l, d-m-Y');
+
+            $response = Http::withHeaders([
+                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $data->no_telp,
+                'message' => "
+*💡 #Invoice Tagihan Pembayaran 📚*
+    
+Halo 👋 $data->nama,
+Sehubungan dengan pembelajaran dalam Kelas $pembelajaran->nama_kelas, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
+    
+Pembelajaran : *$pembelajaran->nama_kelas*
+Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
+Tanggal Jatuh Tempo: $tanggalJatuhTempo
+Nomor Tagihan: " . $datasiswa['no_invoice'] . "
+Total Terbayar: Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+    
+Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
+Bank: BCA (Bank Central Asia)
+Nomor Rekening: 9203123456
+Atas Nama: Julian Sahertian
+                                
+Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+📞 https://wa.me/+6285655770506
+    
+Untuk pemantauan pembelajaran dapat dilihat di:
+🌐 ruangrobot.id
+▶ username : $data->username
+▶ password : ruangrobot
+                                
+Kami siap membantu Anda! 😊
+Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+                                
+Salam hangat,
+*Ruang Robot*,
+Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
+                'countryCode' => '62',
+                'filename' => 'Tagihanku',
+                'schedule' => 0,
+                'typing' => false,
+                'delay' => '0',
+                'followup' => 0,
+            ]);
+
+            // Simpan response untuk debug jika diperlukan
+            $responses[] = $response->body();
+        }
+
+        // Kembalikan response untuk semua siswa
+        return response()->json([
+            'message' => 'Semua siswa berhasil ditambahkan dan invoice dikirim!',
+            'responses' => $responses
+        ]);
     }
+
 
     public function hapus(Request $request)
     {
-
         $id = $request->id; // ID murid yang ingin dihapus
         $id_kelas = $request->kelas_id; // ID kelas
 
@@ -252,5 +351,10 @@ class pembelajaranController extends Controller
                 ->where('kelas_id', $id_kelas)
                 ->update(['murid' => json_encode(array_values($muridArray))]);
         }
+
+        invoice::where('profile_id', $id)
+       ->where('kelas_id', $id_kelas) // AND condition
+       ->delete();
+
     }
 }

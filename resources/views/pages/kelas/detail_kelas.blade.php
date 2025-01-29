@@ -647,9 +647,8 @@
                     success: function(response) {
                         $('#tambah_siswa').modal('hide'); // Tutup modal
                         location.reload();
-                        console.log("Data baru berhasil dibuat:", response);
+                        // console.log(response);
                         alert('Data siswa berhasil ditambahkan!');
-                        siswaTable.ajax.reload(); // Reload tabel untuk memperbarui data
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);

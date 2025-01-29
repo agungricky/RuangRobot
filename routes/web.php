@@ -118,4 +118,4 @@ Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pe
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
-Route::get('kuy/json', [pembelajaranController::class, 'kuy'])->name('kuy.json');
+Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');

@@ -13,6 +13,11 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
+use GDText\Box;
+use GDText\Color;
+use Illuminate\Support\Facades\File;
+
+
 
 class kelasController extends Controller
 {
@@ -268,32 +273,86 @@ class kelasController extends Controller
         return $pdf->stream('jurnal_kelas.pdf');
     }
 
+
     public function sertifikat(string $id)
     {
-        // Data statis untuk sertifikat
-        $data = [
-            'no_sertifikat' => '310/RUANGROBOT/I/2025',
-            'nama_siswa' => 'Yasmin Azizah',
-            'program_belajar' => 'EKSTRAKULIKULER ROBOT MAKER - ROBOT REMOTE ANALOG',
-            'tanggal_mulai' => '29 Agustus 2024',
-            'tanggal_selesai' => '07 November 2024',
-            'predikat' => 'SANGAT BAIK',
-            'tanggal_terbit' => '07 November 2024',
-            'pengajar' => 'Julian Sahertian, S.Pd., M.T.',
-        ];
+        // Path template sertifikat
+        $templatePath = public_path('assets/certificate.jpg');
 
-        // Mengirim data ke view untuk diproses
-        $pdf = FacadePdf::loadView('pdf.sertifikat_kelas', compact('data'));
+        // Cek apakah file template tersedia
+        if (!file_exists($templatePath)) {
+            abort(404, "Template sertifikat tidak ditemukan.");
+        }
 
-        // Mengatur ukuran dan orientasi halaman (contoh: A4 landscape)
-        $pdf->setPaper('a4', 'landscape');
-        $pdf->setOption('dpi', 300);
-        // Tambahkan opsi untuk meningkatkan dukungan gambar
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', false);
-        $pdf->setOption('enable_html5_parser', true);
+        // Load template gambar
+        $template = imagecreatefromjpeg($templatePath);
 
-        // Mengirimkan file PDF
-        return $pdf->stream('sertifikat.pdf');
+        // Array bulan dalam format Romawi
+        $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $bln = $array_bln[date('n')];
+
+        // Buat teks di atas sertifikat menggunakan GDText\Box
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(24); // Ukuran font
+        $box->setBox(680, 240, 450, 120); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'top');
+        $box->draw("No : " . $id . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+
+        // Teks Nama
+        $box = new Box($template); // Gunakan $template
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(55); // Ukuran font
+        $box->setBox(500, 330, 800, 160); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'center');
+        $box->draw(ucwords('Ricky Agung Sumiranto')); // Nama
+
+        // Teks Pelatihan
+        $box = new Box($template); // Gunakan $template
+        $box->setFontFace(public_path('assets/arial.ttf')); // Pastikan font tersedia
+        $box->setFontColor(new Color(0, 0, 0)); // Warna teks hitam
+        $box->setFontSize(24); // Ukuran font
+        $box->setBox(500, 490, 800, 200); // Area teks (x, y, width, height)
+        $box->setTextAlign('center', 'top');
+        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper('Program Belajar Arduino Dasar') . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
+
+        $box = new Box($template);
+        $box->setFontFace('assets/arial.ttf');
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(25);
+        $box->setStrokeColor(new Color(0, 0, 0)); // Set stroke color
+        $box->setStrokeSize(.6); // Stroke size in pixels
+        $box->setBox(750, 610, 300, 70);
+        $box->setTextAlign('center', 'center');
+        $box->draw('SANGAT BAIK');
+
+        $box = new Box($template);
+        $box->setFontFace('assets/arial.ttf');
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(25);
+        $box->setBox(880, 690, 400, 460);
+        $box->setTextAlign('center', 'top');
+        $box->draw("Kediri, " . 29-04-00 . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
+
+        $nama_ser = 14 . "_" . 'Arduino Dasar' . '_' . 'Ricky' . '.jpeg';
+        // header('Content-Disposition: attachment; filename="'.$nama_ser.'.jpeg"');
+        // imagejpeg($im);
+        // $path = public_path('cert');
+        // if (!\file()::isDirectory($path)) {
+        //     \file()::makeDirectory($path, 0777, true, true);
+        // }
+
+
+        // Path untuk menyimpan sertifikat yang sudah diberi teks
+        $outputPath = public_path('generated/sertifikat_' . $id . '.jpg');
+
+        // Simpan gambar hasil edit
+        imagejpeg($template, $outputPath);
+        imagedestroy($template); // Bersihkan memori
+
+        // Return file ke browser agar bisa di-preview
+        return response()->file($outputPath);
     }
 }
