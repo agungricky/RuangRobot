@@ -22,4 +22,14 @@ class kelas extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function program_belajar()
+    {
+        return $this->belongsTo(programbelajar::class, 'program_belajar_id');
+    }
+
+    public function kategori_kelas()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_kelas_id');
+    }
 }

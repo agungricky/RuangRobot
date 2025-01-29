@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardController;
+use App\Http\Controllers\dashboardUser;
+use App\Http\Controllers\dashboardUserController;
 use App\Http\Controllers\gajiController;
 use App\Http\Controllers\kategoriController;
 use App\Http\Controllers\kelasController;
+use App\Http\Controllers\kelaspengajarController;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\pembelajaranController;
 use App\Http\Controllers\penggunaController;
@@ -19,6 +22,9 @@ Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 
 Route::view('/x', 'main.layout');
 // Route::view('/x', 'pages.konten');
+
+Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('dashboard_user');
+Route::get('/kelas_saya', [kelaspengajarController::class, 'index'])->name('kelas_saya');
 
 
 

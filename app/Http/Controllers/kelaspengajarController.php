@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class dashboardController extends Controller
+class kelaspengajarController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('pages.dashboard.dashboard');
+        // dd(Auth::id());
+        $kelas = kelas::with(['program_belajar', 'kategori_kelas'])
+            ->where('status_kelas', 'aktif')
+            ->where('penanggung_jawab', 4)
+            ->get();
+
+        // dd($kelas); 
+
+        return view('pages.pengajar.kelas_saya', compact('kelas'));
     }
 
-    
     /**
      * Show the form for creating a new resource.
      */
