@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Absensi : {{ $data->nama_kelas }}</title>
+    <title>{{ $data->nama_kelas }}</title>
     <style>
         .table {
             width: 100%;
@@ -36,7 +36,10 @@
 
     <table style="border:0px !important;">
         <tr>
-            <td style="width: 100px;font-weoght:bold;font-size:19px;">Program Belajar</td>
+            <td style="width: 100px;font-size: 19px;white-space: nowrap;">
+                Program Belajar
+            </td>
+            
             <td>: {{ $data->nama_program }}</td>
         </tr>
         <tr>
@@ -59,7 +62,7 @@
             {{-- {{dd($data_pertemuan)}} --}}
             @foreach ($data_pertemuan as $item)
                 <tr>
-                    <td>{{ $item->pertemuan }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ $item->pertemuan }}</td>
                     <td>
                         @php
                             $daftar_hari = [
@@ -83,7 +86,7 @@
                     </td>
                     <td>
                         {{-- Tampilkan jam jika ada --}}
-                        {{ $item->jamm ?? '-' }} - {{ $item->jams ?? '-' }}
+                        {{ $item->durasi_belajar }}
                     </td>
                     <td>{{ $item->materi ?: '-' }}</td>
                     <td></td> <!-- Kolom tanda tangan -->
@@ -96,24 +99,63 @@
     <center>
         <h3>Absensi Siswa</h3>
     </center>
-    {{-- <table class="table table-bordered">
+    <table class="table table-bordered">
         <tr>
             <th>No</th>
             <th>Nama Siswa</th>
-            @foreach ($slot_kelas as $key => $item)
-                <th>#{{ $key + 1 }}</th>
+            @foreach ($absensi_siswa as $key => $item)
+                <th>#{{ $item->pertemuan }}</th>
             @endforeach
         </tr>
-        @foreach ($siswa as $ki => $item)
+    
+        @php
+            // Menyusun data siswa yang unik berdasarkan id
+            $siswaUnik = [];
+            foreach ($absensi_siswa as $item) {
+                foreach ($item->absensi as $absen) {
+                    if (!isset($siswaUnik[$absen['id']])) {
+                        $siswaUnik[$absen['id']] = [
+                            'nama' => $absen['nama'],
+                            'id' => $absen['id'],
+                        ];
+                    }
+                }
+            }
+    
+            // Menyusun ulang data untuk tampilan
+            $no = 1;
+        @endphp
+    
+        @foreach ($siswaUnik as $siswa)
             <tr>
-                <td>{{ $ki + 1 }}</td>
-                <td>{{ $item->nama_siswa }}</td>
-                @foreach ($slot_kelas as $key => $items)
-                    {{ Ceksiswa::cekabsenaa($item->id, $items->id) }}
+                <td>{{ $no++ }}</td>
+                <td>{{ $siswa['nama'] }}</td>
+                @foreach ($absensi_siswa as $pertemuan)
+                    @php
+                        $presensi = '-';
+                        foreach ($pertemuan->absensi as $absen) {
+                            if ($absen['id'] === $siswa['id']) {
+                                $presensi = $absen['presensi'];
+                                break;
+                            }
+                        }
+    
+                        // Tentukan warna latar berdasarkan presensi
+                        $bgColor = '';
+                        if ($presensi === 'H') {
+                            $bgColor = '#28a745';
+                        } elseif ($presensi === 'I') {
+                            $bgColor = '#F93827';
+                        }
+                    @endphp
+                    <td style="background-color: {{ $bgColor }}; color: white;">
+                        {{-- {{ $presensi }} --}}
+                    </td>
                 @endforeach
             </tr>
         @endforeach
-    </table> --}}
+    </table>
+        
 </body>
 
 </html>
