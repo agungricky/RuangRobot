@@ -15,11 +15,12 @@
             {{-- Button --}}
             <div class="row">
                 <div class="col">
-                    <a href="{{ route('jurnal_kelas', ['id'=> $data->id]) }}" class="btn btn-success mb-4 mr-3"><i class="fas fa-file"></i>
+                    <a href="{{ route('jurnal_kelas', ['id' => $data->id]) }}" class="btn btn-success mb-4 mr-3"><i
+                            class="fas fa-file"></i>
                         Generate Report</a>
-                    <a href="" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</a>
-                    <a href="" class="btn btn-primary mb-4"><i class="fas fa-print"></i>
+                    <a href="{{ route('sertifikat', ['id'=> $data->id]) }}" class="btn btn-primary mb-4 mr-3"><i class="fas fa-print"></i>
                         Generate Sertifikat</a>
+                    <a href="" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</a>
                 </div>
             </div>
 

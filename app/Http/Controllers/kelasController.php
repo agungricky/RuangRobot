@@ -9,6 +9,9 @@ use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\PDF;
+use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
 
 class kelasController extends Controller
@@ -238,15 +241,59 @@ class kelasController extends Controller
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Dihapus');
     }
 
-    public function jurnalkelas(string $id){
+    public function jurnalkelas(string $id)
+    {
         $data = kelas::where('kelas.id', $id)
-        ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-        ->select('kelas.*', 'program_belajar.nama_program')
-        ->first();
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->select('kelas.*', 'program_belajar.nama_program')
+            ->first();
 
-        $data_pertemuan = pembelajaran::where('kelas_id', $id)->get();
-        // dd($data_pertemuan);
-        return $data_pertemuan;
-        // return view('pdf.jurnal_kelas', compact('data', 'data_pertemuan'));
+        $data_pertemuan = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->select('pembelajaran.pertemuan', 'pembelajaran.tanggal', 'pembelajaran.materi', 'pembelajaran.pengajar', 'kelas.durasi_belajar')
+            ->get();
+
+        $absensi_siswa = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->select('pertemuan', 'absensi')
+            ->get();
+
+        $absensi_siswa->each(function ($item) {
+            $item->absensi = json_decode($item->absensi, true);
+        });
+
+        // Kirim data ke view PDF
+        $pdf = FacadePdf::loadView('pdf.jurnal_kelas', compact('data', 'data_pertemuan', 'absensi_siswa'));
+
+        // Tampilkan terlebih dahulu
+        return $pdf->stream('jurnal_kelas.pdf');
+    }
+
+    public function sertifikat(string $id)
+    {
+        // Data statis untuk sertifikat
+        $data = [
+            'no_sertifikat' => '310/RUANGROBOT/I/2025',
+            'nama_siswa' => 'Yasmin Azizah',
+            'program_belajar' => 'EKSTRAKULIKULER ROBOT MAKER - ROBOT REMOTE ANALOG',
+            'tanggal_mulai' => '29 Agustus 2024',
+            'tanggal_selesai' => '07 November 2024',
+            'predikat' => 'SANGAT BAIK',
+            'tanggal_terbit' => '07 November 2024',
+            'pengajar' => 'Julian Sahertian, S.Pd., M.T.',
+        ];
+
+        // Mengirim data ke view untuk diproses
+        $pdf = FacadePdf::loadView('pdf.sertifikat_kelas', compact('data'));
+
+        // Mengatur ukuran dan orientasi halaman (contoh: A4 landscape)
+        $pdf->setPaper('a4', 'landscape');
+        $pdf->setOption('dpi', 300);
+        // Tambahkan opsi untuk meningkatkan dukungan gambar
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isPhpEnabled', false);
+        $pdf->setOption('enable_html5_parser', true);
+
+        // Mengirimkan file PDF
+        return $pdf->stream('sertifikat.pdf');
     }
 }
