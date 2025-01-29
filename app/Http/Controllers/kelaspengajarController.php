@@ -16,7 +16,7 @@ class kelaspengajarController extends Controller
         // dd(Auth::id());
         $kelas = kelas::with(['program_belajar', 'kategori_kelas'])
             ->where('status_kelas', 'aktif')
-            ->where('penanggung_jawab', 4)
+            // ->where('penanggung_jawab', 4)
             ->get();
 
         // dd($kelas); 
