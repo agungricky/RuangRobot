@@ -10,12 +10,14 @@
         <!-- sidebar menu -->
         <ul class="sidebar-menu">
             <!-- menu header -->
+            @if($dataLogin->role == 'Admin')
             <li class="menu-header">Dashboard</li>
             <!-- menu item -->
             <li>
                 <a href="{{ route('dashboard') }}"><i
                         class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
+            
             <!-- menu header -->
             <li class="menu-header">Manage Pembelajaran</li>
             <!-- Dropdown Menu -->
@@ -65,6 +67,35 @@
                     </div>
                 </a>
             </li>
+            @endif
+
+
+
+
+
+
+            <!------------------ menu dashboard pengguna ---------------->
+            @if($dataLogin->role == 'Pengajar')
+                <li class="menu-header">Dashboard</li>
+                <!-- menu item -->
+                <li>
+                    <a href="{{ url('/dashboard_user')}}"><i
+                            class="fas fa-fire"></i><span>Dashboard</span></a>
+                </li>
+                <li class="menu-header">Manage Kelas</li>
+                <li>
+                    <a href="{{ url('/kelas_saya')}}"><i class="fa-solid fa-book-open"></i><span>Kelas Saya</span></a>
+                </li>
+                <li>
+                    <a href="{{ url('/')}}"><i class="fa fa-calendar-alt"></i><span>Jenis Kelas</span></a>
+                </li>
+                <li class="menu-header">Gaji</li>
+                <li>
+                    <a href="{{ url('/')}}"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></a>
+                </li>
+            @endif
+            
+
         </ul>
     </aside>
 </div>

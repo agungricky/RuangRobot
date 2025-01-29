@@ -22,12 +22,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('main.navbar', function ($view) {
+        View::composer('*', function ($view) {
             $id = Auth::user()->id;
             $dataLogin= akun::where('akun.id', $id)
             ->join('profile', 'profile.id', 'akun.id')
             ->first();
             $view->with('dataLogin', $dataLogin);
+
         });
     }
 }

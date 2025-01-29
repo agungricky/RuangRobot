@@ -1,0 +1,97 @@
+@extends('main.layout')
+@section('content')
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <x-title_halaman title="Daftar Kelas Saya" />
+
+        <div class="section-body">
+            <div class="card author-box card-primary">
+                <div class="card-body">
+                    <h2 class="section-title">On Going</h2>
+                    <div class="row">
+                        @foreach ($kelas as $key => $kls)
+                        <div class="col-md-4 mb-4">
+                            <a href="" class="linklistkelas">
+                                <div class="hero text-white hero-bg-image"
+                                    style="background-image: url('{{ $kls->banner != '' ? url('/banner/' . $kls->banner) : url('/img_videogaming.jpg') }}');padding:20px;">
+                                    <div class="hero-inner">
+                                        <h5 style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                            {{ ucwords($kls->nama_kelas) }}</h5>
+                                        @if ($kls->kategori_kelas == 'Kelas Ekskul')
+                                            <span class="badge badge-danger">{{ $kls->kategori_kelas }}</span>
+                                        @elseif ($kls->kategori_kelas == 'Kelas Lomba')
+                                            <span class="badge badge-primary">{{ $kls->kategori_kelas }}</span>
+                                        @elseif ($kls->kategori_kelas == 'Kelas Project')
+                                            <span class="badge badge-warning text-dark">{{ $kls->kategori_kelas }}</span>
+                                        @elseif ($kls->kategori_kelas == 'Kelas Reguler')
+                                            <span class="badge badge-info">{{ $kls->kategori_kelas }}</span>
+
+                                        @endif
+                                        <p class="lead">{{ $kls->program_belajar->nama_program }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    {{-- <div class="author-box-details">
+                        <div class="author-box-name">
+                            @if($dataLogin->role == 'Pengajar')
+                            <a href="">
+                                <span>{{ $dataLogin->nama }}</span>
+
+                                <div class="badge badge-pill badge-success">PENGAJAR</div>
+                            </a>
+                        </div>
+                        <div class="author-box-job mt-3"><i class="fas fa-map-marker">{{ $dataLogin->alamat }}</i>
+                        </div>
+                        <div class="author-box-job mt-3"><i class="fas fa-phone"></i>{{ $dataLogin->no_telp }}</div>
+                        <div class="author-box-job mt-3 mb-3"><i class="fas fa-address-card"></i>
+                        </div>
+                        @endif
+                        <h4 class="mb-3">LEVEL : </h4>
+                        <div class="mb-4">
+                            <div class="text-small float-right font-weight-bold text-muted"></div>
+                            <div class="font-weight-bold mb-1">EXP</div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" data-width="" aria-valuenow=""
+                                    aria-valuemin="0" aria-valuemax="" style="width: %;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
+                            <div class="font-weight-bold mb-1">MEKANIK</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success text-dark" role="progressbar" data-width=""
+                                    aria-valuenow="" aria-valuemin="0" aria-valuemax="" style="width: %;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
+                            <div class="font-weight-bold mb-1">ELEKTRONIK</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning text-dark" role="progressbar" data-width="%"
+                                    aria-valuenow="" aria-valuemin="0" aria-valuemax="" style="width: %;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
+                            <div class="font-weight-bold mb-1">PEMROGRAMAN</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-danger text-dark" role="progressbar" data-width="%"
+                                    aria-valuenow="" aria-valuemin="0" aria-valuemax="" style="width: %;">
+                                </div>
+                            </div>
+                        </div>
+                    </div> --}}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@endsection
