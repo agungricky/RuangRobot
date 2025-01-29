@@ -28,6 +28,7 @@ class kelasController extends Controller
     {
         $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
             ->select('kelas.*', 'kategori_kelas.kategori_kelas')
+            ->orderByDesc('created_at') 
             ->get();
         $kategori = Kategori::all();
         $programbelajar = programbelajar::all();
@@ -234,6 +235,14 @@ class kelasController extends Controller
         ]);
 
         return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
+    }
+
+    public function kelasselesai($id){
+        kelas::where('id', $id)->update([
+            'status_kelas' => 'selesai'
+        ]);
+
+        return back()->with('success', 'Status kelas berhasil di perbarui');
     }
 
     /**
