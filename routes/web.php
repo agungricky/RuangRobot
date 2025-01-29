@@ -67,6 +67,9 @@ Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.ed
 Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
 Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
 Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
+Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
+
+
 
 // ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
