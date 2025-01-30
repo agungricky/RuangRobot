@@ -111,6 +111,12 @@ Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa
 // ========= Gaji ========= //
 Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
 Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
+Route::get('detail/gaji/{id}', [gajiController::class, 'show'])->name('gaji_detail');
+Route::patch('/gaji_utama/verifikasi/{id}', [gajiController::class, 'gaji_utama'])->name('gaji.verifikasi');
+Route::patch('/gaji_transport/verifikasi/{id}', [gajiController::class, 'gaji_transport'])->name('transport.verifikasi');
+Route::patch('/gaji_custom/verifikasi/{id}', [gajiController::class, 'gaji_custom'])->name('custom.verifikasi');
+Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->name('gaji.terbayar');
+
 
 
 // ========= Pembayaran ========= //

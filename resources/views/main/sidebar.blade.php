@@ -60,9 +60,27 @@
 
                 <!-- menu header -->
                 <li class="menu-header">Keuangan</li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('gaji') }} "><i class="fas fa-address-book"></i><span>Gaji</span></a>
+                </li> --}}
+                <li>
+                    <a href="#gaji-riwayat" class="nav-link" data-bs-toggle="collapse">
+                        <i class="fa-solid fa-money-bill-wave"></i> <span>Gaji & Riwayat</span>
+                    </a>
+                    <div class="collapse ps-4" id="gaji-riwayat">
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{{ route('gaji') }}" class="nav-link">
+                                    <i class="fa-solid fa-wallet"></i> Gaji</a>
+                            </li>
+                            <li>
+                                <a href="" class="nav-link">
+                                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Gaji</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+
                 <!-- menu header -->
                 <li class="menu-header">Pembayaran</li>
                 <li>

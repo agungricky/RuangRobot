@@ -18,16 +18,16 @@
                                     {{-- <x-button.button_add_modal message="Tambah Sekolah" id="#form_sekolah" /> --}}
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example" data-page-length="25">
                                         <thead>
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>
                                                 <th style="width: 20%;">Nama Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
+                                                {{-- <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
                                                 <th style="width: 15%;" class="text-center">Gaji Transporrt</th>
-                                                <th style="width: 15%;" class="text-center">Gaji Custom</th>
-                                                <th style="width: 15%;" class="text-center">Total Gaji</th>
-                                                <th style="width: 10%;">Aksi</th>
+                                                <th style="width: 15%;" class="text-center">Gaji Custom</th> --}}
+                                                <th style="width: 25%;" class="text-center">Total Belum Terbayar</th>
+                                                <th style="width: 60%;">Aksi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -47,7 +47,11 @@
                 ajax: {
                     type: "GET",
                     url: "{{ route('gaji.json') }}",
-                    dataSrc: 'data',
+                    dataSrc: function(response) {
+                        console.log("Data dari API:", response); // Cek apakah API merespon dengan benar
+                        console.log("Total Gaji:", response.total_gaji); // Cek isi total_gaji
+                        return response.total_gaji; // Pastikan hanya mengembalikan array data
+                    }
                 },
                 columns: [{
                         data: null,
@@ -57,74 +61,43 @@
                     },
                     {
                         data: 'nama',
-                        render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">${data}</>`;
+                        render: function(data) {
+                            return `<div class="text-start fw-bold text-tabel">${data}</div>`;
                         }
                     },
+                    // {
+                    //     data: 'gaji_mengajar',
+                    //     render: function(data) {
+                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
+                    //     }
+                    // },
+                    // {
+                    //     data: 'gaji_custom',
+                    //     render: function(data) {
+                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
+                    //     }
+                    // },
+                    // {
+                    //     data: 'gaji_transport',
+                    //     render: function(data) {
+                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
+                    //     }
+                    // },
                     {
-                        data: 'null',
-                        render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">Rp. 0</>`;
-                        }
-                    },
-                    {
-                        data: 'null',
-                        render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">Rp. 0</>`;
-                        }
-                    },
-                    {
-                        data: 'null',
-                        render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">Rp. 0</>`;
-                        }
-                    },
-                    {
-                        data: 'null',
-                        render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">Rp. 0</>`;
+                        data: 'total',
+                        render: function(data) {
+                            return `<div class="text-center fw-bold text-tabel text-success">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
                         }
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button class="btn btn-success btn-sm">Selengkapnya</button>
-                            </div>
-                        `;
+                            return `<div class="d-flex justify-content-start align-items-center"><a href="{{ url('detail/gaji/${row.id}') }}" class="btn btn-success btn-sm">Selengkapnya</a></div>`;
                         }
-
                     }
                 ]
             });
 
-            // Menambahkan Data
-            $('#submit_sekolah').on('click', function() {
-                let form = $('#sekolah_form'); // Tangkap form
-                let formData = form.serialize(); // Ambil data dari form
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('sekolah.store') }}", // Pastikan rutenya sesuai
-                    data: formData,
-                    success: function(response) {
-                        form.trigger('reset'); // Reset form setelah berhasil
-                        $('#form_sekolah').modal('hide'); // Tutup modal
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
-
-                        for (let key in errors) {
-                            if (errors.hasOwnProperty(key)) {
-                                let errorMessage = errors[key].join(', ');
-                                $('#error-' + key).text(errorMessage);
-                            }
-                        }
-                    }
-                });
-            });
         });
     </script>
 @endsection
