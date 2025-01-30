@@ -21,7 +21,7 @@
                                     <div class="badge badge-pill badge-success">PENGAJAR</div>
                                 </a>
                             </div>
-                            <div class="author-box-job mt-3"><i class="fas fa-map-marker">{{ $dataLogin->alamat }}</i>
+                            <div class="author-box-job mt-3"><i class="fas fa-map-marker"></i>{{ $dataLogin->alamat }}
                         </div>
                         <div class="author-box-job mt-3"><i class="fas fa-phone"></i>{{ $dataLogin->no_telp }}</div>
                         <div class="author-box-job mt-3 mb-3"><i class="fas fa-address-card"></i>

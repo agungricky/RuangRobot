@@ -32,4 +32,10 @@ class kelas extends Model
     {
         return $this->belongsTo(Kategori::class, 'kategori_kelas_id');
     }
+
+    public function pembelajaran()
+    {
+        return $this->hasMany(pembelajaran::class, 'kelas_id', 'id');
+    }
+    
 }
