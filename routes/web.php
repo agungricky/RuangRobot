@@ -74,8 +74,7 @@ Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->n
 
 // ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
-Route::get('/sertifikat/{id}', [kelasController::class, 'sertifikat'])->name('sertifikat');
-
+Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
 
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
