@@ -37,5 +37,7 @@ class kelas extends Model
     {
         return $this->hasMany(pembelajaran::class, 'kelas_id', 'id');
     }
-    
+
+    //Noted:
+    //menggunakan hasMany karena satu kelas bisa memiliki banyak pembelajaran (tabel pembelajaran adalah foreign tabel) 
 }

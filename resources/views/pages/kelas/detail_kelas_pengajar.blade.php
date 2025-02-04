@@ -85,77 +85,138 @@
             </div>
         </div>
         <h2 class="section-title">Aktifitas</h2>
-
-
         <div class="row">
             <div class="col-12">
                 <div class="activities">
                     @php
-                        $no = 1;
+                    $no = 1;
                     @endphp
-                    @foreach ($kelas ->pembelajaran as $pembelajaran)
-                        @php
-                            $daftar_hari = [
-                                'Sunday' => 'Minggu',
-                                'Monday' => 'Senin',
-                                'Tuesday' => 'Selasa',
-                                'Wednesday' => 'Rabu',
-                                'Thursday' => 'Kamis',
-                                'Friday' => 'Jumat',
-                                'Saturday' => 'Sabtu',
-                            ];
-                            $namahari = date('l', strtotime($pembelajaran->tanggal));
-                        @endphp
-    
-                        {{-- @if (Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pertemuan->tanggal)), $pertemuan->materi) == 'Silahkan Absen Sekarang') --}}
-    
-                        @if (Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pembelajaran->tanggal)), $pembelajaran->materi) == 'Sudah Absen' ||
-                                Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pembelajaran->tanggal)), $pembelajaran->materi) ==
-                                    'Sudah Absen hi')
-                            <div class="activity">
-                                <div class="activity-icon bg-success text-light shadow-primary">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="activity-detail w-100">
-                                    <div class="mb-2">
-                                        <span class="text-job text-success">{{ $daftar_hari[$namahari] }},
-                                            {{ date('d-m-Y', strtotime($$pembelajaran->tanggal)) }} /
-                                            {{ $pertemuan->jamm . ' - ' . $$pembelajaran->jams }}</span>
-                                        <span class="bullet"></span>
-                                        <button
-                                            style="border: 0px;border-radius: 5px;background: #6777ef;color: #fff;padding: 3px 10px;"
-                                            class="text-job"
-                                            onclick="detailkelas({{ $$pembelajaran->id }},'{{ $$pembelajaran->materi }}','{{ $daftar_hari[$namahari] }}, {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }}')">Detail</button>
-                                    </div>
-                                    <p class="mb-2" style="font-size: 15px;">
-                                        {{ $$pembelajaran->materi != '' ? $$pembelajaran->materi : '-' }}</p>
-                                    <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }}</span>
-                                </div>
+                    @foreach ($pembelajaran as $pertemuan)
+                    @php
+                    $daftar_hari = [
+                    'Sunday' => 'Minggu',
+                    'Monday' => 'Senin',
+                    'Tuesday' => 'Selasa',
+                    'Wednesday' => 'Rabu',
+                    'Thursday' => 'Kamis',
+                    'Friday' => 'Jumat',
+                    'Saturday' => 'Sabtu',
+                    ];
+                    $namahari = date('l', strtotime($pertemuan->tanggal));
+                    @endphp
+
+                    {{-- @if (Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pertemuan->tanggal)), $pertemuan->materi) ==
+                    'Sudah Absen' ||
+                    Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pertemuan->tanggal)), $pertemuan->materi) ==
+                    'Sudah Absen hi') --}}
+                    <div class="activity">
+                        <div class="activity-icon bg-success text-light shadow-primary">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-detail w-100">
+                            <div class="mb-2">
+                                <span class="text-job text-success">{{ $daftar_hari[$namahari] }},
+                                    {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }} /
+                                    {{ $pertemuan->kelas->durasi_belajar}}</span>
+                                <span class="bullet"></span>
+                                <button
+                                    style="border: 0px;border-radius: 5px;background: #6777ef;color: #fff;padding: 3px 10px;"
+                                    class="text-job" onclick="">Detail</button>
                             </div>
-                        @else
-                            <div class="activity">
-                                <div class="activity-icon bg-primary text-light shadow-primary">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
-                                <div class="activity-detail w-100">
-                                    <div class="mb-2">
-                                        <span class="text-job text-primary">{{ $daftar_hari[$namahari] }},
-                                            {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }} /
-                                            {{ $pertemuan->jamm . ' - ' . $pertemuan->jams }}</span>
-                                        <span class="bullet"></span>
-                                        <a class="text-job text-success" href="#">Hari Ini</a>
-                                    </div>
-                                    <button class="btn btn-block btn-primary btn-lg mb-2"
-                                        onclick="absen({{ $pertemuan->id }},'{{ $pertemuan->id_kelas }}')"><i
-                                            class="fas fa-clipboard-check"></i> Absen</button>
-                                    <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }}</span>
-                                </div>
+                            <p class="mb-2" style="font-size: 15px;">
+                                {{ $pertemuan->materi != '' ? $pertemuan->materi : '-' }}
+                            </p>
+                            {{--
+                            <hr> --}}
+                            <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }} </span>
+                        </div>
+                    </div>
+                    {{-- @else
+                    <div class="activity">
+                        <div class="activity-icon bg-primary text-light shadow-primary">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="activity-detail w-100">
+                            <div class="mb-2">
+                                <span class="text-job text-primary">{{ $daftar_hari[$namahari] }},
+                                    {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }} /
+                                    {{ $pertemuan->jamm . ' - ' . $pertemuan->jams }}</span>
+                                <span class="bullet"></span>
+                                <a class="text-job text-success" href="#">Hari Ini</a>
                             </div>
-                           
-                        @endif
+                            <button class="btn btn-block btn-primary btn-lg mb-2"
+                                onclick="absen({{ $pertemuan->id }},'{{ $pertemuan->id_kelas }}')"><i
+                                    class="fas fa-clipboard-check"></i> Absen</button>
+                            <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }}</span>
+                        </div>
+                    </div>
+                    @endif --}}
                     @endforeach
+
                 </div>
             </div>
+
+
+            <h2 class="section-title">Daftar Siswa</h2>
+            <div class="row">
+                @foreach ($siswa as $siswas)
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary"><a href="">{{ $siswas->nama_siswa }}</a>
+                            </h6>
+                            <hr>
+                            <p class="text-small"><i class="fa fa-school mr-2"></i> {{ $siswas->sekolah }}</p>
+                            <p class="text-small"><i class="fa fa-signal mr-2"></i> Presentase Kehadiran</p>
+                            <div class="budget-price">
+                                {{-- <div
+                                    class="budget-price-square bg-{{ str_replace('%', '', Ceksiswa::cek_percentage($siswas->id, $slot_kelas->first()->id_kelas, $slot_kelas->count())) <= 50 ? 'danger' : 'primary' }}"
+                                    data-width="{{ Ceksiswa::cek_percentage($siswas->id, $slot_kelas->first()->id_kelas, $slot_kelas->count()) }}"
+                                    style="width: {{ Ceksiswa::cek_percentage($siswas->id, $slot_kelas->first()->id_kelas, $slot_kelas->count()) }};">
+                                </div>
+                                <div class="budget-price-label">
+                                    {{ Ceksiswa::cek_percentage($siswas->id, $slot_kelas->first()->id_kelas,
+                                    $slot_kelas->count()) }}
+                                </div> --}}
+                            </div>
+                            <hr>
+                            {{-- @if (Ceksiswa::get_status($siswas->id, $id) == 'false') --}}
+                            <button data-id="" data-nama="{{ $siswas->nama_siswa }}" data-idgen=""
+                                onclick="selesaikankelas(this)" class="btn btn-block btn-success"><i
+                                    class="fas fa-check"></i> Selesaikan</button>
+                            {{-- <a href="#"
+                                onclick="selesaikankelas({{ $siswas->id }},{{ $siswas->nama_siswa }},{{ $id }})"
+                                class="btn btn-block btn-success selesait" data-id="{{ $siswas->id }}"
+                                data-nama="{{ $siswas->nama_siswa }}" data-kelas="{{ $id }}"><i
+                                    class="fas fa-check"></i> Selesaikan</a> --}}
+                            {{-- @else
+                            @if (Ceksiswa::cek_score($siswas->id, $id) == 'C')
+                            <p class="font-weight-bold text-danger"><i class="fas fa-times"></i> GAGAL</p>
+                            @else
+                            <p class="font-weight-bold text-primary"><i class="fas fa-check"></i> SKOR AKHIR :
+                                {{ Ceksiswa::cek_score($siswas->id, $id) }}</p>
+                            @endif
+                            <p class="text-small"><i class="fas fa-star mr-2"></i> {!! Ceksiswa::get_poin($siswas->id,
+                                $id) !!}</p>
+                            <p></p>
+                            @endif --}}
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+
+            <h2 class="section-title">Status Kelas</h2>
+            {{-- @if ($kelas->status == '0') --}}
+            <form id="submitselesaifix" method="post" action="">
+                @csrf
+                <input type="hidden" name="id_kelas" value="">
+                <button onclick="event.preventDefault();fixselesaikelas()" class="btn btn-primary"><i
+                        class="fas fa-check"></i> Selesaikan Kelas</button>
+            </form>
+            {{-- @else
+            <h2>Kelas Telah Selesai</h2>
+            @endif --}}
         </div>
-    </div>
         @endsection

@@ -21,5 +21,10 @@ class pembelajaran extends Model
         'updated_at',
     ];
 
-    
+    public function kelas()
+    {
+        return $this->belongsTo(kelas::class, 'kelas_id','id');
+    }
+
+    //noted : id adalah primary key dari tabel kelas sedangkan kelas_id adalaah fk dari tabel pembelajaran
 }
