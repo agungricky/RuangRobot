@@ -1,46 +1,28 @@
 @extends('main.layout')
 @section('content')
-    <style>
-        #example_wrapper {
-            margin-bottom: 30px;
-        }
-
-        .level {
-            display: inline-block;
-            color: white;
-            width: 60px;
-            padding: 3px;
-            border-radius: 10px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <x-title_halaman title="Pembayaran" />
+            <x-title_halaman title="Pembayaran Kelas" />
 
             <div class="section-body">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <x-button.button_add_modal message="Tambah Pembayaran" id="#form_kelas" />
-                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 10%;" class="text-center">Nama Kelas</th>
-                                                <th style="width: 10%;" class="text-center">Nama Siswa</th>
-                                                <th style="width: 20%;" class="text-center">Pembayaran</th>
-                                                <th style="width: 10%;" class="text-center">Status</th>
-                                                <th style="width: 15%;" class="text-center">Aksi</th>
+                                                <th style="width: 25%;" class="text-center">Nama Kelas</th>
+                                                <th style="width: 15%;" class="text-center">Jenis Kelas</th>
+                                                <th style="width: 15%;" class="text-center">Status Kelas</th>
+                                                <th style="width: 10%;" class="text-center">Dibuat Tanggal</th>
+                                                <th style="width: 20%;" class="text-center">Opsi</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -53,59 +35,13 @@
         </section>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="form_kelas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Pembayaran</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="POST">
-                        @csrf
-                        <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Nama Kelas</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="inputFieldsContainer">
-                            <div class="mb-3">
-                                <label for="nama_sekolah" class="form-label">Terbayar</label>
-                                <div class="field d-flex gap-1">
-                                    <input type="text" class="form-control border-2" id="nama_sekolah"
-                                        name="nama_sekolah" required>
-                                    <button type="button" class="btn btn-danger removefield">X</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-info" id="addfild">Tambah Form</button>
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success">Kirim</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('pembayaran.json') }}",
+                    url: "{{ route('kelas.json') }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -117,66 +53,47 @@
                     {
                         data: 'nama_kelas',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-tabel fw-bold text-start text-justify">${data}</div>`;
                         }
                     },
                     {
-                        data: 'nama_siswa',
+                        data: 'kategori_kelas',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
+                            return `<div class="text-center text-tabel fw-bold">${data}</div>`;
                         }
                     },
                     {
-                        data: 'terbayar',
+                        data: 'status_kelas',
                         render: function(data, type, row) {
-                            return `<div class="fw-bold">${data}</div>`;
-                        }
-                    },
-                    {
-                        data: 'status',
-                        render: function(data, type, row) {
-                            if (data == 'lunas') {
+                            if (data == 'aktif') {
+                                color = 'primary';
+                            } else if (data == 'selesai') {
                                 color = 'success';
-                            } else if (data == 'belum') {
-                                color = 'warning';
                             }
-                            return `<div class="fw-bold"><span class="level bg-${color}">${data}</span></div>`;
+                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }
                     },
-
+                    {
+                        data: 'created_at',
+                        render: function(data, type, row) {
+                            var date = new Date(data);
+                            var day = String(date.getDate()).padStart(2, '0');
+                            var month = String(date.getMonth() + 1).padStart(2, '0');
+                            var year = date.getFullYear();
+                            return `<div class="text-center text-tabel fw-bold">${day}-${month}-${year}</div>`;
+                        }
+                    },
                     {
                         data: null,
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                    <a href="" class="btn btn-info btn-sm">Selengkapnya</a>
-                                    <a href="" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                    </form>
+                                    <a href="{{ url('/pembayaran/detail/${row.id}') }}" class="btn btn-success btn-sm m-auto"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
                             </div>
                             `;
                         }
                     }
                 ]
-            });
-
-
-            // Menambahkan Field Form
-            $('#addfild').click(function(e) {
-                $('#inputFieldsContainer').append(`
-                    <div class="d-flex gap-1 mt-3 field">
-                        <input type="text" class="form-control border-2" name="nama_sekolah" required>
-                        <button type="button" class="btn btn-danger removefield">X</button>
-                    </div>
-                `);
-            });
-
-            // Menghapus Field Form dengan event delegation
-            $(document).on('click', '.removefield', function() {
-                $(this).closest('.field').remove();
             });
         });
     </script>

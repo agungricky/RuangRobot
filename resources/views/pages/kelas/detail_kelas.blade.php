@@ -17,12 +17,14 @@
                     <a href="{{ route('jurnal_kelas', ['id' => $data->id]) }}" class="btn btn-success mb-4 mr-3"><i
                             class="fas fa-file"></i>
                         Generate Report</a>
-                    <a href="{{ route('sertifikat', ['id'=> $data->id]) }}" class="btn btn-primary mb-4 mr-3"><i class="fas fa-print"></i>
+                    <a href="{{ route('sertifikat', ['id' => $data->id]) }}" class="btn btn-primary mb-4 mr-3"><i
+                            class="fas fa-print"></i>
                         Generate Sertifikat</a>
-                    <form action="{{ route('kelas.selesai', ['id'=>$data->id]) }}" method="POST">
+                    <form action="{{ route('kelas.selesai', ['id' => $data->id]) }}" method="POST">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas Selesai</button>
+                        <button type="submit" class="btn btn-info mb-4 mr-3"><i class="fas fa-check"></i> Tandai Kelas
+                            Selesai</button>
                     </form>
                 </div>
             </div>
@@ -59,7 +61,7 @@
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-users"></i> Jumlah Siswa</b>
-                                                <div class="profile-desc-item pull-right">31 Siswa</div>
+                                                <div class="profile-desc-item pull-right">{{ $jumlahSiswa }} Siswa</div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-user"></i> Penanggung Jawab Kelas </b>
@@ -691,72 +693,6 @@
                 });
             });
 
-            // Edit data Pertemuan 
-            $(document).ready(function() {
-                let selectedId = null;
-
-                // Ketika tombol Edit ditekan
-                $(document).on('click', '#editBtn', function() {
-                    selectedId = $(this).data('id'); // Ambil ID dari data-id
-                    console.log('ID yang dipilih:', selectedId);
-                });
-
-                // Ketika tombol Kirim ditekan
-                $('#Editsubmit').on('click', function() {
-                    const pertemuanKe = $('input[name="pertemuan"]').val();
-
-                    $.ajax({
-                        url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
-                            .replace('__selectedId__',
-                                selectedId), // Ubah URL dengan menggantikan selectedId
-                        type: 'POST',
-                        data: {
-                            _method: 'PATCH',
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            pertemuan: pertemuanKe,
-                        },
-                        success: function(response) {
-                            $('#editPertemuanModal').modal('hide'); // Menutup modal
-
-                            // Menampilkan notifikasi
-                            const notification = $('<div>')
-                                .text('Pertemuan berhasil diupdate!')
-                                .css({
-                                    position: 'fixed',
-                                    top: '20px',
-                                    right: '20px',
-                                    padding: '10px 40px',
-                                    background: '#4CAF50',
-                                    color: '#fff',
-                                    borderRadius: '5px',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    zIndex: 9999,
-
-                                })
-                                .appendTo('body');
-
-                            // Menghilangkan notifikasi setelah 3 detik dan reload halaman
-                            setTimeout(function() {
-                                notification.fadeOut(300, function() {
-                                    $(this).remove();
-                                    const form = $(
-                                        '#edit_pertemuan_form');
-                                    form.trigger('reset');
-                                    location.reload();
-                                });
-                            }, 2000);
-                        },
-                        error: function(xhr) {
-                            // alert(xhr.responseText);
-                            const errors = xhr.responseJSON.errors;
-                            if (errors.pertemuan) {
-                                $('#pertemuanError').text(errors.pertemuan[0]);
-                            }
-                        },
-                    });
-                });
-            });
-
             // Hapus Siswa di kelas
             $(document).on('click', '.btn-hapus', function() {
                 var murid_id = $(this).data('id');
@@ -781,6 +717,72 @@
                     error: function(xhr, status, error) {
                         alert(xhr.responseText);
                     }
+                });
+            });
+        });
+
+        // Edit data Pertemuan 
+        $(document).ready(function() {
+            let selectedId = null;
+
+            // Ketika tombol Edit ditekan
+            $(document).on('click', '#editBtn', function() {
+                selectedId = $(this).data('id'); // Ambil ID dari data-id
+                console.log('ID yang dipilih:', selectedId);
+            });
+
+            // Ketika tombol Kirim ditekan
+            $('#Editsubmit').on('click', function() {
+                const pertemuanKe = $('input[name="pertemuan"]').val();
+
+                $.ajax({
+                    url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
+                        .replace('__selectedId__',
+                            selectedId), // Ubah URL dengan menggantikan selectedId
+                    type: 'POST',
+                    data: {
+                        _method: 'PATCH',
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        pertemuan: pertemuanKe,
+                    },
+                    success: function(response) {
+                        $('#editPertemuanModal').modal('hide'); // Menutup modal
+
+                        // Menampilkan notifikasi
+                        const notification = $('<div>')
+                            .text('Pertemuan berhasil diupdate!')
+                            .css({
+                                position: 'fixed',
+                                top: '20px',
+                                right: '20px',
+                                padding: '10px 40px',
+                                background: '#4CAF50',
+                                color: '#fff',
+                                borderRadius: '5px',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                zIndex: 9999,
+
+                            })
+                            .appendTo('body');
+
+                        // Menghilangkan notifikasi setelah 3 detik dan reload halaman
+                        setTimeout(function() {
+                            notification.fadeOut(300, function() {
+                                $(this).remove();
+                                const form = $(
+                                    '#edit_pertemuan_form');
+                                form.trigger('reset');
+                                location.reload();
+                            });
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        // alert(xhr.responseText);
+                        const errors = xhr.responseJSON.errors;
+                        if (errors.pertemuan) {
+                            $('#pertemuanError').text(errors.pertemuan[0]);
+                        }
+                    },
                 });
             });
         });

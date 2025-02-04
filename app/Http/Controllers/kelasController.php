@@ -121,9 +121,21 @@ class kelasController extends Controller
             ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
             ->where('kelas.id', $id)->first();
 
+        // Menghitung Jumlah Siswa
+        $jm = kelas::where('kelas.id', $id)
+            ->join('murid_kelas', 'murid_kelas.kelas_id', 'kelas.id')
+            ->first();
+
+        if ($jm && $jm->murid) {
+            $muridArray = json_decode($jm->murid, true);
+            $jumlahSiswa = count($muridArray);
+        } else {
+            $jumlahSiswa = 0;
+        }
+
+
         // Jumlah Pembelajaran
         $jp = pembelajaran::where('id', $id)->count();
-
 
         // =============================================== // 
         // Jumlah Pembelajaran Total Absensi Siswa //
@@ -169,7 +181,7 @@ class kelasController extends Controller
             return $absen;
         }, $totalAbsensi);
 
-        return view('pages.kelas.detail_kelas', compact('data', 'jp', 'result'));
+        return view('pages.kelas.detail_kelas', compact('data', 'jp', 'result', 'jumlahSiswa'));
     }
 
     /**
@@ -285,9 +297,9 @@ class kelasController extends Controller
     public function generateAndDownloadZip($id)
     {
         $participants = muridKelas::where('murid_kelas.kelas_id', $id)
-        ->join('kelas', 'kelas.id', 'murid_kelas.kelas_id')
-        ->select('murid_kelas.*', 'kelas.nama_kelas')
-        ->first();
+            ->join('kelas', 'kelas.id', 'murid_kelas.kelas_id')
+            ->select('murid_kelas.*', 'kelas.nama_kelas')
+            ->first();
 
         if (!$participants) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
@@ -303,7 +315,7 @@ class kelasController extends Controller
             $tempDir = public_path('generated/temp_sertifikat/');
             File::makeDirectory($tempDir, 0777, true, true);
 
-            $nama_kelas = $participants->nama_kelas; 
+            $nama_kelas = $participants->nama_kelas;
             foreach ($muridData as $murid) {
                 if (!isset($murid['id'], $murid['nama'], $nama_kelas)) {
                     continue;
@@ -343,26 +355,26 @@ class kelasController extends Controller
         // Buat teks di atas sertifikat menggunakan GDText\Box
         $box = new Box($template);
         $box->setFontFace(public_path('assets/arial.ttf'));
-        $box->setFontColor(new Color(0, 0, 0)); 
-        $box->setFontSize(24); 
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
         $box->setBox(680, 240, 450, 120); // Area teks (x, y, width, height)
         $box->setTextAlign('center', 'top');
         $box->draw("No : " . $id . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
 
         // Teks Nama
-        $box = new Box($template); 
+        $box = new Box($template);
         $box->setFontFace(public_path('assets/arial.ttf'));
-        $box->setFontColor(new Color(0, 0, 0)); 
+        $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(55);
         $box->setBox(500, 330, 800, 160);
         $box->setTextAlign('center', 'center');
         $box->draw(ucwords($nama));
 
         // Teks Pelatihan
-        $box = new Box($template); 
-        $box->setFontFace(public_path('assets/arial.ttf')); 
-        $box->setFontColor(new Color(0, 0, 0)); 
-        $box->setFontSize(24); 
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
         $box->setBox(500, 490, 800, 200);
         $box->setTextAlign('center', 'top');
         $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($kelas) . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
