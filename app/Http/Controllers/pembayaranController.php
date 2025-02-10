@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 use App\Models\kelas;
+use App\Models\pembelajaran;
 use App\Models\pengguna;
+use App\Models\programbelajar;
 
 class pembayaranController extends Controller
 {
@@ -13,19 +16,16 @@ class pembayaranController extends Controller
      */
     public function index(Request $request)
     {
-        $data = kelas::join('murid_kelas', 'murid_kelas.kelas_id', '=', 'kelas.id')
-            ->join('pembayaran_kelas', 'pembayaran_kelas.kelas_id', '=', 'kelas.id')
-            ->select('kelas.nama_kelas', 'murid_kelas.nama_siswa', 'pembayaran_kelas.terbayar', 'pembayaran_kelas.status')
+        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.created_at', 'kategori_kelas.kategori_kelas')
+            ->orderByDesc('created_at')
             ->get();
-
-        // dd($data);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
             ]);
         }
-
-        return view('pages.pembayaran.pembayaran', compact('data'));
+        return view('pages.pembayaran.pembayaran');
     }
 
     /**
@@ -47,9 +47,47 @@ class pembayaranController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
-        //
+        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
+            ->where('kelas.id', $id)->first();
+
+        // Menghitung Jumlah Siswa
+        $jm = kelas::where('kelas.id', $id)
+            ->join('murid_kelas', 'murid_kelas.kelas_id', 'kelas.id')
+            ->first();
+
+        if ($jm && $jm->murid) {
+            $muridArray = json_decode($jm->murid, true);
+            $jumlahSiswa = count($muridArray);
+        } else {
+            $jumlahSiswa = 0;
+        }
+
+        // Rencana Pendapatan Kelas
+        $rencana_pendapatan = $jumlahSiswa * $data->harga;
+
+        $totalPembayaran = 0;
+        foreach ($muridArray as $key => $value) {
+            $totalPembayaran += $value['pembayaran'];
+        }
+
+        // Menghitung Sisa Pembayaran
+        $sisaPembayaran = [];
+        foreach ($muridArray as $key => $value) {
+            $sisaPembayaran[$key] = $value['tagihan'] - $value['pembayaran'];
+            $muridArray[$key]['sisa_pembayaran'] = $sisaPembayaran[$key];
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $muridArray,
+            ]);
+        }
+
+        return view('pages.pembayaran.detail_pembayaran', compact('data', 'jumlahSiswa', 'rencana_pendapatan', 'totalPembayaran'));
     }
 
     /**
@@ -57,7 +95,7 @@ class pembayaranController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        
     }
 
     /**
@@ -65,7 +103,12 @@ class pembayaranController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data_murid = kelas::where('id', $id)->first();
+        kelas::where('id', $id)->update([
+            'status_kelas' => 1
+        ]);
+        // $muridArray = json_decode($jm->murid, true);
+        
     }
 
     /**

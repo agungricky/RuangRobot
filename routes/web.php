@@ -74,8 +74,7 @@ Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->n
 
 // ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
-Route::get('/sertifikat/{id}', [kelasController::class, 'sertifikat'])->name('sertifikat');
-
+Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
 
 // ========= Pembelajaran ========= //
 Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
@@ -122,6 +121,9 @@ Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->n
 // ========= Pembayaran ========= //
 Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
 Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
+Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
+Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
+Route::patch('/pembayaran/murid/{id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
 
 
 //route edit

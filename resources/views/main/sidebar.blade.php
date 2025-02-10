@@ -13,7 +13,7 @@
                 <li class="menu-header">Dashboard</li>
                 <!-- menu item -->
                 <li>
-                    <a href="{{ route('dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                    <a href="{{ route('dashboard') }}"><i class="fa-solid fa-fire"></i><span>Dashboard</span></a>
                 </li>
 
                 <!-- menu header -->
@@ -84,9 +84,9 @@
                 <!-- menu header -->
                 <li class="menu-header">Pembayaran</li>
                 <li>
-                    <a href="{{ route('pembayaran') }}"><i class="fas fa-money-bill-alt"></i><span>Pembayaran</span>
-                        <div class="badge badge-pill badge-warning text-dark">
-                        </div>
+                    <a href="{{ route('pembayaran') }}"><i class="fa-solid fa-money-bill-alt"></i><span>Pembayaran</span>
+                        {{-- <div class="badge badge-pill badge-warning text-dark">
+                        </div> --}}
                     </a>
                 </li>
             @endif
