@@ -116,6 +116,9 @@ Route::patch('/gaji_transport/verifikasi/{id}', [gajiController::class, 'gaji_tr
 Route::patch('/gaji_custom/verifikasi/{id}', [gajiController::class, 'gaji_custom'])->name('custom.verifikasi');
 Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->name('gaji.terbayar');
 
+// ========= Histori Gaji ========= //
+Route::get('/histori/gaji', [gajiController::class, 'historigaji'])->name('histori_gaji');
+Route::get('/detail/histori/{pengajar_id}/{tanggal_id}', [gajiController::class, 'detailhistori'])->name('detail_histori');
 
 
 // ========= Pembayaran ========= //
@@ -123,7 +126,8 @@ Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembaya
 Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
 Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
 Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
-Route::patch('/pembayaran/murid/{id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
+Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
+
 
 
 //route edit

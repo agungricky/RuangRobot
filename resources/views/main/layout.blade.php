@@ -87,8 +87,8 @@
     {{-- jquery ui untuk auto complate --}}
     <script src="{{ asset('assets/js/jquery-ui.min.js') }}"></script>
 
-    <!-- Page Specific JS File -->
-    {{-- @stack('script-js') --}}
+    {{-- Sweet Alert --}}
+    <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
 </body>
 
 </html>

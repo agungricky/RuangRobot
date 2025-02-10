@@ -3,8 +3,6 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
-    <!-- Custom Alert Notifikasi -->
-    <x-sweetalert.success_custom text1="Berhasil!" text2="Pertemuan berhasil diupdate!" />
 
     <!-- Main Content -->
     <div class="main-content">
@@ -78,7 +76,7 @@
                     </div>
                 </div>
 
-                {{-- Tambah Siswa Kelas --}}
+                {{-- Data Siswa --}}
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -124,8 +122,10 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="Editsubmit" class="btn btn-success">Kirim</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i>
+                        Batal</button>
+                    <button type="button" id="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i>
+                        Kirim</button>
                 </div>
             </div>
         </div>
@@ -200,80 +200,84 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return '<button class="btn btn-success btn-sm" ' +
+                            if (row.sisa_pembayaran <= 0) {
+                                return '<button class="btn btn-success btn-sm readonly"><i class="fa-solid fa-check"></i> Lunas </button>';
+                            } else {
+                                return '<button class="btn btn-warning btn-sm" ' +
                                     'data-id="' + row.id + '" ' +
                                     'data-kelas-id="' + <?= $data->id ?> + '" ' +
                                     'data-bs-toggle="modal" data-bs-target="#tambahpembayaran">' +
                                     '<i class="fa fa-plus"></i> Bayar</button>';
+                            }
                         }
                     }
                 ]
             });
-        });
 
-        // Edit data Pertemuan 
-        $(document).ready(function() {
-            let selectedId = null;
-
-            $(document).on('click', '#tambahpembayaran', function() {
-                selectedId = $(this).data('id');
-                console.log('ID yang dipilih:', selectedId);
+            // Variabel global untuk menyimpan ID kita button tambah di klik
+            let selectedKelasId;
+            let selectedSiswaId;
+            $(document).on('click', '.btn-warning', function() {
+                selectedSiswaId = $(this).data('id');
+                selectedKelasId = $(this).data('kelas-id');
             });
 
-            // Ketika tombol Kirim ditekan
-            $('#Editsubmit').on('click', function() {
-                const pertemuanKe = $('input[name="pertemuan"]').val();
+            // Tambah Pembayaran
+            $(document).on("click", "#submit", function(e) {
+                e.preventDefault();
 
-                $.ajax({
-                    url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
-                        .replace('__selectedId__',
-                            selectedId), // Ubah URL dengan menggantikan selectedId
-                    type: 'POST',
-                    data: {
-                        _method: 'PATCH',
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        pertemuan: pertemuanKe,
-                    },
-                    success: function(response) {
-                        $('#editPertemuanModal').modal('hide'); // Menutup modal
+                if (!selectedKelasId || !selectedSiswaId) {
+                    alert("Error: Kelas ID atau Siswa ID tidak ditemukan!");
+                    return;
+                }
 
-                        // Menampilkan notifikasi
-                        const notification = $('<div>')
-                            .text('Pertemuan berhasil diupdate!')
-                            .css({
-                                position: 'fixed',
-                                top: '20px',
-                                right: '20px',
-                                padding: '10px 40px',
-                                background: '#4CAF50',
-                                color: '#fff',
-                                borderRadius: '5px',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                zIndex: 9999,
+                $("#submit").on("click", function() {
+                    let $btn = $(this); // Simpan referensi tombol
+                    let originalHtml = $btn.html(); // Simpan teks asli tombol
 
-                            })
-                            .appendTo('body');
+                    // Ubah tombol menjadi loading
+                    $btn.prop("disabled", true).html(
+                        '<i class="fa fa-spinner fa-spin"></i> Mengirim...');
 
-                        // Menghilangkan notifikasi setelah 3 detik dan reload halaman
-                        setTimeout(function() {
-                            notification.fadeOut(300, function() {
-                                $(this).remove();
-                                const form = $(
-                                    '#edit_pertemuan_form');
-                                form.trigger('reset');
-                                location.reload();
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('pembayaran.murid', ['kelas_id' => '__KELAS_ID__', 'siswa_id' => '__SISWA_ID__']) }}"
+                            .replace('__KELAS_ID__', selectedKelasId)
+                            .replace('__SISWA_ID__', selectedSiswaId),
+                        data: $("#edit_pertemuan_form").serialize() + "&_method=PATCH",
+                        dataType: "json",
+                        success: function(response) {
+                            $('#tambahpembayaran').modal('hide');
+                            $('#edit_pertemuan_form').trigger('reset');
+                            $('#data_siswa').DataTable().ajax.reload();
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Pembayaran berhasil diperbarui!',
+                                showConfirmButton: false,
+                                timer: 2000
                             });
-                        }, 2000);
-                    },
-                    error: function(xhr) {
-                        // alert(xhr.responseText);
-                        const errors = xhr.responseJSON.errors;
-                        if (errors.pertemuan) {
-                            $('#pertemuanError').text(errors.pertemuan[0]);
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan: ' + xhr.responseText,
+                                confirmButtonText: 'OK'
+                            });
+                        },
+                        complete: function() {
+                            // Kembalikan tombol ke kondisi awal
+                            $btn.prop("disabled", false).html(originalHtml);
                         }
-                    },
+                    });
                 });
+
+
             });
+
+
         });
     </script>
 @endsection

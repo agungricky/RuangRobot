@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use App\Models\kelas;
+use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use Illuminate\Support\Facades\Http;
+use PhpParser\Node\Stmt\If_;
 
 class pembayaranController extends Controller
 {
@@ -25,6 +28,7 @@ class pembayaranController extends Controller
                 'data' => $data
             ]);
         }
+
         return view('pages.pembayaran.pembayaran');
     }
 
@@ -93,23 +97,103 @@ class pembayaranController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $kelas_id, $siswa_id)
     {
-        $data_murid = kelas::where('id', $id)->first();
-        kelas::where('id', $id)->update([
-            'status_kelas' => 1
+        $kelas = muridKelas::where('kelas_id', $kelas_id)->first();
+
+        if (!$kelas) {
+            return response()->json(['error' => 'Kelas tidak ditemukan'], 404);
+        }
+
+        $murid_decode = json_decode($kelas->murid, true);
+
+        foreach ($murid_decode as &$murid) {
+            if ($murid['id'] == $siswa_id) {
+                $murid['pembayaran'] += $request->tambah_pembayaran;
+                break;
+            }
+        }
+
+        $kelas->update([
+            'murid' => json_encode($murid_decode),
         ]);
-        // $muridArray = json_decode($jm->murid, true);
-        
+
+        // =============================================//
+        // ========== Iformasi Kepada Orangtua =========//
+        // =============================================//
+
+        $data = pengguna::where('id', $siswa_id)->first();
+        $kelas = kelas::where('id', $kelas_id)->first();
+        $muridkelas = muridKelas::where('kelas_id', $kelas_id)->first();
+        $murid = json_decode($muridkelas->murid, true);
+        $datasiswa = null;
+        foreach ($murid as $key => $value) {
+            if ($value['id'] == $data['id']) {
+                $datasiswa = $value;
+                break;
+            }
+        }
+        $kekurangan = $datasiswa['tagihan'] - $datasiswa['pembayaran'];
+
+        if ($kekurangan == 0) {
+            $tangal_lunas = now()->format('d-m-Y');
+            $jatuh_tempo = "Status Pembayaran : *LUNAS* / $tangal_lunas";
+        }else{
+            $jatuh_tempo = "Jatuh Tempo : ". $datasiswa['jatuh_tempo'];
+            $alert = "Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
+Bank: BCA (Bank Central Asia)
+Nomor Rekening: 9203123456
+Atas Nama: Julian Sahertian";
+        }
+
+        $response = Http::withHeaders([
+            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+        ])->post('https://api.fonnte.com/send', [
+            'target' => $data->no_telp,
+            'message' => "
+*💡 #INFORMASI PEMBAYARAN DITERIMA 📚*
+
+Halo 👋 $data->nama,
+Sehubungan dengan pembelajaran dalam Kelas $kelas->nama_kelas, kami ingin menginformasikan mengenai pembayaran masuk. 
+Berikut kami sampaikan rinciannya :
+
+Pembelajaran : *$kelas->nama_kelas*
+Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
+Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
+$jatuh_tempo
+
+". ($alert?? '') . "
+
+Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+📞 https://wa.me/+6285655770506
+
+                            
+Kami siap membantu Anda! 😊
+Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+                            
+Salam hangat,
+*Ruang Robot*,
+Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
+            'countryCode' => '62',
+            'filename' => 'Tagihanku',
+            'schedule' => 0,
+            'typing' => false,
+            'delay' => '0',
+            'followup' => 0,
+        ]);
+
+        // Simpan response untuk debug jika diperlukan
+        $responses[] = $response->body();
+
+        return response()->json(['success' => 'Pembayaran berhasil diperbarui']);
     }
+
 
     /**
      * Remove the specified resource from storage.

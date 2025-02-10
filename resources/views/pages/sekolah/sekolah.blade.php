@@ -137,20 +137,20 @@
 
             // Menambahkan Data
             $('#submit_sekolah').on('click', function() {
-                let form = $('#sekolah_form'); // Tangkap form
-                let formData = form.serialize(); // Ambil data dari form
+                let form = $('#sekolah_form');
+                let formData = form.serialize();
 
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('sekolah.store') }}", // Pastikan rutenya sesuai
+                    url: "{{ route('sekolah.store') }}",
                     data: formData,
                     success: function(response) {
-                        form.trigger('reset'); // Reset form setelah berhasil
-                        $('#form_sekolah').modal('hide'); // Tutup modal
+                        form.trigger('reset');
+                        $('#form_sekolah').modal('hide');
                         location.reload();
                     },
                     error: function(xhr) {
-                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                        let errors = xhr.responseJSON.errors;
 
                         for (let key in errors) {
                             if (errors.hasOwnProperty(key)) {
