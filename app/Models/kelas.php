@@ -35,7 +35,7 @@ class kelas extends Model
 
     public function pembelajaran()
     {
-        return $this->hasMany(pembelajaran::class, 'kelas_id', 'id');
+        return $this->hasMany(Pembelajaran::class, 'kelas_id', 'id');
     }
 
     //Noted:

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\pengguna;
 use Illuminate\Http\Request;
 
 class dashboardUserController extends Controller
@@ -11,7 +12,17 @@ class dashboardUserController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard.dashboard_pengajar');
+        $kelas = pengguna::all();
+        // dd($kelas);
+        $mekanik = $elektronik = $pemrograman = 0;
+        foreach ($kelas as $poin) {
+            $mekanik      += $poin->mekanik;
+            $pemrograman  += $poin->pemrograman;
+            $elektronik  += $poin->elektronik;
+        }
+        $max = max($mekanik, $elektronik, $pemrograman);
+
+        return view('pages.dashboard.dashboard_pengajar', compact('mekanik', 'elektronik', 'pemrograman', 'max', 'kelas'));
     }
 
     /**

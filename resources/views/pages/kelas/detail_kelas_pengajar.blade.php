@@ -104,11 +104,8 @@
                     ];
                     $namahari = date('l', strtotime($pertemuan->tanggal));
                     @endphp
-
-                    {{-- @if (Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pertemuan->tanggal)), $pertemuan->materi) ==
-                    'Sudah Absen' ||
-                    Ceksiswa::isdate_terlewat(date('d-m-Y', strtotime($pertemuan->tanggal)), $pertemuan->materi) ==
-                    'Sudah Absen hi') --}}
+{{-- {{ dd($pertemuan)}} --}}
+                @if ($pertemuan->status_absen == 'Sudah Absen' || $pertemuan->status_absen == 'Sudah Absen hi')
                     <div class="activity">
                         <div class="activity-icon bg-success text-light shadow-primary">
                             <i class="fas fa-check"></i>
@@ -121,17 +118,15 @@
                                 <span class="bullet"></span>
                                 <button
                                     style="border: 0px;border-radius: 5px;background: #6777ef;color: #fff;padding: 3px 10px;"
-                                    class="text-job" onclick="">Detail</button>
+                                    class="text-job" onclick="detailkelas({{ $pertemuan->id }}">Detail</button>
                             </div>
                             <p class="mb-2" style="font-size: 15px;">
                                 {{ $pertemuan->materi != '' ? $pertemuan->materi : '-' }}
                             </p>
-                            {{--
-                            <hr> --}}
                             <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }} </span>
                         </div>
                     </div>
-                    {{-- @else
+                @else
                     <div class="activity">
                         <div class="activity-icon bg-primary text-light shadow-primary">
                             <i class="fas fa-calendar-alt"></i>
@@ -140,21 +135,19 @@
                             <div class="mb-2">
                                 <span class="text-job text-primary">{{ $daftar_hari[$namahari] }},
                                     {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }} /
-                                    {{ $pertemuan->jamm . ' - ' . $pertemuan->jams }}</span>
+                                    {{ $pertemuan->kelas->durasi_belajar}}</span>
                                 <span class="bullet"></span>
                                 <a class="text-job text-success" href="#">Hari Ini</a>
                             </div>
                             <button class="btn btn-block btn-primary btn-lg mb-2"
-                                onclick="absen({{ $pertemuan->id }},'{{ $pertemuan->id_kelas }}')"><i
+                                onclick="absen()"><i
                                     class="fas fa-clipboard-check"></i> Absen</button>
-                            <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }}</span>
                         </div>
                     </div>
-                    @endif --}}
-                    @endforeach
-
-                </div>
+                @endif
+              @endforeach
             </div>
+        </div>
 
 
             <h2 class="section-title">Daftar Siswa</h2>
@@ -220,3 +213,217 @@
             @endif --}}
         </div>
         @endsection
+
+@section('modal')
+    <div class="modal fade" id="ajaxModall" tabindex="-1" role="dialog" aria-labelledby="ajaxModallLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ajaxModallLabel">Absen Kelas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post">
+                        @csrf
+                        <h6>Siswa Yang Hadir :</h6>
+                        {{-- @foreach ($siswa as $siswas)
+                            <label class="labela">
+                                <input type="checkbox"
+                                    {{ in_array($siswas->id, $id_siswa_yang_absen_sementara) ? 'checked="true"' : '' }}
+                                    name="id[]" class="card-input-element d-none"
+                                    value="{{ $siswas->id . ',' . $siswas->nama_siswa . ',' . $siswas->sekolah }}">
+                                <div class="card mb-2" style="box-shadow:none !important;">
+                                    <div class="card-body" style="background: #f8f8f8;padding:15px;">
+                                        <span class="font-weight-bold"><i class="fas fa-check-circle mr-3"></i>
+                                            {{ $siswas->nama_siswa }}</span>
+                                    </div>
+                                </div>
+                            </label>
+                        @endforeach --}}
+                        <input type="hidden" name="id_kelas" value="">
+                        <input type="hidden" id="uuid" name="uuid" placeholder="uuid" class="form-control">
+                        <input type="hidden" id="idsesi" name="idsesi" placeholder="idsesi" class="form-control">
+                        <h6>Materi :</h6>
+                        <input type="text" id="materi" name="materi" placeholder="Materi"
+                            class="form-control mb-4" value="">
+                        <button type="submit" name="opsi_simpan" value="simpan_sementara" class="btn btn-primary"><i
+                                class="fas fa-clipboard-check"></i> Simpan Sementara</button>
+                        <button type="submit" name="opsi_simpan" value="submit_final" class="btn btn-success"><i
+                                class="fas fa-clipboard-check"></i> Final Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="detailmodal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Kelas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <b><i class="fas fa-user"></i> Pengajar </b>
+                            <div class="profile-desc-item pull-right">
+                                {{-- {{ $kelas->pengajar->nama_pengajar }} --}}
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <b><i class="fas fa-clock"></i> Waktu Pertemuan </b>
+                            <div class="profile-desc-item pull-right">
+                                <span id="gettanggalnya"></span>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <b><i class="fas fa-book"></i> Materi </b>
+                            <div class="profile-desc-item pull-right">
+                                <b class="isimateri"></b>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6 class="mt-3 mb-3">Siswa Yang Hadir :</h6>
+                    <div class="inimasuksiswahadir"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('styles')
+    <style>
+        .labela {
+            width: 100%;
+        }
+
+        .card-input-element+.card {
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border-left: 4px solid #f8f8f8;
+            /* border-radius: 4px; */
+        }
+
+        .card-input-element+.card:hover {
+            cursor: pointer;
+        }
+
+        .card-input-element:checked+.card {
+            border-left: 4px solid #28a745 !important;
+            -webkit-transition: border .3s;
+            -o-transition: border .3s;
+            transition: border .3s;
+        }
+
+        .card-input-element+.card i {
+            color: #f8f8f8;
+        }
+
+        .card-input-element:checked+.card i {
+            color: #28a745 !important;
+        }
+
+        @-webkit-keyframes fadeInCheckbox {
+            from {
+                opacity: 0;
+                -webkit-transform: rotateZ(-20deg);
+            }
+
+            to {
+                opacity: 1;
+                -webkit-transform: rotateZ(0deg);
+            }
+        }
+
+        @keyframes fadeInCheckbox {
+            from {
+                opacity: 0;
+                transform: rotateZ(-20deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: rotateZ(0deg);
+            }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        $(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        });
+
+        function fixselesaikelas(asd) {
+            swal.fire({
+                title: 'Apakah Anda Yakin?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: "Ya",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.value) {
+                    // var form = asd.parents('form');
+                    $('#submitselesaifix').submit();
+                }
+            });
+        }
+
+        function selesaikankelas(component) {
+            // id, nama, id_kelas
+            Swal.fire({
+                title: 'Selesaikan ' + component.dataset.nama + '?',
+                text: "Dengan Klik YA Siswa Dianggap Menyelesaikan Kelas",
+                icon: 'warning',
+                html: '<div class="form-group row d-flex justify-content-center align-items-center"><h4 class="col-md-12">Nilai :</h4><div class="col-md-2"><div class="form-check"><label class="form-check-label"><input type="radio" class="form-check-input" name="poinsiswa" id="radionilai1" value="A" checked=""> A <i class="input-helper"></i></label></div></div><div class="col-md-2"><div class="form-check"><label class="form-check-label"><input type="radio" class="form-check-input" name="poinsiswa" id="radionilai2" value="B"> B <i class="input-helper"></i></label></div></div><div class="col-md-2"><div class="form-check"><label class="form-check-label"><input type="radio" class="form-check-input" name="poinsiswa" id="radionilai2" value="C"> GAGAL <i class="input-helper"></i></label></div></div></div>',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Selesai!',
+                cancelButtonText: "Batal!",
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "",
+                        data: {
+                            id_siswa: component.dataset.id,
+                            id_kelas: component.dataset.idgen,
+                            nilai: $('input[name=poinsiswa]:checked').val(),
+                        },
+                        success: function(data) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Data telah diupdate',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            window.location.reload();
+                        },
+                        error: function(data) {
+                            console.log('Error: ', data);
+                        }
+                    })
+                }
+            })
+        }
+
+        
+
+        function absen(id, idkelas) {
+            $('#ajaxModall').modal('show');
+            $('#uuid').val(idkelas);
+            $('#idsesi').val(idsesi);
+        }
+    </script>
+@endpush

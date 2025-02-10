@@ -109,7 +109,7 @@
                 </li>
                 <li class="menu-header">Gaji</li>
                 <li>
-                    <a href="{{ url('/') }}"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></a>
+                    <a href="{{ url('/gaji_saya') }}"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></a>
                 </li>
             @endif
 
