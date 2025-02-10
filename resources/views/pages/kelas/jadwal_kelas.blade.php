@@ -7,7 +7,7 @@
 
         <div class="col-md-12">
             <ul class="cbp_tmtimeline">
-                @foreach ($perhari as $key => $item)
+                @foreach ($jadwal as $key => $item)
                     @php
                         $daftar_hari = [
                             'Sunday' => 'Minggu',

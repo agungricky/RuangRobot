@@ -127,3 +127,7 @@ Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('
 Route::get('/kelas_saya', [kelaspengajarController::class, 'index'])->name('kelas_saya');
 Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
 Route::get('/jadwal_kelas', [kelaspengajarController::class, 'jadwal'])->name('jadwal_kelas');
+Route::get('/gaji_saya', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya');
+Route::get('/gaji_saya/json', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya.json');
+
+

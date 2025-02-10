@@ -4,7 +4,6 @@
 <div class="main-content">
     <section class="section">
         <x-title_halaman title="Daftar Kelas Saya" />
-
         <div class="section-body">
             <div class="card author-box card-primary">
                 <div class="card-body">
