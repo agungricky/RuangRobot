@@ -9,6 +9,7 @@ use App\Models\gajiUtama;
 use App\Models\historigaji;
 use App\Models\pengguna;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class gajiController extends Controller
 {
@@ -43,10 +44,6 @@ class gajiController extends Controller
                 'total' => $gaji + $gaji_transport + $gaji_custom
             ];
         }
-
-        // Menampilkan hasil
-        // return response()->json($gaji_pengajar);
-        // dd($pengajar);
 
         if ($request->ajax()) {
             return response()->json([
@@ -244,5 +241,107 @@ class gajiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function historigaji(Request $request)
+    {
+        $data = historigaji::join('gajis', 'gajis.history_gaji_id', 'history_gaji.id')
+            ->join('profile', 'profile.id', 'gajis.pengajar')
+            ->select('profile.nama', 'history_gaji.tanggal_terbayar', 'gajis.pengajar', 'history_gaji.id')
+            ->distinct()
+            ->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data
+            ]);
+        }
+
+        return view('pages.gaji.histori_gaji');
+    }
+
+    public function detailhistori(String $pengajar_id, $tanggal_id)
+    {
+        $gaji = gajiUtama::join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
+            ->join('profile', 'profile.id', 'gajis.pengajar')
+            ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->where('gajis.pengajar', $pengajar_id)
+            ->where('gajis.history_gaji_id', $tanggal_id)
+            ->select('gajis.pengajar', 'gajis.nominal', 'pembelajaran.pertemuan', 'gajis.status_pengajar', 'history_gaji.tanggal_terbayar', 'profile.nama', 'kelas.nama_kelas')
+            ->get();
+
+        $transport = gajiTransport::join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
+            ->join('profile', 'profile.id', 'transport.pengajar')
+            ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->where('transport.pengajar', $pengajar_id)
+            ->where('transport.history_gaji_id', $tanggal_id)
+            ->select('transport.pengajar', 'transport.nominal', 'pembelajaran.pertemuan', 'transport.status_pengajar', 'history_gaji.tanggal_terbayar', 'profile.nama', 'kelas.nama_kelas')
+            ->get();
+
+        $custom = gajiCustom::join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
+            ->join('profile', 'profile.id', 'gaji_custom.pengajar')
+            ->select('history_gaji.tanggal_terbayar', 'gaji_custom.keterangan', 'gaji_custom.nominal', 'gaji_custom.tanggal', 'profile.nama')
+            ->get();
+
+        // ================================================== //
+        // ================== Gaji Diterima ================= //
+        // ================================================== //
+        $total_gaji = gajiUtama::where('pengajar', $pengajar_id)
+            ->where('gajis.history_gaji_id', $tanggal_id)
+            ->where('gajis.status', 'dibayar')
+            ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
+            ->sum('nominal');
+
+        $total_gajitransport = gajiTransport::where('pengajar',  $pengajar_id)
+            ->where('transport.history_gaji_id', $tanggal_id)
+            ->where('transport.status', 'dibayar')
+            ->join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
+            ->sum('nominal');
+
+        $total_gajicustom = gajiCustom::where('pengajar', $pengajar_id)
+            ->where('gaji_custom.history_gaji_id', $tanggal_id)
+            ->where('gaji_custom.status', 'dibayar')
+            ->join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
+            ->sum('nominal');
+
+        $gaji_pengajar = [
+            'gaji_mengajar' => $total_gaji,
+            'gaji_transport' => $total_gajitransport,
+            'gaji_custom' => $total_gajicustom,
+            'total' => $total_gaji + $total_gajitransport + $total_gajicustom
+        ];
+
+        // ================================================== //
+        // ================== Gaji Diterima ================= //
+        // ================================================== //
+        $total_gaji_ditolak = gajiUtama::where('pengajar', $pengajar_id)
+            ->where('gajis.history_gaji_id', $tanggal_id)
+            ->where('gajis.status', 'ditolak')
+            ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
+            ->sum('nominal');
+
+        $total_gajitransport_ditolak = gajiTransport::where('pengajar',  $pengajar_id)
+            ->where('transport.history_gaji_id', $tanggal_id)
+            ->where('transport.status', 'ditolak')
+            ->join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
+            ->sum('nominal');
+
+        $total_gajicustom_ditolak = gajiCustom::where('pengajar', $pengajar_id)
+            ->where('gaji_custom.history_gaji_id', $tanggal_id)
+            ->where('gaji_custom.status', 'ditolak')
+            ->join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
+            ->sum('nominal');
+
+        $gaji_ditolak = [
+            'gaji_mengajar_ditolak' => $total_gaji_ditolak,
+            'gaji_transport_ditolak' => $total_gajitransport_ditolak,
+            'gaji_custom_ditolak' => $total_gajicustom_ditolak,
+            'total' => $total_gaji_ditolak + $total_gajitransport_ditolak + $total_gajicustom_ditolak
+        ];
+
+        // dd($total_gajicustom);
+        return view('pages.gaji.detail_histori', compact('gaji', 'transport', 'custom', 'gaji_pengajar', 'gaji_ditolak'));
     }
 }

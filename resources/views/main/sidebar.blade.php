@@ -60,9 +60,6 @@
 
                 <!-- menu header -->
                 <li class="menu-header">Keuangan</li>
-                {{-- <li>
-                    <a href="{{ route('gaji') }} "><i class="fas fa-address-book"></i><span>Gaji</span></a>
-                </li> --}}
                 <li>
                     <a href="#gaji-riwayat" class="nav-link" data-bs-toggle="collapse">
                         <i class="fa-solid fa-money-bill-wave"></i> <span>Gaji & Riwayat</span>
@@ -74,7 +71,7 @@
                                     <i class="fa-solid fa-wallet"></i> Gaji</a>
                             </li>
                             <li>
-                                <a href="" class="nav-link">
+                                <a href="{{ route('histori_gaji') }}" class="nav-link">
                                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Gaji</a>
                             </li>
                         </ul>
