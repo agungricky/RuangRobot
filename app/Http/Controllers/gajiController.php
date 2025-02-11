@@ -314,23 +314,26 @@ class gajiController extends Controller
         ];
 
         // ================================================== //
-        // ================== Gaji Diterima ================= //
+        // ================== Gaji Ditolak ================= //
         // ================================================== //
         $total_gaji_ditolak = gajiUtama::where('pengajar', $pengajar_id)
             ->where('gajis.history_gaji_id', $tanggal_id)
             ->where('gajis.status', 'ditolak')
+            ->orWhere('gajis.status', 'pending')
             ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
             ->sum('nominal');
 
         $total_gajitransport_ditolak = gajiTransport::where('pengajar',  $pengajar_id)
             ->where('transport.history_gaji_id', $tanggal_id)
             ->where('transport.status', 'ditolak')
+            ->orWhere('transport.status', 'pending')
             ->join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
             ->sum('nominal');
 
         $total_gajicustom_ditolak = gajiCustom::where('pengajar', $pengajar_id)
             ->where('gaji_custom.history_gaji_id', $tanggal_id)
             ->where('gaji_custom.status', 'ditolak')
+            ->orWhere('gaji_custom.status', 'pending')
             ->join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
             ->sum('nominal');
 

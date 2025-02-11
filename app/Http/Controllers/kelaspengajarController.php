@@ -15,18 +15,29 @@ class kelaspengajarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // dd(Auth::id());
-        $kelas = kelas::with(['program_belajar', 'kategori_kelas'])
+        $kelas_aktif = kelas::
             ->where('status_kelas', 'aktif')
+            ->select('kelas.id')
             ->get();
+
+        return response()->json([
+            'data' => $kelas_aktif
+        ]);
 
         $kelas2 = kelas::with(['program_belajar', 'kategori_kelas'])
             ->where('status_kelas', 'selesai')
             ->get();
 
-        return view('pages.kelas.kelas_pengajar', compact('kelas', 'kelas2'));
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => $kelas_aktif,
+                'kelas2' => $kelas2
+            ]);
+        }
+
+        return view('pages.kelas.kelas_pengajar', compact('kelas2'));
     }
 
 
