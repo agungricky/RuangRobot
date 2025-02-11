@@ -3,81 +3,108 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <x-title_halaman title="Dashboard User" />
+            <x-title_halaman title="Dashboard Pengajar" />
 
             <div class="section-body">
                 <div class="card author-box card-primary">
                     <div class="card-body">
-                        <div class="author-box-left">
-                            <img style="width: 100px;height: 100px;object-fit: cover;" alt="image"
-                            src="{{ url('assets/img/avatar/avatar-1.png') }}"
-                            class="rounded-circle author-box-picture">
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="author-box-details">
-                            <div class="author-box-name">
-                                <a href="" style="text-decoration: none;">
-                                    <span>{{ $dataLogin->nama }}</span>
-                                    <div class="badge badge-pill badge-success">PENGAJAR</div>
-                                </a>
-                                
-                            </div>
-                            <div class="author-box-job mt-3"><i class="fas fa-map-marker"></i>{{ $dataLogin->alamat }}
-                        </div>
-                        <div class="author-box-job mt-3"><i class="fas fa-phone"></i>{{ $dataLogin->no_telp }}</div>
-                        <div class="author-box-job mt-3 mb-3"><i class="fas fa-address-card"></i>
-                        </div>
-                        <h4 class="mb-3">LEVEL : </h4>
-                        <div class="mb-4">
-                            <div class="text-small float-right font-weight-bold text-muted"></div>
-                            <div class="font-weight-bold mb-1">EXP</div>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" data-width="{{ $kelas->count() }}%"
-                                    aria-valuenow="{{ $kelas->count() }}" aria-valuemin="0"
-                                    aria-valuemax="{{ 99 }}" style="width: {{ $kelas->count() }}%;">
-                                    {{ $kelas->count() }}</div>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
-                            <div class="font-weight-bold mb-1">MEKANIK</div>
-                            <div class="progress">
-                                <div class="progress-bar bg-success text-dark" role="progressbar"
-                                data-width="{{ $mekanik > 0 ? ($mekanik / 99) * 100 : 0 }}%"
-                                aria-valuenow="{{ $mekanik > 0 ? ($mekanik / 99) * 100 : 0 }}" aria-valuemin="0"
-                                aria-valuemax="{{ 99 }}"
-                                style="width: {{ $mekanik > 0 ? ($mekanik / 99) * 100 : 0 }}%;">{{ $mekanik }}
-                            </div>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
-                            <div class="font-weight-bold mb-1">ELEKTRONIK</div>
-                            <div class="progress">
-                                <div class="progress-bar bg-warning text-dark" role="progressbar"
-                                    data-width="{{ $elektronik > 0 ? ($elektronik / 99) * 100 : 0 }}%"
-                                    aria-valuenow="{{ $elektronik > 0 ? ($elektronik / 99) * 100 : 0 }}" aria-valuemin="0"
-                                    aria-valuemax="{{ 99 }}"
-                                    style="width: {{ $elektronik > 0 ? ($elektronik / 99) * 100 : 0 }}%;">
-                                    {{ $elektronik }}</div>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="text-small float-right font-weight-bold text-muted">MAX : 99</div>
-                            <div class="font-weight-bold mb-1">PEMROGRAMAN</div>
-                            <div class="progress">
-                                <div class="progress-bar bg-danger text-dark" role="progressbar"
-                                    data-width="{{ $pemrograman > 0 ? ($pemrograman / 99) * 100 : 0 }}%"
-                                    aria-valuenow="{{ $pemrograman > 0 ? ($pemrograman / 99) * 100 : 0 }}"
-                                    aria-valuemin="0" aria-valuemax="{{ 99 }}"
-                                    style="width: {{ $pemrograman > 0 ? ($pemrograman / 99) * 100 : 0 }}%;">
-                                    {{ $pemrograman }}</div>
+                        <div class="container">
+                            <div class="main-body">
+
+                                <div class="row gutters-sm">
+                                    <div class="col-md-4">
+                                        <div class="card-body pb-0 mb-0">
+                                            <div class="d-flex flex-column align-items-center text-center">
+                                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
+                                                    class="rounded-circle" width="150">
+                                                <div class="mt-3">
+                                                    {{-- {{dd($dataLogin)}} --}}
+                                                    <h4>{{ isset($dataLogin->username) ? ucfirst($dataLogin->username) : '' }}
+                                                    </h4>
+                                                    <p class="text-dark mb-1">
+                                                        {{ isset($dataLogin->role) ? $dataLogin->role : '' }} Ruang Robot
+                                                    </p>
+                                                    <p class="text-dark font-size-sm">
+                                                        {{ isset($dataLogin->alamat) ? $dataLogin->alamat : '' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 mt-3">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Nama Lengkap</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-dark">
+                                                    {{ isset($dataLogin->nama) ? $dataLogin->nama : '' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Email</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-dark">
+                                                    {{ isset($dataLogin->email) ? $dataLogin->email : '' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">No Telp</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-dark">
+                                                    {{ isset($dataLogin->no_telp) ? $dataLogin->no_telp : '' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <h6 class="mb-0">Alamat</h6>
+                                                </div>
+                                                <div class="col-sm-9 text-dark">
+                                                    {{ isset($dataLogin->alamat) ? $dataLogin->alamat : '' }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                        </div>
+
+                                        <div class="row gutters-sm">
+                                            <div class="col-sm-12 mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="d-flex align-items-center mb-3">
+                                                        <i class="material-icons text-info mr-2">Level</i>Penanganan Pembelajaran</h6>
+                                                    <small>Elektronik ({{ $dataLogin->elektronik }}/100)</small>
+                                                    <div class="progress mb-3" style="height: 15px">
+                                                        <div class="progress-bar bg-primary" role="progressbar"
+                                                            style="width: {{ $dataLogin->elektronik }}%"
+                                                            aria-valuenow="{{ $dataLogin->elektronik }}" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                    <small>Mekanik ({{ $dataLogin->mekanik }}/100)</small>
+                                                    <div class="progress mb-3" style="height: 15px">
+                                                        <div class="progress-bar bg-danger" role="progressbar"
+                                                            style="width: {{ $dataLogin->mekanik }}%" aria-valuenow="{{ $dataLogin->mekanik }}" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                    <small>Pemrograman ({{ $dataLogin->pemrograman }}/100)</small>
+                                                    <div class="progress mb-3" style="height: 15px">
+                                                        <div class="progress-bar bg-success" role="progressbar"
+                                                            style="width: {{ $dataLogin->pemrograman }}%" aria-valuenow="{{ $dataLogin->pemrograman }}" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 @endsection

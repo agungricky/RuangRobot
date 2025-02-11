@@ -102,7 +102,7 @@
                 </li>
                 <li class="menu-header">Manage Kelas</li>
                 <li>
-                    <a href="{{ url('/kelas_saya') }}"><i class="fa-solid fa-book-open"></i><span>Kelas Saya</span></a>
+                    <a href="{{ url('/kelas_pengajar') }}"><i class="fa-solid fa-book-open"></i><span>Kelas Saya</span></a>
                 </li>
                 <li>
                     <a href="{{ url('/jadwal_kelas') }}"><i class="fa fa-calendar-alt"></i><span>Jadwal Kelas</span></a>
