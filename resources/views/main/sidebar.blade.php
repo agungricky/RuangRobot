@@ -92,21 +92,29 @@
 
 
 
-
+            {{-- ===================================================== --}}
             <!------------------ menu dashboard pengguna ---------------->
+            {{-- ===================================================== --}}
+
             @if ($dataLogin->role == 'Pengajar')
                 <li class="menu-header">Dashboard</li>
-                <!-- menu item -->
                 <li>
                     <a href="{{ url('/dashboard_user') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 </li>
                 <li class="menu-header">Manage Kelas</li>
                 <li>
-                    <a href="{{ url('/kelas_pengajar') }}"><i class="fa-solid fa-book-open"></i><span>Kelas Saya</span></a>
+                    <a href="{{ url('/kelas_pengajar') }}">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Kelas Aktif</span>
+                    </a>
                 </li>
                 <li>
-                    <a href="{{ url('/jadwal_kelas') }}"><i class="fa fa-calendar-alt"></i><span>Jadwal Kelas</span></a>
+                    <a href="{{ url('/kelas_pengajar/selesai') }}">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Kelas Selesai</span>
+                    </a>
                 </li>
+   
                 <li class="menu-header">Gaji</li>
                 <li>
                     <a href="{{ url('/gaji_saya') }}"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></a>

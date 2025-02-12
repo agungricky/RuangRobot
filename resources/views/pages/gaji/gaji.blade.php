@@ -23,9 +23,6 @@
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>
                                                 <th style="width: 20%;">Nama Pengajar</th>
-                                                {{-- <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
-                                                <th style="width: 15%;" class="text-center">Gaji Transporrt</th>
-                                                <th style="width: 15%;" class="text-center">Gaji Custom</th> --}}
                                                 <th style="width: 25%;" class="text-center">Total Belum Terbayar</th>
                                                 <th style="width: 60%;">Aksi</th>
                                             </tr>
@@ -65,24 +62,6 @@
                             return `<div class="text-start fw-bold text-tabel">${data}</div>`;
                         }
                     },
-                    // {
-                    //     data: 'gaji_mengajar',
-                    //     render: function(data) {
-                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
-                    //     }
-                    // },
-                    // {
-                    //     data: 'gaji_custom',
-                    //     render: function(data) {
-                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
-                    //     }
-                    // },
-                    // {
-                    //     data: 'gaji_transport',
-                    //     render: function(data) {
-                    //         return `<div class="text-start fw-bold text-tabel">Rp. ${parseInt(data || 0, 10).toLocaleString()}</div>`;
-                    //     }
-                    // },
                     {
                         data: 'total',
                         render: function(data) {

@@ -136,9 +136,16 @@ Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.j
 
 // ========= Dashboard Pengajar ========= //
 Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('dashboard_pengajar');
-Route::get('/kelas_pengajar', [kelaspengajarController::class, 'index'])->name('kelas_pengajar');
+
+// ========= Kelas Pengajar ========= //
+Route::get('/kelas_pengajar', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
+Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
 Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
-Route::get('/jadwal_kelas', [kelaspengajarController::class, 'jadwal'])->name('jadwal_kelas');
+Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
+Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
+
+
+
 Route::get('/gaji_saya', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya');
 Route::get('/gaji_saya/json', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya.json');
 
