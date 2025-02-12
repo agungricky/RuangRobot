@@ -142,4 +142,6 @@ Route::get('/jadwal_kelas', [kelaspengajarController::class, 'jadwal'])->name('j
 Route::get('/gaji_saya', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya');
 Route::get('/gaji_saya/json', [kelaspengajarController::class, 'gaji_saya'])->name('gaji_saya.json');
 
-
+// ========= Edit Profile ========= //
+Route::get('/edit_profile/{id}', [dashboardUserController::class,'edit'])->name('edit_profile');
+Route::patch('/update_profile/{id}', [dashboardUserController::class,'update'])->name('update_profile');
