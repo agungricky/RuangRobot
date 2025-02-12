@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\gajiTransport;
 use App\Models\gajiUtama;
 use App\Models\kelas;
+use App\Models\muridKelas;
 use App\Models\pembelajaran;
+use App\Models\programbelajar;
 use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,39 +18,38 @@ class kelaspengajarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function kelas_aktif(Request $request)
     {
-        $kelas_aktif = kelas::
-            ->where('status_kelas', 'aktif')
-            ->select('kelas.id')
-            ->get();
-
-        return response()->json([
-            'data' => $kelas_aktif
-        ]);
-
-        $kelas2 = kelas::with(['program_belajar', 'kategori_kelas'])
-            ->where('status_kelas', 'selesai')
+        $kelas_aktif = kelas::where('kelas.status_kelas', 'aktif')
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas')
             ->get();
 
         if (request()->ajax()) {
             return response()->json([
                 'data' => $kelas_aktif,
-                'kelas2' => $kelas2
             ]);
         }
 
-        return view('pages.kelas.kelas_pengajar', compact('kelas2'));
+        return view('pages.kelas.pengajar.kelas_pengajar_aktif');
     }
 
-
-    public function jadwal()
+    public function kelas_selesai(Request $request)
     {
-        $cekData = pembelajaran::with('kelas')->get();
+        $kelas_selesai = kelas::where('kelas.status_kelas', 'selesai')
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas')
+            ->get();
 
-dd($cekData); // Debugging
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => $kelas_selesai,
+            ]);
+        }
 
-        return view('pages.kelas.jadwal_kelas', compact('jadwal'));
+        return view('pages.kelas.pengajar.kelas_pengajar_selesai');
     }
 
     public function create()
@@ -68,45 +70,95 @@ dd($cekData); // Debugging
      */
     public function show(string $id)
     {
-        // Ambil kelas + pembelajaran terkait
-        $kelas = Kelas::with('pembelajaran')->findOrFail($id);
+        $kelas = Kelas::where('kelas.id', $id)
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
+            ->first();
 
-        //ambil daftar pembelajaran berdasarkan kelas_id
-        $pembelajaran = pembelajaran::with('kelas')
-            ->select('id', 'pertemuan', 'pengajar', 'tanggal', 'materi', 'catatan_pengajar', 'absensi', 'status_tersimpan', 'kelas_id')
-            ->where('kelas_id', $id)
-            ->orderBy('tanggal', 'asc')
-            ->limit(25)
+        $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
+
+        $pembelajaran = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->select('pembelajaran.*', 'kelas.durasi_belajar')
+            ->orderBy('pertemuan', 'asc')
             ->get();
 
-        //ambil data siswa di kelas tersebut
-        $siswa = siswa::where('kelas_id', $id)->get();
+        $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
+        $daftar_siswa = json_decode($daftar_siswa->murid);
 
-        //proses status absensi untuk setiap pembelajaran
-        foreach ($pembelajaran as $p) {
-            $p->status_absen = $this->cekStatusAbsen($p->tanggal, $p->materi);
+        $kehadiran = [];
+        $totalPertemuan = $pembelajaran->count();
+
+        foreach ($pembelajaran as $pertemuan) {
+            $absensi = json_decode($pertemuan->absensi, true);
+
+            foreach ($absensi as $siswa) {
+                $id = $siswa['id'];
+                $nama = $siswa['nama'];
+                $presensi = $siswa['presensi'];
+
+                if (!isset($kehadiran[$id])) {
+                    $kehadiran[$id] = [
+                        'nama' => $nama,
+                        'hadir' => 0,
+                        'total' => $totalPertemuan,
+                        'persentase' => 0
+                    ];
+                }
+
+                if ($presensi === 'H') {
+                    $kehadiran[$id]['hadir']++;
+                }
+            }
         }
 
-        return view('pages.kelas.detail_kelas_pengajar', compact('kelas', 'siswa', 'pembelajaran'));
+        // Hitung persentase kehadiran
+        foreach ($kehadiran as &$siswa) {
+            $siswa['persentase'] = ($siswa['hadir'] / $siswa['total']) * 100;
+        }
+
+        foreach ($daftar_siswa as &$siswa) {
+            $id = $siswa->id;
+            $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
+        }        
+        // dd($kelas);
+        return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
     }
 
-    private function cekStatusAbsen($date, $materi)
-    {
-        $current = strtotime(date("d-m-Y")); //tanggal hari ini dalam format timestamp
-        $date = strtotime($date); //ubah tanggal pertemuan menajdi timestamp
-        $datediff = $date - $current; //selisih tanggal dalam detik
-        $difference = floor($datediff / (60 * 60 * 24)); //ubah selisih menjadi hari
+    public function detail_absensi(Request $request, $id){
+        $absen = pembelajaran::where('id', $id)->first();
+        $siswa = json_decode($absen->absensi);
 
-        if ($difference < 0 && empty($materi)) {
-            return 'Tidak Absen'; //pertemuan sudah lewat, tetapi materi kosong
-        } elseif ($difference > 0 && empty($materi)) {
-            return 'Belum Waktunya'; // pertemuan belum terjadi, materi kosong
-        } elseif ($difference < 0 && !empty($materi)) {
-            return 'Sudah Absen'; // pertemuan sudah lewat, materi ada
-        } elseif ($difference == 0 && !empty($materi)) {
-            return 'Sudah Absen hi'; // pertemuan hari ini, materi ada
-        } elseif ($difference == 0 && empty($materi)) {
-            return 'Silahkan Absen Sekarang';
+        return response()->json([
+            'data' => $siswa,
+            'absen' => $absen
+        ]);
+    }
+
+    public function pengajar_bantu(Request $request, $id){
+        try {
+            gajiUtama::create([
+                'pengajar' => $request->pengajar,
+                'nominal' => $request->gaji_pengajar,
+                'status' => $request->status_pembayaran,
+                'status_pengajar' => $request->status_pengajar,
+                'pembelajaran_id' => $id,
+            ]);
+    
+            if($request->gaji_transport != 0){
+                gajiTransport::create([
+                    'pengajar' => $request->pengajar,
+                    'nominal' => $request->gaji_transport,
+                    'status' => $request->status_pembayaran,
+                    'status_pengajar' => $request->status_pengajar,
+                    'pembelajaran_id' => $id,
+                ]);
+            }
+
+            return response()->json(['message' => 'Gaji Mengajar dan Gaji Transport Berhasil di Tambahkan di akunmu'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
         }
     }
 
