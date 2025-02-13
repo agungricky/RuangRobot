@@ -162,6 +162,14 @@ class kelaspengajarController extends Controller
         }
     }
 
+    public function siswa_show($id){
+        $siswa = muridKelas::where('kelas_id', $id)->first();
+        $siswa_kelas = json_decode($siswa->murid);
+        return response()->json([
+            'data' => $siswa_kelas
+        ]);
+    }
+
     public function gaji_saya(Request $request)
     {
         $data  = gajiUtama::with('history_gaji')->first();

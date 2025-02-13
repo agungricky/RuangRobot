@@ -7,6 +7,7 @@
             <a href="{{ url('kelas_pengajar') }}" class="btn btn-primary btn-lg mb-4">
                 <i class="fa fa-arrow-left"></i> Kembali</a>
 
+            {{-- Informasi Pertemuan --}}
             <div class="row">
                 <div class="col">
                     <div class="hero text-white hero-bg-image"
@@ -86,6 +87,7 @@
                 </div>
             </div>
 
+            {{-- Aktifitas Siswa --}}
             <h2 class="section-title">Aktifitas</h2>
             <div class="row">
                 <div class="col-12">
@@ -142,8 +144,10 @@
                                             <span class="font-weight-bold text-small"># Pertemuan Ke
                                                 {{ $pertemuan->pertemuan }}</span>
                                         </div>
-                                        <button class="btn btn-block btn-primary btn-lg mb-2" onclick="absen()"><i
-                                                class="fas fa-clipboard-check"></i> Absen</button>
+                                        <button class="btn btn-block btn-primary btn-lg mb-2 absen"
+                                            data-id="{{ $pertemuan->id }}" data-idkelas="{{ $kelas->id }}">
+                                            <i class="fas fa-clipboard-check"></i> Absen
+                                        </button>
                                     </div>
                                 </div>
                             @endif
@@ -201,7 +205,7 @@
     {{-- ============= MODAL ABSEN SISWA ============ --}}
     {{-- ============================================ --}}
 
-    <div class="modal fade" id="ajaxModall" tabindex="-1" role="dialog" aria-labelledby="ajaxModallLabel"
+    <div class="modal fade" id="absen_siswa" tabindex="-1" role="dialog" aria-labelledby="ajaxModallLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -212,33 +216,25 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="post">
+                    <form id="form_absen">
                         @csrf
-                        <h6>Siswa Yang Hadir :</h6>
-                        {{-- @foreach ($siswa as $siswas)
-                            <label class="labela">
-                                <input type="checkbox"
-                                    {{ in_array($siswas->id, $id_siswa_yang_absen_sementara) ? 'checked="true"' : '' }}
-                                    name="id[]" class="card-input-element d-none"
-                                    value="{{ $siswas->id . ',' . $siswas->nama_siswa . ',' . $siswas->sekolah }}">
-                                <div class="card mb-2" style="box-shadow:none !important;">
-                                    <div class="card-body" style="background: #f8f8f8;padding:15px;">
-                                        <span class="font-weight-bold"><i class="fas fa-check-circle mr-3"></i>
-                                            {{ $siswas->nama_siswa }}</span>
-                                    </div>
-                                </div>
-                            </label>
-                        @endforeach --}}
-                        <input type="hidden" name="id_kelas" value="">
-                        <input type="hidden" id="uuid" name="uuid" placeholder="uuid" class="form-control">
-                        <input type="hidden" id="idsesi" name="idsesi" placeholder="idsesi" class="form-control">
+                        <div id="siswa_hadir"></div>
+
                         <h6>Materi :</h6>
                         <input type="text" id="materi" name="materi" placeholder="Materi"
                             class="form-control mb-4" value="">
-                        <button type="submit" name="opsi_simpan" value="simpan_sementara" class="btn btn-primary"><i
-                                class="fas fa-clipboard-check"></i> Simpan Sementara</button>
-                        <button type="submit" name="opsi_simpan" value="submit_final" class="btn btn-success"><i
-                                class="fas fa-clipboard-check"></i> Final Submit</button>
+
+                        <h6>Catatan Pengajar :</h6>
+                        <textarea id="editor"></textarea>
+
+                        <div class="m-4 d-flex gap-2">
+                            <button type="button" class="btn btn-primary" id="simpan_sementara"><i
+                                    class="fas fa-clipboard-check"></i>
+                                Simpan Sementara
+                            </button>
+                            <button type="submit" name="opsi_simpan" value="submit_final" class="btn btn-success"><i
+                                    class="fas fa-clipboard-check"></i> Final Submit</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -311,6 +307,8 @@
             </div>
         </div>
     </div>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/trumbowyg.min.css') }}">
     <style>
         .ticket-item:hover {
             background-color: #e2e1e1;
@@ -325,7 +323,10 @@
     <script>
         $(document).ready(function() {
             let id;
+            let id_kelas;
+            $('#editor').trumbowyg();
 
+            // Detail Pertemuan Selesai
             $(".btn-detail").on("click", function() {
                 id = $(this).data("id");
 
@@ -379,7 +380,10 @@
                 });
             });
 
+            // Absen Pengajar Bantu
             $("#pengajar_bantu").on("click", function() {
+                id = $(this).data("id");
+
                 let formdata = $("#absen_pengajar_bantu").serialize();
                 formdata += "&_token=" + $('meta[name="csrf-token"]').attr("content");
                 formdata += "&idpembelajaran=" + id;
@@ -398,6 +402,145 @@
                     }
                 });
             });
+
+            // Absen Siswa
+            let localStorageKey = "dataAbsenDisimpan";
+
+            // 🔹 Ambil data dari LocalStorage saat halaman dimuat
+            let dataAbsen = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+
+            // 🔹 Fungsi untuk menyimpan ke LocalStorage
+            function simpanKeStorage() {
+                localStorage.setItem(localStorageKey, JSON.stringify(dataAbsen));
+            }
+
+            // 🔹 Saat tombol absen diklik (ambil data dari API)
+            $(".absen").on("click", function() {
+                let id_kelas = $(this).data("idkelas");
+
+                $.ajax({
+                    type: "GET",
+                    url: `{{ url('/absen/siswa/${id_kelas}') }}`,
+                    dataType: "json",
+                    success: function(response) {
+                        $("#siswa_hadir").html("");
+
+                        $.each(response.data, function(index, siswa) {
+                            // Cek apakah siswa sudah ada di dataAbsen sebelumnya
+                            let existingSiswa = dataAbsen.find(s => s.id == siswa.id);
+
+                            // Jika siswa belum ada, tambahkan dengan status default
+                            if (!existingSiswa) {
+                                dataAbsen.push({
+                                    id: siswa.id,
+                                    nama: siswa.nama,
+                                    presensi: siswa.presensi ? siswa.presensi :
+                                        "I" // Default "I"
+                                });
+                            }
+
+                            // Ambil data terbaru dari storage
+                            let siswaData = dataAbsen.find(s => s.id == siswa.id);
+                            let isHadir = siswaData.presensi === "H";
+                            let statusClass = isHadir ? "border-success" :
+                                "border-danger";
+                            let icon = isHadir ?
+                                '<i class="fas fa-check-circle text-success"></i>' :
+                                '<i class="fas fa-times-circle text-danger"></i>';
+
+                            let listItem = `
+                    <div class="d-flex align-items-center p-3 mb-2 bg-putih border-start border-4 ${statusClass} rounded siswa-item" 
+                        data-id="${siswa.id}" data-nama="${siswa.nama}" data-status="${siswaData.presensi}">
+                        <input type="checkbox" class="form-check-input d-none checkbox-presensi" ${isHadir ? 'checked' : ''}> 
+                        <div class="me-3 fs-4">${icon}</div> 
+                        <div class="fw-bold">${siswa.nama}</div>
+                    </div>
+                `;
+
+                            $("#siswa_hadir").append(listItem);
+                        });
+
+                        $("#absen_siswa").modal('show');
+                    }
+                });
+            });
+
+            // 🔹 Toggle Hadir/Izin saat klik siswa
+            $(document).on("click", ".siswa-item", function() {
+                let checkbox = $(this).find(".checkbox-presensi");
+                checkbox.prop("checked", !checkbox.prop("checked"));
+
+                let isChecked = checkbox.prop("checked");
+                let icon = $(this).find("i");
+                let statusDiv = $(this);
+                let siswaId = $(this).data("id");
+
+                // Ubah tampilan ikon & warna
+                if (isChecked) {
+                    icon.removeClass("text-danger fas fa-times-circle").addClass(
+                        "text-success fas fa-check-circle");
+                    statusDiv.removeClass("border-danger").addClass("border-success");
+                } else {
+                    icon.removeClass("text-success fas fa-check-circle").addClass(
+                        "text-danger fas fa-times-circle");
+                    statusDiv.removeClass("border-success").addClass("border-danger");
+                }
+
+                // Perbarui data dalam array
+                let siswaIndex = dataAbsen.findIndex(s => s.id == siswaId);
+                if (siswaIndex !== -1) {
+                    dataAbsen[siswaIndex].presensi = isChecked ? "H" : "I";
+                }
+            });
+
+            // 🔹 Simpan data ke LocalStorage saat tombol "Simpan Sementara" ditekan
+            $("#simpan_sementara").on("click", function() {
+                simpanKeStorage();
+                alert("Data absen berhasil disimpan!");
+                $("#absen_siswa").modal('hide');
+                console.log("Data Disimpan:", dataAbsen);
+            });
+
+            // 🔹 Saat modal dibuka kembali, tampilkan data dari LocalStorage
+            $("#absen_siswa").on("show.bs.modal", function() {
+                let savedData = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+
+                if (savedData.length > 0) {
+                    $("#siswa_hadir").html("");
+
+                    $.each(savedData, function(index, siswa) {
+                        let isHadir = siswa.presensi === "H";
+                        let statusClass = isHadir ? "border-success" : "border-danger";
+                        let icon = isHadir ? '<i class="fas fa-check-circle text-success"></i>' :
+                            '<i class="fas fa-times-circle text-danger"></i>';
+
+                        let listItem = `
+                <div class="d-flex align-items-center p-3 mb-2 bg-putih border-start border-4 ${statusClass} rounded siswa-item" 
+                    data-id="${siswa.id}" data-nama="${siswa.nama}" data-status="${siswa.presensi}">
+                    <input type="checkbox" class="form-check-input d-none checkbox-presensi" ${isHadir ? 'checked' : ''}> 
+                    <div class="me-3 fs-4">${icon}</div> 
+                    <div class="fw-bold">${siswa.nama}</div>
+                </div>
+            `;
+
+                        $("#siswa_hadir").append(listItem);
+                    });
+
+                    // Update dataAbsen dari storage supaya tetap sinkron
+                    dataAbsen = savedData;
+                }
+            });
+
+
+
+            // Reset modal saat ditutup agar data bersih setiap kali dibuka
+            $('#absen_siswa').on('hidden.bs.modal', function() {
+                $("#siswa_hadir").html(""); // Kosongkan daftar siswa hadir
+                $("#form_absen")[0].reset(); // Reset form
+            });
+
+
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.27.3/trumbowyg.min.js"></script>
 @endsection
