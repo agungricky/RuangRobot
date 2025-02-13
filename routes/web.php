@@ -144,6 +144,7 @@ Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name
 Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
 Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
 Route::get('/absen/siswa/{id}', [kelaspengajarController::class, 'siswa_show'])->name('absen.siswa');
+Route::patch('/absen/siswa/store/{id}', [kelaspengajarController::class, 'store'])->name('absen.store');
 
 
 

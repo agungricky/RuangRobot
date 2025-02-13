@@ -58,14 +58,6 @@ class kelaspengajarController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)
@@ -121,12 +113,13 @@ class kelaspengajarController extends Controller
         foreach ($daftar_siswa as &$siswa) {
             $id = $siswa->id;
             $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
-        }        
+        }
         // dd($kelas);
         return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
     }
 
-    public function detail_absensi(Request $request, $id){
+    public function detail_absensi($id)
+    {
         $absen = pembelajaran::where('id', $id)->first();
         $siswa = json_decode($absen->absensi);
 
@@ -136,7 +129,8 @@ class kelaspengajarController extends Controller
         ]);
     }
 
-    public function pengajar_bantu(Request $request, $id){
+    public function pengajar_bantu(Request $request, $id)
+    {
         try {
             gajiUtama::create([
                 'pengajar' => $request->pengajar,
@@ -145,8 +139,8 @@ class kelaspengajarController extends Controller
                 'status_pengajar' => $request->status_pengajar,
                 'pembelajaran_id' => $id,
             ]);
-    
-            if($request->gaji_transport != 0){
+
+            if ($request->gaji_transport != 0) {
                 gajiTransport::create([
                     'pengajar' => $request->pengajar,
                     'nominal' => $request->gaji_transport,
@@ -162,12 +156,34 @@ class kelaspengajarController extends Controller
         }
     }
 
-    public function siswa_show($id){
+    public function siswa_show($id)
+    {
         $siswa = muridKelas::where('kelas_id', $id)->first();
         $siswa_kelas = json_decode($siswa->murid);
         return response()->json([
             'data' => $siswa_kelas
         ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request, $id)
+    {
+        try {
+            pembelajaran::where('id', $id)->update([
+                'pengajar' => $request->pengajar,
+                'tanggal' => $request->tanggal,
+                'materi' => $request->materi,
+                'catatan_pengajar' => $request->catatan_pengajar,
+                'absensi' => $request->absensi,
+                'status_tersimpan' => "permanen",
+            ]);
+            
+            return response()->json(['message' => 'Kelas Selesai'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 
     public function gaji_saya(Request $request)
