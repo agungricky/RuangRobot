@@ -114,7 +114,7 @@ class kelaspengajarController extends Controller
             $id = $siswa->id;
             $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
         }
-        // dd($kelas);
+        // dd($daftar_siswa);
         return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
     }
 
@@ -179,6 +179,25 @@ class kelaspengajarController extends Controller
                 'absensi' => $request->absensi,
                 'status_tersimpan' => "permanen",
             ]);
+
+            $kelas = kelas::where('id', $request->id_kelas)->first();
+            gajiUtama::create([
+                'pengajar' => $request->pengajar_id,
+                'nominal' => $kelas->gaji_pengajar,
+                'status' => "pending",
+                'status_pengajar' => "Pengajar Utama",
+                'pembelajaran_id' => $id,
+            ]);
+
+            if ($request->gaji_transport != 0) {
+                gajiTransport::create([
+                    'pengajar' => $request->pengajar_id,
+                    'nominal' => $kelas->gaji_transport,
+                    'status' => "pending",
+                    'status_pengajar' => "Pengajar Utama",
+                    'pembelajaran_id' => $id,
+                ]);
+            }
             
             return response()->json(['message' => 'Kelas Selesai'], 200);
         } catch (\Throwable $th) {
