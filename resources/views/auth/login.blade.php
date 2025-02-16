@@ -42,14 +42,24 @@
                                     @csrf
                                     <div class="form-group">
                                         <label for="username">Username</label>
-                                        <input id="username" type="text" class="form-control" name="username" required>
-                                        <x-validation_form.error name="username"/>
+                                        <input id="username" type="text" class="form-control" name="username"
+                                            required>
+                                        <x-validation_form.error name="username" />
                                     </div>
 
-                                    <div class="form-group">
+
+                                    <div class="form-group" style="position: relative;">
                                         <label for="password" class="control-label">Password</label>
-                                        <input id="password" type="password" class="form-control" name="password" required>
-                                        <x-validation_form.error name="password"/>
+
+                                        <input id="password" type="password" class="form-control" name="password"
+                                            required style="padding-right: 40px;">
+
+                                        <!-- Ikon Mata -->
+                                        <i id="togglePassword" class="fas fa-eye-slash"
+                                            style="position: absolute; right: 15px; top: 40%; transform: translateY(40%);
+                                                   cursor: pointer; color: gray; font-size: 1.5rem;"></i>
+
+                                        <x-validation_form.error name="password" />
                                     </div>
 
                                     <div class="form-group">
@@ -62,21 +72,22 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">Login</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block"
+                                            tabindex="4">Login</button>
                                     </div>
                                 </form>
                                 <div class="text-muted text-center">
                                     Tidak mempunyai akun? <a
                                         href="https://wa.me/6285655770506?text={{ urlencode('Halo Ruang Robot.
-                                                                                Saya Mau daftar.
-                                                                                
-                                                                                Nama Lengkap:
-                                                                                Nomor Telfon:
-                                                                                Sekolah:
-                                                                                Tanggal Lahir:
-                                                                                Alamat:
-                                                                                
-                                                                                Terimakasih.') }}">Daftar
+                                                                                                                                                                                                                                                                                                                                                                        Saya Mau daftar.
+                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                        Nama Lengkap:
+                                                                                                                                                                                                                                                                                                                                                                        Nomor Telfon:
+                                                                                                                                                                                                                                                                                                                                                                        Sekolah:
+                                                                                                                                                                                                                                                                                                                                                                        Tanggal Lahir:
+                                                                                                                                                                                                                                                                                                                                                                        Alamat:
+                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                        Terimakasih.') }}">Daftar
                                         Disini</a>
                                 </div>
                             </div>
@@ -100,6 +111,22 @@
     </script>
     <script src="{{ asset('assets/js/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('assets/js/stisla.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#togglePassword").on("click", function(event) {
+                event.preventDefault(); // Mencegah fokus input
+                let passwordField = $("#password");
+                let type = passwordField.attr("type") === "password" ? "text" : "password";
+                passwordField.attr("type", type);
+
+                // Toggle ikon mata
+                $(this).toggleClass("fa-eye fa-eye-slash");
+            });
+        });
+    </script>
 </body>
 
 </html>

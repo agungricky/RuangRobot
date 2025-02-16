@@ -50,7 +50,7 @@
 
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
-                                        <a href="#" class="text-decoration-none">
+                                        <a href="{{ url('/detail_kelas/selesai/${item.id}') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image" 
                                                 style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
                                                 <div class="hero-inner">

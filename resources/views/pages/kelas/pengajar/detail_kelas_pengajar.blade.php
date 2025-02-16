@@ -1,5 +1,9 @@
 @extends('main.layout')
 @section('content')
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -171,13 +175,31 @@
                                                 style="width: {{ $siswa->persentase }}%; height: 5px;">
                                             </div>
                                             <span
-                                                class="ml-2">{{ number_format($siswa->persentase, 2, ',', '.') }}%</span>
+                                                class="ml-2">{{ number_format($siswa->persentase, 1, ',', '.') }}%</span>
                                         </div>
                                     </div>
                                     <hr>
-                                    <button data-id="" data-nama="Ricky Agung" data-idgen=""
-                                        onclick="selesaikankelas(this)" class="btn btn-block btn-success"><i
-                                            class="fas fa-check"></i> Selesaikan</button>
+                                    @if ($siswa->nilai == null)
+                                        <button data-idsiswa="{{ $siswa->id }}" data-id_kelas="{{ $kelas->id }}"
+                                            class="btn btn-block btn-success btn_selesai_siswa">
+                                            <i class="fas fa-check"></i> Selesaikan</button>
+                                    @else
+                                        <div class="p-3 text-center">
+                                            <h4 class="text-primary">Nilai Siswa</h4>
+                                            @php
+                                                $nilaiColor = [
+                                                    'A' => 'text-success',
+                                                    'B' => 'text-success', // 'Warning' harus huruf kecil
+                                                    'Gagal' => 'text-danger',
+                                                ];
+                                            @endphp
+
+                                            <h2 class="fw-bold {{ $nilaiColor[$siswa->nilai] ?? 'text-dark' }}">
+                                                {{ $siswa->nilai }}
+                                            </h2>
+                                            <p class="text-muted">Nilai sudah diberikan</p>
+                                        </div>
+                                    @endif
 
                                 </div>
                             </div>
@@ -186,17 +208,27 @@
                 </div>
 
                 <h2 class="section-title">Status Kelas</h2>
-                @if ($kelas->status == '0')
-                    <form id="submitselesaifix" method="post" action="">
-                        @csrf
-                        <input type="hidden" name="id_kelas" value="">
-                        <button onclick="event.preventDefault();fixselesaikelas()" class="btn btn-primary"><i
-                                class="fas fa-check"></i>
-                            Selesaikan Kelas</button>
-                    </form>
-                @else
-                    <h2>Kelas Telah Selesai</h2>
-                @endif
+                <div class="col-12">
+                    <div class="card shadow-sm py-4 text-center">
+                        @if ($kelas->status_kelas == 'aktif')
+                            <h2 class="text-danger">Kelas Belum Selesai</h2>
+                            <p class="text-muted">Pastikan semua tugas telah diselesaikan sebelum menyelesaikan kelas.</p>
+
+                            <form method="post" action="{{ route('kelas.selesai', ['id' => $kelas->id]) }}">
+                                @csrf
+                                <input type="hidden" name="status_kelas" value="selesai">
+                                <button type="submit" class="btn btn-success btn-lg mt-3">
+                                    <i class="fas fa-check"></i> Selesaikan Kelas
+                                </button>
+                            </form>
+                        @else
+                            <h2 class="text-success">Kelas Telah Selesai</h2>
+                            <p class="text-muted">Terima kasih telah menyelesaikan kelas ini!</p>
+                            <i class="fas fa-check-circle text-success mt-3" style="font-size: 80px;"></i>
+                        @endif
+                    </div>
+                </div>
+
             </div>
         </section>
     </div>
@@ -204,7 +236,6 @@
     {{-- ============================================ --}}
     {{-- ============= MODAL ABSEN SISWA ============ --}}
     {{-- ============================================ --}}
-
     <div class="modal fade" id="absen_siswa" tabindex="-1" role="dialog" aria-labelledby="ajaxModallLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -220,13 +251,13 @@
                         <div id="siswa_hadir"></div>
 
                         <h6>Materi :</h6>
-                        <input type="text" name="materi" placeholder="Materi"
-                            class="form-control mb-4">
+                        <input type="text" name="materi" placeholder="Materi" class="form-control mb-4">
 
                         <h6>Catatan Pengajar :</h6>
                         <textarea id="editor" name="catatan_pengajar"></textarea>
 
                         <input type="hidden" name="pengajar" value="{{ $dataLogin->nama }}">
+                        <input type="hidden" name="pengajar_id" value="{{ $dataLogin->id }}">
                     </form>
                     <div class="m-4 d-flex gap-2 justify-content-end">
                         <button type="button" class="btn btn-primary" id="simpan_sementara"><i
@@ -246,7 +277,6 @@
     {{-- ============================================ --}}
     {{-- ============= MODAL DETAIL ABSEN ============ --}}
     {{-- ============================================ --}}
-
     <div class="modal fade" id="detailmodal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -309,8 +339,10 @@
             </div>
         </div>
     </div>
+
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/trumbowyg.min.css') }}">
+    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.27.3/trumbowyg.min.js') }}"></script>
     <style>
         .ticket-item:hover {
             background-color: #e2e1e1;
@@ -407,335 +439,266 @@
                 });
             });
 
-            // // 🔹 Simpan Sementara Ke Local Storage
-            // let localStorageKey = "dataAbsenDisimpan";
-            // let dataAbsen = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-
-            // function simpanKeStorage() {
-            //     localStorage.setItem(localStorageKey, JSON.stringify(dataAbsen));
-            // }
-
-            // // 🔹 Saat tombol absen diklik (ambil data dari API)
-            // $(".absen").on("click", function() {
-            //     id_kelas = $(this).data("idkelas");
-            //     id = $(this).data("id");
-
-            //     $.ajax({
-            //         type: "GET",
-            //         url: `{{ url('/absen/siswa/${id_kelas}') }}`,
-            //         dataType: "json",
-            //         success: function(response) {
-            //             $("#siswa_hadir").html("");
-
-            //             $.each(response.data, function(index, siswa) {
-            //                 // Cek apakah siswa sudah ada di dataAbsen sebelumnya
-            //                 let existingSiswa = dataAbsen.find(s => s.id == siswa.id);
-
-            //                 if (!existingSiswa) {
-            //                     dataAbsen.push({
-            //                         id: siswa.id,
-            //                         nama: siswa.nama,
-            //                         presensi: siswa.presensi ? siswa.presensi :
-            //                             "I" // Default "I"
-            //                     });
-            //                 }
-            //             });
-
-            //             // Simpan perubahan ke storage setiap kali ada update dari API
-            //             simpanKeStorage();
-
-            //             // Render ulang tampilan absen
-            //             renderAbsen();
-            //         }
-            //     });
-
-            //     $("#absen_siswa").modal('show');
-            // });
-
-            // // 🔹 Toggle Hadir/Izin saat klik siswa
-            // $(document).on("click", ".siswa-item", function() {
-            //     let siswaId = $(this).data("id");
-            //     let checkbox = $(this).find(".checkbox-presensi");
-            //     checkbox.prop("checked", !checkbox.prop("checked"));
-
-            //     let isChecked = checkbox.prop("checked");
-            //     let icon = $(this).find("i");
-            //     let statusDiv = $(this);
-
-            //     // Ubah tampilan ikon & warna
-            //     if (isChecked) {
-            //         icon.removeClass("text-danger fas fa-times-circle").addClass(
-            //             "text-success fas fa-check-circle");
-            //         statusDiv.removeClass("border-danger").addClass("border-success");
-            //     } else {
-            //         icon.removeClass("text-success fas fa-check-circle").addClass(
-            //             "text-danger fas fa-times-circle");
-            //         statusDiv.removeClass("border-success").addClass("border-danger");
-            //     }
-
-            //     // Perbarui data dalam array
-            //     let siswaIndex = dataAbsen.findIndex(s => s.id == siswaId);
-            //     if (siswaIndex !== -1) {
-            //         dataAbsen[siswaIndex].presensi = isChecked ? "H" : "I";
-            //     }
-
-            //     // Simpan perubahan ke storage setiap kali ada update
-            //     simpanKeStorage();
-            // });
-
-            // // 🔹 Fungsi untuk merender ulang daftar siswa hadir
-            // function renderAbsen() {
-            //     $("#siswa_hadir").html("");
-
-            //     $.each(dataAbsen, function(index, siswa) {
-            //         let isHadir = siswa.presensi === "H";
-            //         let statusClass = isHadir ? "border-success" : "border-danger";
-            //         let icon = isHadir ? '<i class="fas fa-check-circle text-success"></i>' :
-            //             '<i class="fas fa-times-circle text-danger"></i>';
-
-            //         let listItem = `
-            //             <div class="d-flex align-items-center p-3 mb-2 bg-putih border-start border-4 ${statusClass} rounded siswa-item" 
-            //                 data-id="${siswa.id}" data-nama="${siswa.nama}" data-status="${siswa.presensi}">
-            //                 <input type="checkbox" class="form-check-input d-none checkbox-presensi" ${isHadir ? 'checked' : ''}> 
-            //                 <div class="me-3 fs-4">${icon}</div> 
-            //                 <div class="fw-bold">${siswa.nama}</div>
-            //             </div>
-            //         `;
-
-            //         $("#siswa_hadir").append(listItem);
-            //     });
-            // }
-
-            // // 🔹 Saat modal dibuka kembali, tampilkan data dari LocalStorage
-            // $("#absen_siswa").on("show.bs.modal", function() {
-            //     let savedData = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-
-            //     if (savedData.length > 0) {
-            //         dataAbsen = savedData;
-            //         renderAbsen();
-            //     }
-            // });
-
-            // // 🔹 Simpan Sementara
-            // $("#simpan_sementara").on("click", function() {
-            //     simpanKeStorage();
-            //     alert("Data absen berhasil disimpan!");
-            //     $("#absen_siswa").modal('hide');
-            //     console.log("Data Disimpan:", dataAbsen);
-            // });
-
-            // // 🔹 Simpan Permanen (Final Submit)
-            // $("#final-submit").on("click", function(e) {
-            //     simpanKeStorage();
-
-
-            //     let savedData = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-            //     let formData = $("#form_absen").serializeArray();
-            //     let tanggal = new Date().toISOString().split('T')[0];
-
-            //     // 🔹 Ubah FormData menjadi Object
-            //     let formObject = {};
-            //     $.each(formData, function(_, field) {
-            //         formObject[field.name] = field.value;
-            //     });
-
-            //     // 🔹 Tambahkan tanggal dan absensi ke form
-            //     formObject.tanggal = tanggal;
-            //     formObject.absensi = savedData; // Tambahkan data absen dari localStorage
-            //     formObject.status_tersimpan = "permanen"; // Tambahkan status tersimpan
-
-            //     console.log("id :" + id + "" + formObject); // Cek sebelum dikirim
-
-            //     // 🔹 Kirim ke Laravel dengan AJAX
-            //     $.ajax({
-            //         type: "PATCH",
-            //         url: `{{ url('/absen/siswa/store/${id}') }}`, // Ganti dengan route penyimpanan
-            //         data: JSON.stringify(formObject),
-            //         contentType: "application/json",
-            //         headers: {
-            //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-            //         },
-            //         success: function(response) {
-            //             Swal.fire("Berhasil!", response.message, "success");
-            //             localStorage.removeItem(localStorageKey);
-            //             $("#detailmodal").modal("hide");
-            //             location.reload();
-            //         },
-            //         error: function(xhr, status, error) {
-            //             Swal.fire("Gagal!", response.message, "error");
-            //         }
-            //     });
-            // });
 
             // 🔹 Simpan data absen ke Local Storage berdasarkan ID Kelas
-function simpanKeStorage(id_kelas) {
-    let storageKey = `dataAbsen_Kelas_${id_kelas}`;
-    localStorage.setItem(storageKey, JSON.stringify(dataAbsen));
-}
+            function simpanKeStorage(id_kelas) {
+                let storageKey = `dataAbsen_Kelas_${id_kelas}`;
+                localStorage.setItem(storageKey, JSON.stringify(dataAbsen));
+            }
 
-// 🔹 Ambil data dari Local Storage berdasarkan ID Kelas
-function ambilDariStorage(id_kelas) {
-    let storageKey = `dataAbsen_Kelas_${id_kelas}`;
-    return JSON.parse(localStorage.getItem(storageKey)) || [];
-}
+            // 🔹 Ambil data dari Local Storage berdasarkan ID Kelas
+            function ambilDariStorage(id_kelas) {
+                let storageKey = `dataAbsen_Kelas_${id_kelas}`;
+                return JSON.parse(localStorage.getItem(storageKey)) || [];
+            }
 
-// 🔹 Saat tombol absen diklik (ambil data dari API jika LocalStorage kosong)
-$(".absen").on("click", function () {
-    let id_kelas = $(this).data("idkelas");
-    let id = $(this).data("id");
+            // 🔹 Saat tombol absen diklik (ambil data dari API jika LocalStorage kosong)
+            $(".absen").on("click", function() {
+                let id_kelas = $(this).data("idkelas");
+                let id = $(this).data("id");
 
-    // Cek apakah sudah ada di localStorage
-    let savedData = ambilDariStorage(id_kelas);
+                // Cek apakah sudah ada di localStorage
+                let savedData = ambilDariStorage(id_kelas);
 
-    if (savedData.length > 0) {
-        dataAbsen = savedData;
-        renderAbsen();
-    } else {
-        // Jika tidak ada di localStorage, ambil dari database
-        $.ajax({
-            type: "GET",
-            url: `{{ url('/absen/siswa/${id_kelas}') }}`,
-            dataType: "json",
-            success: function (response) {
-                dataAbsen = response.data.map(siswa => ({
-                    id: siswa.id,
-                    nama: siswa.nama,
-                    presensi: siswa.presensi || "I" // Default "I"
-                }));
+                if (savedData.length > 0) {
+                    dataAbsen = savedData;
+                    renderAbsen();
+                } else {
+                    // Jika tidak ada di localStorage, ambil dari database
+                    $.ajax({
+                        type: "GET",
+                        url: `{{ url('/absen/siswa/${id_kelas}') }}`,
+                        dataType: "json",
+                        success: function(response) {
+                            dataAbsen = response.data.map(siswa => ({
+                                id: siswa.id,
+                                nama: siswa.nama,
+                                presensi: siswa.presensi || "I" // Default "I"
+                            }));
 
-                // Simpan ke LocalStorage
+                            simpanKeStorage(id_kelas);
+                            renderAbsen();
+                        }
+                    });
+                }
+
+                $("#absen_siswa").modal("show");
+            });
+
+            // 🔹 Toggle Hadir/Izin saat klik siswa
+            $(document).on("click", ".siswa-item", function() {
+                let siswaId = $(this).data("id");
+                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                let checkbox = $(this).find(".checkbox-presensi");
+                checkbox.prop("checked", !checkbox.prop("checked"));
+
+                let isChecked = checkbox.prop("checked");
+                let icon = $(this).find("i");
+                let statusDiv = $(this);
+
+                // Ubah tampilan ikon & warna
+                if (isChecked) {
+                    icon.removeClass("text-danger fas fa-times-circle").addClass(
+                        "text-success fas fa-check-circle");
+                    statusDiv.removeClass("border-danger").addClass("border-success");
+                } else {
+                    icon.removeClass("text-success fas fa-check-circle").addClass(
+                        "text-danger fas fa-times-circle");
+                    statusDiv.removeClass("border-success").addClass("border-danger");
+                }
+
+                // Perbarui data dalam array
+                let siswaIndex = dataAbsen.findIndex(s => s.id == siswaId);
+                if (siswaIndex !== -1) {
+                    dataAbsen[siswaIndex].presensi = isChecked ? "H" : "I";
+                }
+
+                // Simpan perubahan ke LocalStorage berdasarkan ID kelas
+                simpanKeStorage(id_kelas);
+            });
+
+            // 🔹 Fungsi untuk merender ulang daftar siswa hadir
+            function renderAbsen() {
+                $("#siswa_hadir").html("");
+
+                $.each(dataAbsen, function(index, siswa) {
+                    let isHadir = siswa.presensi === "H";
+                    let statusClass = isHadir ? "border-success" : "border-danger";
+                    let icon = isHadir ? '<i class="fas fa-check-circle text-success"></i>' :
+                        '<i class="fas fa-times-circle text-danger"></i>';
+
+                    let listItem = `
+                        <div class="d-flex align-items-center p-3 mb-2 bg-putih border-start border-4 ${statusClass} rounded siswa-item" 
+                            data-id="${siswa.id}">
+                            <input type="checkbox" class="form-check-input d-none checkbox-presensi" ${isHadir ? 'checked' : ''}> 
+                            <div class="me-3 fs-4">${icon}</div> 
+                            <div class="fw-bold">${siswa.nama}</div>
+                        </div>
+                    `;
+
+                    $("#siswa_hadir").append(listItem);
+                });
+            }
+
+            // 🔹 Saat modal dibuka kembali, tampilkan data dari LocalStorage sesuai ID Kelas
+            $("#absen_siswa").on("show.bs.modal", function() {
+                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                let savedData = ambilDariStorage(id_kelas);
+
+                if (savedData.length > 0) {
+                    dataAbsen = savedData;
+                    renderAbsen();
+                }
+            });
+
+            // 🔹 Simpan Sementara
+            $("#simpan_sementara").on("click", function() {
+                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                simpanKeStorage(id_kelas);
+                Swal.fire("Berhasil!", "Data berhasil di simpan", "success");
+                $("#absen_siswa").modal("hide");
+            });
+
+            // 🔹 Simpan Permanen (Final Submit)
+            $("#final-submit").on("click", function() {
+                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                let id = $(".absen").data("id");
+
                 simpanKeStorage(id_kelas);
 
-                // Render ulang tampilan absen
-                renderAbsen();
-            }
-        });
-    }
+                let savedData = ambilDariStorage(id_kelas);
+                let formData = $("#form_absen").serializeArray();
+                let tanggal = new Date().toISOString().split("T")[0];
 
-    $("#absen_siswa").modal("show");
-});
+                // 🔹 Ubah FormData menjadi Object
+                let formObject = {};
+                $.each(formData, function(_, field) {
+                    formObject[field.name] = field.value;
+                });
 
-// 🔹 Toggle Hadir/Izin saat klik siswa
-$(document).on("click", ".siswa-item", function () {
-    let siswaId = $(this).data("id");
-    let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
-    let checkbox = $(this).find(".checkbox-presensi");
-    checkbox.prop("checked", !checkbox.prop("checked"));
+                // 🔹 Tambahkan tanggal dan absensi ke form
+                formObject.tanggal = tanggal;
+                formObject.absensi = savedData;
+                formObject.status_tersimpan = "permanen";
+                formObject.id_kelas = id_kelas;
 
-    let isChecked = checkbox.prop("checked");
-    let icon = $(this).find("i");
-    let statusDiv = $(this);
-
-    // Ubah tampilan ikon & warna
-    if (isChecked) {
-        icon.removeClass("text-danger fas fa-times-circle").addClass("text-success fas fa-check-circle");
-        statusDiv.removeClass("border-danger").addClass("border-success");
-    } else {
-        icon.removeClass("text-success fas fa-check-circle").addClass("text-danger fas fa-times-circle");
-        statusDiv.removeClass("border-success").addClass("border-danger");
-    }
-
-    // Perbarui data dalam array
-    let siswaIndex = dataAbsen.findIndex(s => s.id == siswaId);
-    if (siswaIndex !== -1) {
-        dataAbsen[siswaIndex].presensi = isChecked ? "H" : "I";
-    }
-
-    // Simpan perubahan ke LocalStorage berdasarkan ID kelas
-    simpanKeStorage(id_kelas);
-});
-
-// 🔹 Fungsi untuk merender ulang daftar siswa hadir
-function renderAbsen() {
-    $("#siswa_hadir").html("");
-
-    $.each(dataAbsen, function (index, siswa) {
-        let isHadir = siswa.presensi === "H";
-        let statusClass = isHadir ? "border-success" : "border-danger";
-        let icon = isHadir ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>';
-
-        let listItem = `
-            <div class="d-flex align-items-center p-3 mb-2 bg-putih border-start border-4 ${statusClass} rounded siswa-item" 
-                data-id="${siswa.id}">
-                <input type="checkbox" class="form-check-input d-none checkbox-presensi" ${isHadir ? 'checked' : ''}> 
-                <div class="me-3 fs-4">${icon}</div> 
-                <div class="fw-bold">${siswa.nama}</div>
-            </div>
-        `;
-
-        $("#siswa_hadir").append(listItem);
-    });
-}
-
-// 🔹 Saat modal dibuka kembali, tampilkan data dari LocalStorage sesuai ID Kelas
-$("#absen_siswa").on("show.bs.modal", function () {
-    let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
-    let savedData = ambilDariStorage(id_kelas);
-
-    if (savedData.length > 0) {
-        dataAbsen = savedData;
-        renderAbsen();
-    }
-});
-
-// 🔹 Simpan Sementara
-$("#simpan_sementara").on("click", function () {
-    let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
-    simpanKeStorage(id_kelas);
-    alert("Data absen berhasil disimpan!");
-    $("#absen_siswa").modal("hide");
-});
-
-// 🔹 Simpan Permanen (Final Submit)
-$("#final-submit").on("click", function () {
-    let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
-    let id = $(".absen").data("id");
-
-    simpanKeStorage(id_kelas);
-
-    let savedData = ambilDariStorage(id_kelas);
-    let formData = $("#form_absen").serializeArray();
-    let tanggal = new Date().toISOString().split("T")[0];
-
-    // 🔹 Ubah FormData menjadi Object
-    let formObject = {};
-    $.each(formData, function (_, field) {
-        formObject[field.name] = field.value;
-    });
-
-    // 🔹 Tambahkan tanggal dan absensi ke form
-    formObject.tanggal = tanggal;
-    formObject.absensi = savedData;
-    formObject.status_tersimpan = "permanen";
-
-    // 🔹 Kirim ke Laravel dengan AJAX
-    $.ajax({
-        type: "PATCH",
-        url: `{{ url('/absen/siswa/store/${id}') }}`,
-        data: JSON.stringify(formObject),
-        contentType: "application/json",
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-        },
-        success: function (response) {
-            Swal.fire("Berhasil!", response.message, "success");
-            localStorage.removeItem(`dataAbsen_Kelas_${id_kelas}`);
-            $("#detailmodal").modal("hide");
-            location.reload();
-        },
-        error: function (xhr, status, error) {
-            Swal.fire("Gagal!", response.message, "error");
-        }
-    });
-});
-
-
-            // Reset modal saat ditutup agar data bersih setiap kali dibuka
-            $('#absen_siswa').on('hidden.bs.modal', function() {
-                $("#siswa_hadir").html(""); // Kosongkan daftar siswa hadir
-                $("#form_absen")[0].reset(); // Reset form
+                console.log(formObject);
+                // 🔹 Kirim ke Laravel dengan AJAX
+                $.ajax({
+                    type: "POST",
+                    url: `{{ url('/absen/siswa/store/${id}') }}`,
+                    data: JSON.stringify(formObject),
+                    contentType: "application/json",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                    },
+                    success: function(response) {
+                        Swal.fire("Berhasil!", response.message, "success");
+                        localStorage.removeItem(`dataAbsen_Kelas_${id_kelas}`);
+                        $("#detailmodal").modal("hide");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Gagal!", response.message, "error");
+                    }
+                });
             });
+
+
+            // =========================================================//
+            // ===============  PRESENTASE DATA SISWA ==================//
+            // =========================================================//
+            let id_siswa;
+
+            function pilihNilai() {
+                return Swal.fire({
+                    title: "📜 Konfirmasi Nilai",
+                    html: `
+                            <p>Pilih nilai untuk siswa:</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <label><input type="radio" name="nilai" value="A"> A</label>
+                                <label><input type="radio" name="nilai" value="B"> B</label>
+                                <label><input type="radio" name="nilai" value="Gagal"> Gagal</label>
+                            </div>
+                        `,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "✅ Simpan",
+                    cancelButtonText: "❌ Batal",
+                    preConfirm: () => {
+                        let nilai = document.querySelector('input[name="nilai"]:checked');
+                        if (!nilai) {
+                            Swal.showValidationMessage("⚠️ Pilih salah satu nilai!");
+                            return false;
+                        }
+                        return nilai.value;
+                    }
+                });
+            }
+
+            $(".btn_selesai_siswa").on("click", function() {
+                let id_siswa = $(this).data("idsiswa");
+                let id_kelas = $(this).data("id_kelas");
+
+                let now = new Date();
+                let tanggal = now.getDate();
+                let bulan = now.getMonth() + 1;
+                let tahun = now.getFullYear();
+
+                let bulanRomawi = {
+                    1: 'I',
+                    2: 'II',
+                    3: 'III',
+                    4: 'IV',
+                    5: 'V',
+                    6: 'VI',
+                    7: 'VII',
+                    8: 'VIII',
+                    9: 'IX',
+                    10: 'X',
+                    11: 'XI',
+                    12: 'XII'
+                };
+
+                let no_sertiv = `${tanggal}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
+
+                pilihNilai().then((nilai) => {
+                    console.log("Nilai yang dipilih:", nilai);
+                    $.ajax({
+                        type: "POST",
+                        url: `{{ url('/siswa/selesai/${id_kelas}/${id_siswa}') }}`,
+                        data: {
+                            _method: "PATCH",
+                            nilai: nilai.value,
+                            no_sertiv: no_sertiv,
+                            status_sertiv: "Terbit",
+                            _token: $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        success: function(response) {
+                            console.log("Sukses:", response);
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil!",
+                                text: "Data berhasil diperbarui.",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Gagal!",
+                                text: "Terjadi kesalahan saat memperbarui data.",
+                                footer: `<pre>${xhr.responseText}</pre>`
+                            });
+                        }
+                    });
+                });
+            });
+
         });
     </script>
-    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.27.3/trumbowyg.min.js') }}"></script>
 @endsection

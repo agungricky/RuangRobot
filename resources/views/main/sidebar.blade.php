@@ -81,7 +81,8 @@
                 <!-- menu header -->
                 <li class="menu-header">Pembayaran</li>
                 <li>
-                    <a href="{{ route('pembayaran') }}"><i class="fa-solid fa-money-bill-alt"></i><span>Pembayaran</span>
+                    <a href="{{ route('pembayaran') }}"><i
+                            class="fa-solid fa-money-bill-alt"></i><span>Pembayaran</span>
                         {{-- <div class="badge badge-pill badge-warning text-dark">
                         </div> --}}
                     </a>
@@ -114,10 +115,14 @@
                         <span>Kelas Selesai</span>
                     </a>
                 </li>
-   
+
                 <li class="menu-header">Gaji</li>
                 <li>
-                    <a href="{{ url('/gaji_saya') }}"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></a>
+                    <a href="{{ route('gaji.pengajar', ['id'=> $dataLogin->id]) }}"><i class="fas fa-wallet"></i> <span>Gaji</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('riwayatgaji.pengajar', ['id'=> $dataLogin->id]) }}"><i class="fas fa-file-invoice-dollar"></i> <span>Riwayat
+                            Gaji</span></a>
                 </li>
             @endif
 
