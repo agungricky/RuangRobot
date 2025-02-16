@@ -643,22 +643,21 @@
 
                 console.log(selectedSiswa);
                 $.ajax({
-                    url: "{{ route('add_siswa.update', ['id' => $data->id]) }}", // Endpoint untuk membuat data baru
-                    method: "POST", // Gunakan POST untuk operasi CREATE
+                    url: "{{ route('add_siswa.update', ['id' => $data->id]) }}",
+                    method: "POST",
                     data: {
-                        _token: '{{ csrf_token() }}', // Token CSRF untuk keamanan
-                        siswa: selectedSiswa, // Data siswa yang akan ditambahkan
+                        _token: '{{ csrf_token() }}',
+                        siswa: selectedSiswa,
                     },
                     success: function(response) {
-                        $('#tambah_siswa').modal('hide'); // Tutup modal
+                        $('#tambah_siswa').modal('hide');
                         location.reload();
                         // console.log(response);
                         alert('Data siswa berhasil ditambahkan!');
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);
-                        console.error("Error:", xhr
-                            .responseText); // Tampilkan pesan error di console
+                        console.error("Error:", xhr.responseText);
                     },
                 });
             });

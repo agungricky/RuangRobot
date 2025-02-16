@@ -1,5 +1,9 @@
 @extends('main.layout')
 @section('content')
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -135,7 +139,7 @@
                                     </div>
                                 </div>
                             @else
-                                {{-- <div class="activity">
+                                <div class="activity">
                                     <div class="activity-icon bg-primary text-light shadow-primary">
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>
@@ -149,7 +153,7 @@
                                             <i class="fas fa-clipboard-check"></i> Absen
                                         </button>
                                     </div>
-                                </div> --}}
+                                </div>
                             @endif
                         @endforeach
                     </div>
@@ -175,9 +179,27 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <button data-idsiswa="{{$siswa->id}}" data-nama="{{$siswa->nama}}"
-                                        class="btn btn-block btn-success btn_selesai_siswa">
-                                        <i class="fas fa-check"></i> Selesaikan</button>
+                                    @if ($siswa->nilai == null)
+                                        <button data-idsiswa="{{ $siswa->id }}" data-id_kelas="{{ $kelas->id }}"
+                                            class="btn btn-block btn-success btn_selesai_siswa">
+                                            <i class="fas fa-check"></i> Selesaikan</button>
+                                    @else
+                                        <div class="p-3 text-center">
+                                            <h4 class="text-primary">Nilai Siswa</h4>
+                                            @php
+                                                $nilaiColor = [
+                                                    'A' => 'text-success',
+                                                    'B' => 'text-success', // 'Warning' harus huruf kecil
+                                                    'Gagal' => 'text-danger',
+                                                ];
+                                            @endphp
+
+                                            <h2 class="fw-bold {{ $nilaiColor[$siswa->nilai] ?? 'text-dark' }}">
+                                                {{ $siswa->nilai }}
+                                            </h2>
+                                            <p class="text-muted">Nilai sudah diberikan</p>
+                                        </div>
+                                    @endif
 
                                 </div>
                             </div>
@@ -186,17 +208,27 @@
                 </div>
 
                 <h2 class="section-title">Status Kelas</h2>
-                @if ($kelas->status == '0')
-                    <form id="submitselesaifix" method="post" action="">
-                        @csrf
-                        <input type="hidden" name="id_kelas" value="">
-                        <button onclick="event.preventDefault();fixselesaikelas()" class="btn btn-primary"><i
-                                class="fas fa-check"></i>
-                            Selesaikan Kelas</button>
-                    </form>
-                @else
-                    <h2>Kelas Telah Selesai</h2>
-                @endif
+                <div class="col-12">
+                    <div class="card shadow-sm py-4 text-center">
+                        @if ($kelas->status_kelas == 'aktif')
+                            <h2 class="text-danger">Kelas Belum Selesai</h2>
+                            <p class="text-muted">Pastikan semua tugas telah diselesaikan sebelum menyelesaikan kelas.</p>
+
+                            <form method="post" action="{{ route('kelas.selesai', ['id' => $kelas->id]) }}">
+                                @csrf
+                                <input type="hidden" name="status_kelas" value="selesai">
+                                <button type="submit" class="btn btn-success btn-lg mt-3">
+                                    <i class="fas fa-check"></i> Selesaikan Kelas
+                                </button>
+                            </form>
+                        @else
+                            <h2 class="text-success">Kelas Telah Selesai</h2>
+                            <p class="text-muted">Terima kasih telah menyelesaikan kelas ini!</p>
+                            <i class="fas fa-check-circle text-success mt-3" style="font-size: 80px;"></i>
+                        @endif
+                    </div>
+                </div>
+
             </div>
         </section>
     </div>
@@ -444,10 +476,7 @@
                                 presensi: siswa.presensi || "I" // Default "I"
                             }));
 
-                            // Simpan ke LocalStorage
                             simpanKeStorage(id_kelas);
-
-                            // Render ulang tampilan absen
                             renderAbsen();
                         }
                     });
@@ -556,7 +585,7 @@
                 console.log(formObject);
                 // 🔹 Kirim ke Laravel dengan AJAX
                 $.ajax({
-                    type: "PATCH",
+                    type: "POST",
                     url: `{{ url('/absen/siswa/store/${id}') }}`,
                     data: JSON.stringify(formObject),
                     contentType: "application/json",
@@ -580,23 +609,96 @@
             // ===============  PRESENTASE DATA SISWA ==================//
             // =========================================================//
             let id_siswa;
-            let id_nama_siswa;
+
+            function pilihNilai() {
+                return Swal.fire({
+                    title: "📜 Konfirmasi Nilai",
+                    html: `
+                            <p>Pilih nilai untuk siswa:</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <label><input type="radio" name="nilai" value="A"> A</label>
+                                <label><input type="radio" name="nilai" value="B"> B</label>
+                                <label><input type="radio" name="nilai" value="Gagal"> Gagal</label>
+                            </div>
+                        `,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "✅ Simpan",
+                    cancelButtonText: "❌ Batal",
+                    preConfirm: () => {
+                        let nilai = document.querySelector('input[name="nilai"]:checked');
+                        if (!nilai) {
+                            Swal.showValidationMessage("⚠️ Pilih salah satu nilai!");
+                            return false;
+                        }
+                        return nilai.value;
+                    }
+                });
+            }
 
             $(".btn_selesai_siswa").on("click", function() {
-                id_siswa = $(this).data("idsiswa");
-                id_nama_siswa = $(this).data("nama");
+                let id_siswa = $(this).data("idsiswa");
+                let id_kelas = $(this).data("id_kelas");
 
-                console.log(id_siswa + ' ' + id_nama_siswa);
+                let now = new Date();
+                let tanggal = now.getDate();
+                let bulan = now.getMonth() + 1;
+                let tahun = now.getFullYear();
+
+                let bulanRomawi = {
+                    1: 'I',
+                    2: 'II',
+                    3: 'III',
+                    4: 'IV',
+                    5: 'V',
+                    6: 'VI',
+                    7: 'VII',
+                    8: 'VIII',
+                    9: 'IX',
+                    10: 'X',
+                    11: 'XI',
+                    12: 'XII'
+                };
+
+                let no_sertiv = `${tanggal}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
+
+                pilihNilai().then((nilai) => {
+                    console.log("Nilai yang dipilih:", nilai);
+                    $.ajax({
+                        type: "POST",
+                        url: `{{ url('/siswa/selesai/${id_kelas}/${id_siswa}') }}`,
+                        data: {
+                            _method: "PATCH",
+                            nilai: nilai.value,
+                            no_sertiv: no_sertiv,
+                            status_sertiv: "Terbit",
+                            _token: $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        success: function(response) {
+                            console.log("Sukses:", response);
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil!",
+                                text: "Data berhasil diperbarui.",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Gagal!",
+                                text: "Terjadi kesalahan saat memperbarui data.",
+                                footer: `<pre>${xhr.responseText}</pre>`
+                            });
+                        }
+                    });
+                });
             });
 
-            
-
-
-            // // Reset modal saat ditutup agar data bersih setiap kali dibuka
-            // $('#absen_siswa').on('hidden.bs.modal', function() {
-            //     $("#siswa_hadir").html(""); // Kosongkan daftar siswa hadir
-            //     $("#form_absen")[0].reset(); // Reset form
-            // });
         });
     </script>
 @endsection

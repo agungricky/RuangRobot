@@ -65,7 +65,7 @@ class kelaspengajarController extends Controller
         $kelas = Kelas::where('kelas.id', $id)
             ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
             ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
+            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
             ->first();
 
         $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
@@ -114,8 +114,67 @@ class kelaspengajarController extends Controller
             $id = $siswa->id;
             $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
         }
-        // dd($daftar_siswa);
+        // dd($kelas);
         return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
+    }
+
+    public function show_selesai(string $id)
+    {
+        $kelas = Kelas::where('kelas.id', $id)
+            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
+            ->first();
+
+        $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
+
+        $pembelajaran = pembelajaran::where('pembelajaran.kelas_id', $id)
+            ->where('pembelajaran.tanggal', '!=', null)
+            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+            ->select('pembelajaran.*', 'kelas.durasi_belajar')
+            ->orderBy('pertemuan', 'asc')
+            ->get();
+
+        $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
+        $daftar_siswa = json_decode($daftar_siswa->murid);
+
+        $kehadiran = [];
+        $totalPertemuan = $pembelajaran->count();
+
+        foreach ($pembelajaran as $pertemuan) {
+            $absensi = json_decode($pertemuan->absensi, true);
+
+            foreach ($absensi as $siswa) {
+                $id = $siswa['id'];
+                $nama = $siswa['nama'];
+                $presensi = $siswa['presensi'];
+
+                if (!isset($kehadiran[$id])) {
+                    $kehadiran[$id] = [
+                        'nama' => $nama,
+                        'hadir' => 0,
+                        'total' => $totalPertemuan,
+                        'persentase' => 0
+                    ];
+                }
+
+                if ($presensi === 'H') {
+                    $kehadiran[$id]['hadir']++;
+                }
+            }
+        }
+
+        // Hitung persentase kehadiran
+        foreach ($kehadiran as &$siswa) {
+            $siswa['persentase'] = ($siswa['hadir'] / $siswa['total']) * 100;
+        }
+
+        foreach ($daftar_siswa as &$siswa) {
+            $id = $siswa->id;
+            $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
+        }
+
+        return view('pages.kelas.pengajar.detail_kelas_selesai', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
     }
 
     public function detail_absensi($id)
@@ -198,46 +257,53 @@ class kelaspengajarController extends Controller
                     'pembelajaran_id' => $id,
                 ]);
             }
-            
+
             return response()->json(['message' => 'Kelas Selesai'], 200);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }
     }
 
-    public function gaji_saya(Request $request)
+    public function siswa_selesai(Request $request, $id_kelas, $id_siswa)
     {
-        $data  = gajiUtama::with('history_gaji')->first();
+        try {
+            $murid = muridKelas::where('kelas_id', $id_kelas)->first();
+            if (!$murid) {
+                return response()->json(['error' => 'Data murid tidak ditemukan'], 404);
+            }
 
-        if ($request->ajax()) {
+            $murid_kelas = json_decode($murid->murid, true);
+
+            foreach ($murid_kelas as &$siswa) {
+                if ($siswa['id'] == $id_siswa) {
+                    $siswa['nilai'] = $request->input('nilai', $siswa['nilai']);
+                    $siswa['no_sertiv'] = $request->input('no_sertiv', $siswa['no_sertiv']);
+                    $siswa['status_sertiv'] = $request->input('status_sertiv', $siswa['status_sertiv']);
+                    break;
+                }
+            }
+
+            $murid->murid = json_encode($murid_kelas);
+            $murid->save();
+
             return response()->json([
-                'data' => $data
+                'message' => 'Data siswa berhasil diperbarui',
+                'data' => $murid_kelas
             ]);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
         }
-        // dd($gaji);
-        return view('pages.pembayaran.gaji', compact('data'));
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    public function finish_kelas(Request $request, $id){
+        try {
+            $kelas = kelas::where('id', $id)->update([
+                'status_kelas' => $request->status_kelas
+            ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return back()->with('success', 'Kelas Selesai');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
     }
 }
