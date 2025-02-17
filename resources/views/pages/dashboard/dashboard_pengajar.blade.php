@@ -15,8 +15,10 @@
                                     <div class="col-md-4">
                                         <div class="card-body pb-0 mb-0">
                                             <div class="d-flex flex-column align-items-center text-center">
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
-                                                    class="rounded-circle" width="150">
+                                                {{-- <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
+                                                    class="rounded-circle" width="150"> --}}
+                                                    <img src="{{ asset('profile.png') }}" alt="Admin"
+                                                    class="rounded-circle" width="200">
                                                 <div class="mt-3">
                                                     {{-- {{dd($dataLogin)}} --}}
                                                     <h4>{{ isset($dataLogin->username) ? ucfirst($dataLogin->username) : '' }}

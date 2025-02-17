@@ -161,6 +161,10 @@ Route::post('/kelas/selesai/{id}', [kelaspengajarController::class, 'finish_kela
 Route::get('/gaji/{id}', [gajiPengajarController::class, 'index'])->name('gaji.pengajar');
 Route::get('/riwayat/gaji/{id}', [gajiPengajarController::class, 'riwayat_gaji'])->name('riwayatgaji.pengajar');
 Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, 'detail_histori'])->name('detail.riwayat.histori');
+Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->name('gaji.custom');
+Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
+
+
 
 
 

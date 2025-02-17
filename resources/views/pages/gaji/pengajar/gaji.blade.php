@@ -1,36 +1,48 @@
 @extends('main.layout')
 @section('content')
+    @if (session('success'))
+        <x-sweetalert.success />
+    @endif
 
     <div class="main-content">
         <section class="section">
             <x-title_halaman title="Detail gaji" />
 
             <div class="section-body mt-5">
-                    <h4 class="mb-3 text-primary">💰 Kalkulator Gaji</h4>
-                
-                    <div class="card shadow-lg p-4">
-                        <div class="d-flex justify-content-between border-bottom pb-2">
-                            <span class="fw-bold">Gaji Mengajar</span>
-                            <span class="text-success">Rp. {{ number_format($gaji_pengajar['gaji_mengajar'], 0, ',', '.') }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 pt-2">
-                            <span class="fw-bold">Gaji Transport</span>
-                            <span class="text-success">Rp. {{ number_format($gaji_pengajar['gaji_transport'], 0, ',', '.') }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 pt-2">
-                            <span class="fw-bold">Gaji Custom</span>
-                            <span class="text-success">Rp. {{ number_format($gaji_pengajar['gaji_custom'], 0, ',', '.') }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mt-3 p-2 bg-warning rounded">
-                            <span class="fw-bold text-dark">Total Gaji Diterima :</span>
-                            <span class="fw-bold text-dark">Rp. {{ number_format($gaji_pengajar['total'], 0, ',', '.') }}</span>
-                        </div>
-                        <div class="alert alert-danger d-flex align-items-center p-2 mt-3" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <small>Gaji ini belum fix, belum diverifikasi, dan masih bersifat pending.</small>
-                        </div>
+                <h4 class="mb-3 text-primary">💰 Kalkulator Gaji</h4>
+
+                <div class="card shadow-lg p-4">
+                    <div class="d-flex justify-content-between border-bottom pb-2">
+                        <span class="fw-bold">Gaji Mengajar</span>
+                        <span class="text-success">Rp.
+                            {{ number_format($gaji_pengajar['gaji_mengajar'], 0, ',', '.') }}</span>
                     </div>
+                    <div class="d-flex justify-content-between border-bottom pb-2 pt-2">
+                        <span class="fw-bold">Gaji Transport</span>
+                        <span class="text-success">Rp.
+                            {{ number_format($gaji_pengajar['gaji_transport'], 0, ',', '.') }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom pb-2 pt-2">
+                        <span class="fw-bold">Gaji Custom</span>
+                        <span class="text-success">Rp.
+                            {{ number_format($gaji_pengajar['gaji_custom'], 0, ',', '.') }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3 p-2 bg-warning rounded">
+                        <span class="fw-bold text-dark">Total Gaji Diterima :</span>
+                        <span class="fw-bold text-dark">Rp. {{ number_format($gaji_pengajar['total'], 0, ',', '.') }}</span>
+                    </div>
+                    <div class="alert alert-danger d-flex align-items-center p-2 mt-3" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <small>Gaji ini belum fix, belum diverifikasi, dan masih bersifat pending.</small>
+                    </div>
+                </div>
             </div>
+
+            <a href="{{ route('gaji.custom') }}">
+                <button class="btn btn-primary btn-lg shadow-sm my-3">
+                    <i class="fas fa-receipt me-2"></i> Absen Gaji Custom
+                </button>
+            </a>
 
             <div class="section-body">
                 <div class="row">
@@ -61,7 +73,8 @@
                                                     <td>{{ $no++ }}</td>
                                                     <td>{{ $item->nama }}</td>
                                                     <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                                    </td>
                                                     <td>{{ $item->status_pengajar }}</td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
@@ -105,7 +118,8 @@
                                                     <td>{{ $no++ }}</td>
                                                     <td>{{ $item->nama }}</td>
                                                     <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                                    </td>
                                                     <td>{{ $item->status_pengajar }}</td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
@@ -149,7 +163,8 @@
                                                     <td>{{ $no++ }}</td>
                                                     <td>{{ $item->nama }}</td>
                                                     <td>{{ $item->keterangan }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                                    </td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
                                             @endforeach

@@ -182,16 +182,15 @@ class gajiPengajarController extends Controller
             'total_ditolak' => $total_gaji_ditolak + $total_gajitransport_ditolak + $total_gajicustom_ditolak
         ];
 
-        // dd($gaji_ditolak);
-        return view('pages.gaji.pengajar.detail_histori', compact('gaji', 'transport', 'custom', 'gaji_pengajar', 'gaji_ditolak', 'transport_ditolak','custom_ditolak', 'gaji_pengajar_ditolak'));
+        return view('pages.gaji.pengajar.detail_histori', compact('gaji', 'transport', 'custom', 'gaji_pengajar', 'gaji_ditolak', 'transport_ditolak', 'custom_ditolak', 'gaji_pengajar_ditolak'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function gaji_custom()
     {
-        //
+        return view('pages.gaji.pengajar.form_gajicustom');
     }
 
     /**
@@ -199,8 +198,40 @@ class gajiPengajarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = [
+            'pengajar.required'   => 'Pengajar harus diisi.',
+            'tanggal.required'    => 'Tanggal harus diisi.',
+            'keterangan.required' => 'Keterangan wajib diisi.',
+            'nominal.required'    => 'Nominal harus diisi.',
+            'status.required'     => 'Status harus diisi.',
+        ];
+
+        $request->validate([
+            'idpengajar'   => 'required',
+            'tanggal'    => 'required',
+            'keterangan' => 'required',
+            'nominal'    => 'required',
+            'status'     => 'required'
+        ], $message);
+
+        try {
+            gajiCustom::create([
+                'pengajar' => $request->idpengajar,
+                'tanggal' => $request->tanggal,
+                'keterangan' => $request->keterangan,
+                'nominal' => $request->nominal,
+                'status' => $request->status,
+                'history_gaji_id' => null
+            ]);
+
+            return redirect()->route('gaji.pengajar', ['id' => $request->idpengajar])
+                ->with('success', 'Gaji berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Terjadi kesalahan. Gaji tidak dapat ditambahkan.');
+        }
     }
+
 
     /**
      * Display the specified resource.

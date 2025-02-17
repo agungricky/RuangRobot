@@ -22,7 +22,7 @@
                                 $randomBg = $bg[array_rand($bg)];
                             @endphp
 
-                            <h5 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <h5 style="text-wrap w-100">
                                 {{ ucwords($kelas->nama_kelas) }}
                             </h5>
                             <span class="badge badge-{{ $randomBg }}">{{ $kelas->kategori_kelas }}</span>
@@ -250,6 +250,9 @@
                     <form id="form_absen">
                         <div id="siswa_hadir"></div>
 
+                        <h6 class="mt-4">Tanggal Pertemuan :</h6>
+                        <input type="date" name="tanggal" placeholder="Tanggal" class="form-control mb-4">
+
                         <h6>Materi :</h6>
                         <input type="text" name="materi" placeholder="Materi" class="form-control mb-4">
 
@@ -326,7 +329,7 @@
                                 <input type="hidden" name="status_pengajar" value="Pengajar Bantu" />
                             </form>
                             <button class="btn btn-block btn-warning btn-lg mb-2" id="pengajar_bantu"
-                                data-id="{{ $pertemuan->id }}"
+                                data-id="{{ $pertemuan->id }}" data-id_kelas="{{ $kelas->id }}"
                                 onclick="return confirm('<?php echo $dataLogin->nama; ?>, Apakah yakin ingin melakukan absen sebagai pengajar bantu?')">
                                 <i class="fas fa-clipboard-check"></i>
                                 Absen
@@ -364,6 +367,7 @@
             // Detail Pertemuan Selesai
             $(".btn-detail").on("click", function() {
                 id = $(this).data("id");
+
                 // console.log(id);
 
                 $.ajax({
@@ -418,12 +422,15 @@
 
             // Absen Pengajar Bantu
             $("#pengajar_bantu").on("click", function() {
-                // console.log(id);
+                id_kelas = $(this).data("id_kelas");
 
                 let formdata = $("#absen_pengajar_bantu").serialize();
                 formdata += "&_token=" + $('meta[name="csrf-token"]').attr("content");
                 formdata += "&idpembelajaran=" + id;
+                formdata += "&id_kelas=" + id_kelas;
 
+                
+                // console.log(formdata);
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/pengajar/bantu/absen/${id}') }}`,
@@ -561,14 +568,13 @@
 
             // 🔹 Simpan Permanen (Final Submit)
             $("#final-submit").on("click", function() {
-                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                let id_kelas = $(".absen").data("idkelas");
                 let id = $(".absen").data("id");
 
                 simpanKeStorage(id_kelas);
 
                 let savedData = ambilDariStorage(id_kelas);
                 let formData = $("#form_absen").serializeArray();
-                let tanggal = new Date().toISOString().split("T")[0];
 
                 // 🔹 Ubah FormData menjadi Object
                 let formObject = {};
@@ -577,13 +583,11 @@
                 });
 
                 // 🔹 Tambahkan tanggal dan absensi ke form
-                formObject.tanggal = tanggal;
                 formObject.absensi = savedData;
                 formObject.status_tersimpan = "permanen";
                 formObject.id_kelas = id_kelas;
 
                 console.log(formObject);
-                // 🔹 Kirim ke Laravel dengan AJAX
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/absen/siswa/store/${id}') }}`,
