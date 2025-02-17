@@ -13,7 +13,6 @@ class dashboardUserController extends Controller
     public function index()
     {
         $kelas = pengguna::all();
-        // dd($kelas);
         $mekanik = $elektronik = $pemrograman = 0;
         foreach ($kelas as $poin) {
             $mekanik      += $poin->mekanik;
