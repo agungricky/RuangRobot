@@ -167,4 +167,6 @@ Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('ga
 
 
 
-
+// ========= Edit Profile ========= //
+Route::get('/edit_profile/{id}', [dashboardUserController::class,'edit'])->name('edit_profile');
+Route::patch('/update_profile/{id}', [dashboardUserController::class,'update'])->name('update_profile');
