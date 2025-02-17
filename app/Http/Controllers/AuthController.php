@@ -31,6 +31,9 @@ class AuthController extends Controller
             elseif ($role == 'Pengajar') {
                 return redirect()->intended(route('dashboard_pengajar'));
             }
+            else{
+                return redirect()->intended(route('dashboard_siswa'));
+            }
         } else {
             return back()->with('gagal', 'Password atau username salah');
         }
