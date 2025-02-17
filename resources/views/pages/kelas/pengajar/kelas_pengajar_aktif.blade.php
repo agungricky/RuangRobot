@@ -14,7 +14,7 @@
                                 <div class="row" id="kelas-container">
                                 </div>
                             </div>
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,17 +49,18 @@
                                 let randomColor = randomColors[Math.floor(Math.random() *
                                     randomColors.length)];
 
-                                
+
 
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/${item.id}') }}" class="text-decoration-none">
-                                            <div class="hero text-white hero-bg-image" 
+                                            <div class="hero text-white hero-bg-image h-100" 
                                                 style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
                                                 <div class="hero-inner">
-                                                    <h5 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    <h5 class="text-wrap w-100">
                                                         ${item.nama_kelas}
                                                     </h5>
+
                                                     <span class="badge badge-${randomColor}">
                                                         ${item.tipe_kelas}
                                                     </span>

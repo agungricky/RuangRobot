@@ -126,7 +126,7 @@ class kelaspengajarController extends Controller
             ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
             ->first();
 
-        $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
+        $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->where('pembelajaran.tanggal', '!=', null)->count();
 
         $pembelajaran = pembelajaran::where('pembelajaran.kelas_id', $id)
             ->where('pembelajaran.tanggal', '!=', null)

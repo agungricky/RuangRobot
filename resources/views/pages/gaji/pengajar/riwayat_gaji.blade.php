@@ -18,7 +18,7 @@
                                     <small class="text-muted">Status: <span class="text-success">✅ Terbayar</span></small>
                                 </div>
                             </div>
-                            <!-- Button Selengkapnya di bawah status -->
+     
                             <div class="mt-2">
                                 <a href="{{ route('detail.riwayat.histori', ['id'=> $dataLogin->id, 'idtanggal'=>$list_gajian->id]) }}"
                                     class="text-primary">
