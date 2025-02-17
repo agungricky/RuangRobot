@@ -12,16 +12,6 @@ class dashboardUserController extends Controller
      */
     public function index()
     {
-        $kelas = pengguna::all();
-        $mekanik = $elektronik = $pemrograman = 0;
-        foreach ($kelas as $poin) {
-            $mekanik      += $poin->mekanik;
-            $pemrograman  += $poin->pemrograman;
-            $elektronik  += $poin->elektronik;
-        }
-        $max = max($mekanik, $elektronik, $pemrograman);
-
-        return view('pages.dashboard.dashboard_pengajar', compact('mekanik', 'elektronik', 'pemrograman', 'max', 'kelas'));
     }
 
     /**
@@ -53,7 +43,8 @@ class dashboardUserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = pengguna::where('id', $id)->first();
+        return view('pages.pengguna.edit_profile', compact('data'));
     }
 
     /**
@@ -61,8 +52,36 @@ class dashboardUserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // 1️⃣ Validasi data terlebih dahulu
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'alamat' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:15',
+            'password' => 'nullable|min:6' // Password opsional, minimal 6 karakter
+        ]);
+
+        // 2️⃣ Cari data pengguna berdasarkan ID
+        $pengguna = pengguna::findOrFail($id);
+
+        // 3️⃣ Update data (kecuali password jika kosong)
+        $dataUpdate = [
+            'nama' => $request->nama,
+            'alamat' => $request->alamat,
+            'no_telp' => $request->no_telp,
+        ];
+
+        // Jika password diisi, update password juga
+        if ($request->filled('password')) {
+            $dataUpdate['password'] = bcrypt($request->password); // Enkripsi password
+        }
+
+        $pengguna->update($dataUpdate);
+
+        // 4️⃣ Redirect dengan pesan sukses
+        return redirect()->route('edit_profile', ['id' => $id])->with('success', 'Data profile berhasil diubah');
     }
+
+
 
     /**
      * Remove the specified resource from storage.

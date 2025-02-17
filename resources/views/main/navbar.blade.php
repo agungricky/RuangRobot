@@ -16,8 +16,8 @@
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a href="" class="dropdown-item has-icon">
-                    <i class="fas fa-cog"></i> Profil Saya
+                <a href="{{ route('edit_profile', ['id', $dataLogin->id]) }}" class="dropdown-item has-icon">
+                    <i class="fas fa-cog"></i> Edit Profil Saya
                 </a>
                 <a href="{{ route('logout') }}"
                     class="dropdown-item has-icon text-danger">

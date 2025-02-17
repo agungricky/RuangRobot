@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\dashboardAdminController;
 use App\Http\Controllers\dashboardController;
+use App\Http\Controllers\dashboardPengajarController;
 use App\Http\Controllers\dashboardUser;
 use App\Http\Controllers\dashboardUserController;
 use App\Http\Controllers\gajiController;
@@ -21,11 +23,10 @@ Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 
-Route::view('/x', 'main.layout');
-// Route::view('/x', 'pages.konten');
+// Route::view('/x', 'main.layout');
 
 // ========= Admin ========= //
-Route::get('/dashboard', [dashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [dashboardAdminController::class, 'index'])->name('dashboard');
 
 // ========= Kategori & Tipe Kelas ========= //
 Route::get('/kategori_kelas', [kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas');
@@ -142,7 +143,7 @@ Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.j
 
 
 // ========= Dashboard Pengajar ========= //
-Route::get('/dashboard_user', [dashboardUserController::class, 'index'])->name('dashboard_pengajar');
+Route::get('/dashboard/pengajar', [dashboardPengajarController::class, 'index'])->name('dashboard_pengajar');
 
 // ========= Kelas Pengajar ========= //
 Route::get('/kelas_pengajar', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
@@ -164,7 +165,6 @@ Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, '
 Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->name('gaji.custom');
 Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
 
-
-
-
-
+// ========= Edit Profile ========= //
+Route::get('/edit_profile/{id}', [dashboardUserController::class,'edit'])->name('edit_profile');
+Route::patch('/update_profile/{id}', [dashboardUserController::class,'update'])->name('update_profile');
