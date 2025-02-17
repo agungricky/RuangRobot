@@ -329,7 +329,7 @@
                                 <input type="hidden" name="status_pengajar" value="Pengajar Bantu" />
                             </form>
                             <button class="btn btn-block btn-warning btn-lg mb-2" id="pengajar_bantu"
-                                data-id="{{ $pertemuan->id }}"
+                                data-id="{{ $pertemuan->id }}" data-id_kelas="{{ $kelas->id }}"
                                 onclick="return confirm('<?php echo $dataLogin->nama; ?>, Apakah yakin ingin melakukan absen sebagai pengajar bantu?')">
                                 <i class="fas fa-clipboard-check"></i>
                                 Absen
@@ -367,6 +367,7 @@
             // Detail Pertemuan Selesai
             $(".btn-detail").on("click", function() {
                 id = $(this).data("id");
+
                 // console.log(id);
 
                 $.ajax({
@@ -421,12 +422,15 @@
 
             // Absen Pengajar Bantu
             $("#pengajar_bantu").on("click", function() {
-                // console.log(id);
+                id_kelas = $(this).data("id_kelas");
 
                 let formdata = $("#absen_pengajar_bantu").serialize();
                 formdata += "&_token=" + $('meta[name="csrf-token"]').attr("content");
                 formdata += "&idpembelajaran=" + id;
+                formdata += "&id_kelas=" + id_kelas;
 
+                
+                // console.log(formdata);
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/pengajar/bantu/absen/${id}') }}`,

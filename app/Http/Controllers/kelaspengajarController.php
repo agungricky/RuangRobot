@@ -7,11 +7,13 @@ use App\Models\gajiUtama;
 use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
+use App\Models\pengguna;
 use App\Models\programbelajar;
 use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class kelaspengajarController extends Controller
 {
@@ -191,6 +193,13 @@ class kelaspengajarController extends Controller
     public function pengajar_bantu(Request $request, $id)
     {
         try {
+            $kelas = kelas::where('id', $request->id_kelas)->first();
+
+            $program_belajar = programbelajar::where('id', $kelas->program_belajar_id)->first();
+            pengguna::where('id', $request->pengajar)->increment('elektronik', $program_belajar->elektronik ?? 0);
+            pengguna::where('id', $request->pengajar)->increment('mekanik', $program_belajar->mekanik ?? 0);
+            pengguna::where('id', $request->pengajar)->increment('pemrograman', $program_belajar->pemrograman ?? 0);
+            
             gajiUtama::create([
                 'pengajar' => $request->pengajar,
                 'nominal' => $request->gaji_pengajar,
@@ -229,6 +238,14 @@ class kelaspengajarController extends Controller
      */
     public function store(Request $request, $id)
     {
+        $request->validate([
+            'pengajar'           => 'required',
+            'tanggal'            => 'required',
+            'materi'             => 'required',
+            'absensi'            => 'required',
+            'status_tersimpan'   => 'required',
+        ]);
+        
         try {
             pembelajaran::where('id', $id)->update([
                 'pengajar' => $request->pengajar,
@@ -240,6 +257,12 @@ class kelaspengajarController extends Controller
             ]);
 
             $kelas = kelas::where('id', $request->id_kelas)->first();
+
+            $program_belajar = programbelajar::where('id', $kelas->program_belajar_id)->first();
+            pengguna::where('id', $request->pengajar_id)->increment('elektronik', $program_belajar->elektronik ?? 0);
+            pengguna::where('id', $request->pengajar_id)->increment('mekanik', $program_belajar->mekanik ?? 0);
+            pengguna::where('id', $request->pengajar_id)->increment('pemrograman', $program_belajar->pemrograman ?? 0);
+
             gajiUtama::create([
                 'pengajar' => $request->pengajar_id,
                 'nominal' => $kelas->gaji_pengajar,
@@ -295,7 +318,8 @@ class kelaspengajarController extends Controller
         }
     }
 
-    public function finish_kelas(Request $request, $id){
+    public function finish_kelas(Request $request, $id)
+    {
         try {
             $kelas = kelas::where('id', $id)->update([
                 'status_kelas' => $request->status_kelas
