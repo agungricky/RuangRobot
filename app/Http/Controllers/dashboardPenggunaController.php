@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class dashboardSiswaController extends Controller
+class dashboardPenggunaController extends Controller
 {
     /**
      * Display a listing of the resource.

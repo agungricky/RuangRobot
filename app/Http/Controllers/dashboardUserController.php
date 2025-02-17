@@ -10,8 +10,18 @@ class dashboardUserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index_Admin(){
+        return view('pages.dashboard.dashboard');
+    }
+
+    public function index_Pengajar()
     {
+        return view('pages.dashboard.dashboard_pengajar');
+    }
+
+    public function index_Siswa()
+    {
+        return view('pages.dashboard.dashboard_pengajar');
     }
 
     /**

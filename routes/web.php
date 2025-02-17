@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardAdminController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\dashboardPengajarController;
+use App\Http\Controllers\dashboardPenggunaController;
 use App\Http\Controllers\dashboardUser;
 use App\Http\Controllers\dashboardUserController;
 use App\Http\Controllers\gajiController;
@@ -26,7 +27,7 @@ Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 // Route::view('/x', 'main.layout');
 
 // ========= Admin ========= //
-Route::get('/dashboard', [dashboardAdminController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
 
 // ========= Kategori & Tipe Kelas ========= //
 Route::get('/kategori_kelas', [kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas');
@@ -131,7 +132,6 @@ Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])
 Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
 
 
-
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
 Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');
@@ -141,9 +141,8 @@ Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.j
 // ================================ PENGAJAR ============================================ //
 // ====================================================================================== //
 
-
 // ========= Dashboard Pengajar ========= //
-Route::get('/dashboard/pengajar', [dashboardPengajarController::class, 'index'])->name('dashboard_pengajar');
+Route::get('/dashboard/pengajar', [dashboardPenggunaController::class, 'index_Pengajar'])->name('dashboard_pengajar');
 
 // ========= Kelas Pengajar ========= //
 Route::get('/kelas_pengajar', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
@@ -156,7 +155,6 @@ Route::get('/absen/siswa/{id}', [kelaspengajarController::class, 'siswa_show'])-
 Route::post('/absen/siswa/store/{id}', [kelaspengajarController::class, 'store'])->name('absen.store');
 Route::patch('/siswa/selesai/{id_kelas}/{id_siswa}', [kelaspengajarController::class, 'siswa_selesai'])->name('siswa.selesai');
 Route::post('/kelas/selesai/{id}', [kelaspengajarController::class, 'finish_kelas'])->name('kelas.selesai');
-
 
 // ========= Gaji ========= //
 Route::get('/gaji/{id}', [gajiPengajarController::class, 'index'])->name('gaji.pengajar');
