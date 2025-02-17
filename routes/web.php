@@ -17,6 +17,7 @@ use App\Http\Controllers\pembelajaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
+use App\Http\Controllers\siswaController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'index')->name('index');
@@ -164,5 +165,15 @@ Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->nam
 Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
 
 // ========= Edit Profile ========= //
-Route::get('/edit_profile/{id}', [dashboardUserController::class,'edit'])->name('edit_profile');
-Route::patch('/update_profile/{id}', [dashboardUserController::class,'update'])->name('update_profile');
+Route::get('/edit_profile/{id}', [dashboardPenggunaController::class,'edit'])->name('edit_profile');
+Route::patch('/update_profile/{id}', [dashboardPenggunaController::class,'update'])->name('update_profile');
+
+
+// ====================================================================================== //
+// ================================== SISWA ============================================= //
+// ====================================================================================== //
+
+// ========= Dashboard Siswa ========= //
+Route::get('/dashboard/siswa', [dashboardPenggunaController::class, 'index_Siswa'])->name('dashboard_siswa');
+Route::get('/kelas/saya/{id}', [siswaController::class, 'index'])->name('siswa.kelas.json');
+

@@ -94,13 +94,13 @@
 
 
             {{-- ===================================================== --}}
-            <!------------------ menu dashboard pengguna ---------------->
+            <!------------------ menu dashboard Pengajar ----------------->
             {{-- ===================================================== --}}
 
             @if ($dataLogin->role == 'Pengajar')
                 <li class="menu-header">Dashboard</li>
                 <li>
-                    <a href="{{ url('/dashboard_user') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                    <a href="{{ url('/dashboard/pengajar') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 </li>
                 <li class="menu-header">Manage Kelas</li>
                 <li>
@@ -126,7 +126,23 @@
                 </li>
             @endif
 
+            {{-- ===================================================== --}}
+            <!------------------ menu dashboard Siswa----- --------------->
+            {{-- ===================================================== --}}
 
+            @if ($dataLogin->role == 'Siswa')
+                <li class="menu-header">Dashboard</li>
+                <li>
+                    <a href="{{ url('/dashboard/siswa') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                </li>
+                <li class="menu-header">Manage Kelas</li>
+                <li>
+                    <a href="{{ route('siswa.kelas.json', ['id'=> $dataLogin->id]) }}">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Kelas Saya</span>
+                    </a>
+                </li>
+            @endif
         </ul>
     </aside>
 </div>
