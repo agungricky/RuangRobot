@@ -142,6 +142,13 @@
                         <span>Kelas Saya</span>
                     </a>
                 </li>
+                <li class="menu-header">Pembayaran Kelas</li>
+                <li>
+                    <a href="{{ route('pembayaran.siswa', ['id'=>$dataLogin->id]) }}">
+                        <i class="fas fa-receipt"></i>
+                        <span>Pembayaran</span>
+                    </a>
+                </li>
             @endif
         </ul>
     </aside>
