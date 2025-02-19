@@ -166,45 +166,56 @@ class siswaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function pembayaran(Request $request, $id)   
+    public function pembayaran(Request $request, $id)
     {
         $data = pengguna::where('id', $id)->first();
 
-        if (!$data) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
-        }
-
         $kelas_diikuti = json_decode($data->kelas_diikuti, true);
+
         $id_kelas_array = array_column($kelas_diikuti, 'id_kelas');
 
         $kelas = kelas::whereIn('kelas.id', $id_kelas_array)
-            ->where('kelas.status_kelas', 'Aktif')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
 
-        $kelas_selesai = kelas::whereIn('kelas.id', $id_kelas_array)
-            ->where('kelas.status_kelas', 'Selesai')
-            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-            ->select('kelas.*', 'program_belajar.nama_program')
-            ->get();
+        $data_siswa = [];
 
-        if ($request->ajax()) {
-            return response()->json([
-                'kelas' => $kelas,
-                'kelas_selesai' => $kelas_selesai,
-            ]);
+        foreach ($kelas as $item) {
+            $muridKelas = muridKelas::where('kelas_id', $item->id)->first();
+
+            if ($muridKelas && $muridKelas->murid) {
+                $murid = json_decode($muridKelas->murid, true);
+
+                if (is_array($murid)) {
+                    foreach ($murid as $key => $value) {
+                        if ($value['id'] == $data->id) {
+                            $value['nama_kelas'] = $item->nama_kelas;
+                            $value['nama_program'] = $item->nama_program;
+                            $value['status_kelas'] = $item->status_kelas;
+                            $value['kekurangan'] = $value['tagihan'] - $value['pembayaran'];
+                            $value['status_pembayaran'] = ($value['pembayaran'] == $value['tagihan']) ? 'Lunas' : 'Belum Lunas';
+                            $data_siswa[] = $value;
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        
-        return view('pages.pembayaran.siswa.pembayaran');
+
+        // dd($data_siswa);
+
+        return view('pages.pembayaran.siswa.pembayaran', compact('data_siswa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function detail_pembayaran(Request $request)
     {
-        //
+        $data = $request->except('_token');
+        // dd($data);
+        return view('pages.pembayaran.siswa.detail_pembayaran', compact('data'));
     }
 
     /**

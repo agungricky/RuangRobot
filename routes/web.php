@@ -178,5 +178,7 @@ Route::get('/dashboard/siswa', [dashboardPenggunaController::class, 'index_Siswa
 Route::get('/kelas/saya/{id}', [siswaController::class, 'index'])->name('siswa.kelas.json');
 Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('siswa_kelas.detail.json');
 Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
+Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
+
 
 

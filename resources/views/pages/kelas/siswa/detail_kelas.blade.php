@@ -4,7 +4,7 @@
     <div class="main-content">
         <section class="section">
             <x-title_halaman title="Detail Kelas" />
-            <a href="" class="btn btn-primary btn-lg mb-4">
+            <a href="{{ route('siswa.kelas.json', ['id'=>$dataLogin->id]) }}" class="btn btn-primary btn-lg mb-4">
                 <i class="fa fa-arrow-left"></i> Kembali</a>
 
             {{-- Informasi Pertemuan --}}
