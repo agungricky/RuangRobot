@@ -38,6 +38,8 @@
                         let kelasHtml = "";
                         let data = response.kelas || [];
 
+                        console.log(data);
+
                         if (data.length === 0) {
                             kelasHtml =
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
@@ -45,7 +47,7 @@
                             data.forEach(item => {
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ url('/detail_kelas/selesai/') }}/${item.id}" class="text-decoration-none">
+                                        <a href="{{ url('/detail/kelas/${item.id}/siswa') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
                                                 style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
                                                 <div class="hero-inner">
@@ -84,7 +86,7 @@
                     type: "GET",
                     dataType: "json",
                     success: function(response) {
-                        console.log(response); // Cek apakah data sudah diterima
+                        // console.log(response); // Cek apakah data sudah diterima
 
                         let kelasHtml = "";
                         let data = response.kelas_selesai || [];
@@ -98,7 +100,7 @@
                             data.forEach(item => {
                                     kelasHtml += `
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ url('/detail_kelas/selesai/') }}/${item.id}" class="text-decoration-none">
+                                        <a href="{{ url('/detail/kelas/${item.id}/siswa') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
                                                 style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
                                                 <div class="hero-inner">
