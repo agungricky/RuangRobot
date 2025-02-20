@@ -164,16 +164,12 @@ class siswaController extends Controller
      */
     public function pembayaran(Request $request, $id)
     {
-        $data = pengguna::where('id', $id)->first();
-
-        $kelas_diikuti = json_decode($data->kelas_diikuti, true);
-
-        $id_kelas_array = array_column($kelas_diikuti, 'id_kelas');
-
-        $kelas = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas = invoice::where('invoice.profile_id', $id)
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
+
 
         $data_siswa = [];
 
@@ -185,7 +181,7 @@ class siswaController extends Controller
 
                 if (is_array($murid)) {
                     foreach ($murid as $key => $value) {
-                        if ($value['id'] == $data->id) {
+                        if ($value['id'] == $id) {
                             $value['nama_kelas'] = $item->nama_kelas;
                             $value['nama_program'] = $item->nama_program;
                             $value['status_kelas'] = $item->status_kelas;

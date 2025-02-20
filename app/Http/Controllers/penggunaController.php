@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\akun;
+use App\Models\invoice;
 use App\Models\pengguna;
 use App\Models\sekolah;
 use Illuminate\Http\Request;
@@ -168,5 +169,16 @@ class penggunaController extends Controller
         pengguna::find($id)->delete();
         return redirect()->route('pengguna', ['id' => $role])->with('success','Data pengguna berhasil dihapus');
 
+    }
+
+    public function kelas_diikuti($id){
+        $data = invoice::where('invoice.profile_id', $id)
+        ->join('kelas', 'invoice.kelas_id', 'kelas.id')
+        ->join('profile', 'invoice.profile_id', 'profile.id')
+        ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
+        ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
+        ->orderBy('invoice.created_at', 'desc')
+        ->get();
+        return view('pages.pengguna.kelas_diikuti', compact('data'));
     }
 }

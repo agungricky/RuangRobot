@@ -96,7 +96,7 @@ Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('mur
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
 Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
 Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
-
+Route::get('/kelas/diikuti/{id}', [penggunaController::class, 'kelas_diikuti'])->name('kelas.diikuti');
 Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
 Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
 
@@ -132,6 +132,7 @@ Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pe
 Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
 Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
 Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
+Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
 
 
 //route edit

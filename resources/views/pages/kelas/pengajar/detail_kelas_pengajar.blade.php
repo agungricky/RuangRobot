@@ -586,6 +586,7 @@
             $("#final-submit").on("click", function() {
                 let id_kelas = $(".absen").data("idkelas");
                 let id = $(".absen").data("id");
+                let gaji_transport = '{{ $kelas->gaji_transport }}'
 
                 simpanKeStorage(id_kelas);
 
@@ -602,6 +603,7 @@
                 formObject.absensi = savedData;
                 formObject.status_tersimpan = "permanen";
                 formObject.id_kelas = id_kelas;
+                formObject.gaji_transport = gaji_transport;
 
                 $.ajax({
                     type: "POST",

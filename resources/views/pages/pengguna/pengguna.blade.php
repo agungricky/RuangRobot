@@ -169,9 +169,18 @@
                     {
                         data: 'nama',
                         render: function(data, type, row) {
-                            return `<div class="text-start text-tabel fw-bold">${data}</div>`;
+                            console.log(row);
+                            return `<div class="text-start text-tabel fw-bold"><a href="{{ url('/kelas/diikuti/${row.id}') }}">${data}</a></div>`;
                         }
                     },
+                    @if ($id == 'Siswa')
+                        {
+                            data: 'nama_sekolah',
+                            render: function(data, type, row) {
+                                return `<div class="text-start text-tabel">${data}</div>`;
+                            }
+                        },
+                    @endif
                     @if ($id == 'Siswa')
                         {
                             data: 'nama_sekolah',
