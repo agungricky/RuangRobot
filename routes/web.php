@@ -93,16 +93,17 @@ Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('mur
 
 
 // ========= Pengguna ========= //
-Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
-Route::get('/data_admin/{id}/json', [penggunaController::class, 'pengguna'])->name('admin.json');
+Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
+Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
+Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
 
 Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
 Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
 
 // Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
-Route::get('/pengguna/edit/{id}', [penggunaController::class, 'edit'])->name('pengguna.edit');
-Route::patch('/pengguna/update/{id}', [penggunaController::class, 'update'])->name('pengguna.update');
-Route::delete('/pengguna/delete/{id}', [penggunaController::class,'destroy'])->name('pengguna.delete');
+Route::get('/pengguna/edit/{id}/{role}', [penggunaController::class, 'edit'])->name('pengguna.edit');
+Route::patch('/pengguna/update/{id}/{role}', [penggunaController::class, 'update'])->name('pengguna.update');
+Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class,'destroy'])->name('pengguna.delete');
 
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');

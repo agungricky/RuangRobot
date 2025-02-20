@@ -48,11 +48,11 @@
                     </a>
                     <div class="collapse ps-4" id="pengguna">
                         <ul class="list-unstyled">
-                            <li><a href="{{ route('admin', ['id' => 'Admin']) }}" class="nav-link"><i
+                            <li><a href="{{ route('pengguna', ['id' => 'Admin']) }}" class="nav-link"><i
                                         class="fa-solid fa-user-tie"></i>Admin</a></li>
-                            <li><a href="{{ route('admin', ['id' => 'Pengajar']) }}" class="nav-link"><i
+                            <li><a href="{{ route('pengguna', ['id' => 'Pengajar']) }}" class="nav-link"><i
                                         class="fa-solid fa-chalkboard-user"></i>Pengajar</a></li>
-                            <li><a href="{{ route('admin', ['id' => 'Siswa']) }}" class="nav-link"><i
+                            <li><a href="{{ route('pengguna', ['id' => 'Siswa']) }}" class="nav-link"><i
                                         class="fa-solid fa-user"></i>Siswa</a></li>
                         </ul>
                     </div>

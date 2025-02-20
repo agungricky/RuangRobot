@@ -260,7 +260,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="mb-2">
-                                    <form action="{{ route('gaji.terbayar', ['id'=> $data->id]) }}" method="POST">
+                                    <form action="{{ route('gaji.terbayar', ['id' => $data->id]) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="status" value="dibayar">
@@ -351,4 +351,16 @@
             </div>
         </section>
     </div>
+    <script>
+        $(document).ready(function() {
+            let scrollPosition = localStorage.getItem("scrollPosition");
+            if (scrollPosition) {
+                $(window).scrollTop(scrollPosition);
+            }
+
+            $(window).on("beforeunload", function() {
+                localStorage.setItem("scrollPosition", $(window).scrollTop());
+            });
+        });
+    </script>
 @endsection

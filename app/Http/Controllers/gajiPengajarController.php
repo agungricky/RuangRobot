@@ -63,7 +63,6 @@ class gajiPengajarController extends Controller
             'gaji_custom' => $total_gajicustom,
             'total' => $total_gaji + $total_gajitransport + $total_gajicustom
         ];
-        // dd($gaji);
         return view('pages.gaji.pengajar.gaji', compact('gaji', 'transport', 'custom', 'gaji_pengajar'));
     }
 
@@ -74,6 +73,7 @@ class gajiPengajarController extends Controller
             ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
             ->select('history_gaji.id', 'history_gaji.tanggal_terbayar')
             ->distinct()
+            ->orderBy('history_gaji.tanggal_terbayar', 'desc')
             ->get();
 
         // dd($data);

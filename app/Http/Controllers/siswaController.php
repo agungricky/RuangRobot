@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\invoice;
 use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
@@ -21,23 +22,16 @@ class siswaController extends Controller
      */
     public function index(Request $request, $id)
     {
-        $data = pengguna::where('id', $id)->first();
-
-        if (!$data) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
-        }
-
-        $kelas_diikuti = json_decode($data->kelas_diikuti, true);
-        $id_kelas_array = array_column($kelas_diikuti, 'id_kelas');
-
-        $kelas = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas = invoice::where('invoice.profile_id', $id)
             ->where('kelas.status_kelas', 'Aktif')
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
 
-        $kelas_selesai = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas_selesai = invoice::where('invoice.profile_id', $id)
             ->where('kelas.status_kelas', 'Selesai')
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();

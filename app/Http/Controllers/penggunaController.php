@@ -34,8 +34,6 @@ class penggunaController extends Controller
                 ->get();
         }
 
-        // dd($data);
-
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data,
@@ -124,48 +122,51 @@ class penggunaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function reset_password(string $id)
     {
-        //
+        try {
+            akun::where('id', $id)->update([
+                'password' => Hash::make('ruangrobot')
+            ]);
+
+            return back()->with('success', 'Password berhasil direset!');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Password gagal direset!');
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id, $role)
     {
         $data = pengguna::where('id', $id)->first();
 
-        return view('pages.pengguna.edit_pengguna',compact('data'));
+        return view('pages.pengguna.edit_pengguna', compact('data', 'role'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, string $id)
-    // {
-    //     pengguna::where('id', $id)->update([
-    //         'nama' => $request->nama,
-    //         'email' => $request->email,
-    //         'alamat' => $request->alamat,
-    //         'no_telp' => $request->no_telp,
-    //         'sekolah_id' => $request->sekolah_id,
-    //         'elektronik' => $request->elektronik,
-    //         'mekanik' => $request->mekanik,
-    //         'pemrograman' => $request->pemrograman,
+    public function update(Request $request, string $id, $role)
+    {
+        pengguna::where('id', $id)->update([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'alamat' => $request->alamat,
+            'no_telp' => $request->no_telp,
+        ]);
 
-    //     ]);
-
-    //     return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguan berhasil diUpdate');
-    // }
+        return redirect()->route('pengguna',['id' => $role ])->with('success','Data pengguan berhasil diUpdate');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, $role)
     {
         pengguna::find($id)->delete();
-        return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguna berhasil dihapus');
+        return redirect()->route('pengguna', ['id' => $role])->with('success','Data pengguna berhasil dihapus');
 
     }
 }

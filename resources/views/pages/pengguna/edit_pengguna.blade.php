@@ -1,4 +1,4 @@
-{{-- @extends('main.layout')
+@extends('main.layout')
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -10,7 +10,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{route('pengguna.update',['id' => $data->id]) }}" method="POST">
+                                <form action="{{route('pengguna.update', ['id' => $data->id, 'role' => $role]) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="form-group">
@@ -46,4 +46,4 @@
             </div>
         </section>
     </div>
-@endsection --}}
+@endsection
