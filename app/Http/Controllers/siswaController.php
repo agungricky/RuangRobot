@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\invoice;
 use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
@@ -11,6 +12,8 @@ use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Svg\Tag\Rect;
+use GDText\Box;
+use GDText\Color;
 
 class siswaController extends Controller
 {
@@ -19,23 +22,16 @@ class siswaController extends Controller
      */
     public function index(Request $request, $id)
     {
-        $data = pengguna::where('id', $id)->first();
-
-        if (!$data) {
-            return response()->json(['error' => 'Data tidak ditemukan'], 404);
-        }
-
-        $kelas_diikuti = json_decode($data->kelas_diikuti, true);
-        $id_kelas_array = array_column($kelas_diikuti, 'id_kelas');
-
-        $kelas = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas = invoice::where('invoice.profile_id', $id)
             ->where('kelas.status_kelas', 'Aktif')
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
 
-        $kelas_selesai = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas_selesai = invoice::where('invoice.profile_id', $id)
             ->where('kelas.status_kelas', 'Selesai')
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
@@ -168,16 +164,12 @@ class siswaController extends Controller
      */
     public function pembayaran(Request $request, $id)
     {
-        $data = pengguna::where('id', $id)->first();
-
-        $kelas_diikuti = json_decode($data->kelas_diikuti, true);
-
-        $id_kelas_array = array_column($kelas_diikuti, 'id_kelas');
-
-        $kelas = kelas::whereIn('kelas.id', $id_kelas_array)
+        $kelas = invoice::where('invoice.profile_id', $id)
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
             ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
             ->select('kelas.*', 'program_belajar.nama_program')
             ->get();
+
 
         $data_siswa = [];
 
@@ -189,7 +181,7 @@ class siswaController extends Controller
 
                 if (is_array($murid)) {
                     foreach ($murid as $key => $value) {
-                        if ($value['id'] == $data->id) {
+                        if ($value['id'] == $id) {
                             $value['nama_kelas'] = $item->nama_kelas;
                             $value['nama_program'] = $item->nama_program;
                             $value['status_kelas'] = $item->status_kelas;
@@ -214,15 +206,54 @@ class siswaController extends Controller
     public function detail_pembayaran(Request $request)
     {
         $data = $request->except('_token');
-        // dd($data);
         return view('pages.pembayaran.siswa.detail_pembayaran', compact('data'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function generate_sertiv()
     {
-        //
+        $templatePath = public_path('assets/certificate.jpg');
+        if (!file_exists($templatePath)) {
+            abort(404, "Template sertifikat tidak ditemukan.");
+        }
+
+        $template = imagecreatefromjpeg($templatePath);
+        $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $bln = $array_bln[date('n')];
+
+        // Teks No Sertifikat
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
+        $box->setBox(680, 240, 450, 120);
+        $box->setTextAlign('center', 'top');
+        $box->draw("No : " . 12 . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+
+        // Teks Nama
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(55);
+        $box->setBox(500, 330, 800, 160);
+        $box->setTextAlign('center', 'center');
+        $box->draw(ucwords("Ricky Agung Sumiranto"));
+
+        // Teks Pelatihan
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
+        $box->setBox(500, 490, 800, 200);
+        $box->setTextAlign('center', 'top');
+        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper("7B") . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
+
+        // Buat file gambar sementara
+        return response()->streamDownload(function () use ($template) {
+            imagejpeg($template);
+            imagedestroy($template);
+        }, "sertifikat_17.jpg");
     }
 }

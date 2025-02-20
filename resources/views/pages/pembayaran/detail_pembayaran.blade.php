@@ -76,6 +76,9 @@
                     </div>
                 </div>
 
+                <button class="btn btn-primary mb-4" id="pembayaran"><i class="fas fa-add"></i> Buat Penagihan
+                    Pembayaran</button>
+
                 {{-- Data Siswa --}}
                 <div class="row">
                     <div class="col-lg-12">
@@ -224,8 +227,6 @@
 
             // Tambah Pembayaran
             $(document).on("click", "#submit", function(e) {
-                e.preventDefault();
-
                 if (!selectedKelasId || !selectedSiswaId) {
                     alert("Error: Kelas ID atau Siswa ID tidak ditemukan!");
                     return;
@@ -249,7 +250,7 @@
                         success: function(response) {
                             $('#tambahpembayaran').modal('hide');
                             $('#edit_pertemuan_form').trigger('reset');
-                            $('#data_siswa').DataTable().ajax.reload();
+                            location.reload();
 
                             Swal.fire({
                                 icon: 'success',
@@ -277,6 +278,74 @@
 
             });
 
+            // Penagihan Kekurangan Pembayaran
+            $(document).on('click', '#pembayaran', function() {
+                let namaKelas = '{{ $data->nama_kelas }}'
+
+                Swal.fire({
+                    title: "Mohon Tunggu...",
+                    html: '<img src="https://i.gifer.com/ZZ5H.gif" width="50" height="50"> <br> Sedang mengirim pesan',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('pembayaran_murid.json', ['id' => $data->id]) }}",
+                    dataType: "json",
+                    success: function(response) {
+                        let data = Array.isArray(response) ? response : response.data || [];
+                        let filteredData = data.filter(item => item.sisa_pembayaran != 0).map(
+                            item => ({
+                                ...item,
+                                namaKelas: namaKelas
+                            })
+                        );
+
+                        if (filteredData.length > 0) {
+                            $.ajax({
+                                type: "POST",
+                                url: "{{ route('penagihan') }}",
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    pembayaran: filteredData
+                                },
+                                success: function(res) {
+                                    Swal.fire({
+                                        title: "Berhasil!",
+                                        text: "Data berhasil dikirim!",
+                                        icon: "success",
+                                        confirmButtonText: "OK"
+                                    });
+                                },
+                                error: function(xhr, status, error) {
+                                    Swal.fire({
+                                        title: "Gagal!",
+                                        text: "Gagal Mengirim Pesan!",
+                                        icon: "error",
+                                        confirmButtonText: "OK"
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.close();
+                            Swal.fire({
+                                title: "Tidak Ada Tagihan",
+                                text: "Tidak ada data yang perlu ditagih.",
+                                icon: "info",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.close();
+                        console.error("Terjadi kesalahan:", error);
+                    }
+                });
+            });
 
         });
     </script>
