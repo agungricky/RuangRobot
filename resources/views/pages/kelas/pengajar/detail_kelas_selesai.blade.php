@@ -278,8 +278,7 @@
 
             // Detail Pertemuan Selesai
             $(".btn-detail").on("click", function() {
-                id = $(this).data("id");
-                // console.log(id);
+                let id = $(this).data("id");
 
                 $.ajax({
                     type: "GET",
@@ -303,6 +302,9 @@
                         $("#getcatatan").html(response.absen.catatan_pengajar ? response.absen
                             .catatan_pengajar : "-");
 
+                        // Bersihkan daftar sebelum menambahkan data baru
+                        $("#list_siswa").empty();
+
                         $.each(response.data, function(index, siswa) {
                             let statusClass = siswa.presensi === "H" ?
                                 "border-start border-4 border-success" :
@@ -312,11 +314,11 @@
                                 '<i class="bi bi-x-circle-fill text-danger"></i>';
 
                             let listItem = `
-                                <div class="d-flex align-items-center p-3 mb-2 bg-putih ${statusClass} rounded">
-                                    <div class="me-3 fs-4">${icon}</div>
-                                    <div class="fw-bold">${siswa.nama}</div>
-                                </div>
-                            `;
+                    <div class="d-flex align-items-center p-3 mb-2 bg-putih ${statusClass} rounded">
+                        <div class="me-3 fs-4">${icon}</div>
+                        <div class="fw-bold">${siswa.nama}</div>
+                    </div>
+                `;
 
                             $("#list_siswa").append(listItem);
                         });

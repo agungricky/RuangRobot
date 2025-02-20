@@ -11,6 +11,8 @@ use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Svg\Tag\Rect;
+use GDText\Box;
+use GDText\Color;
 
 class siswaController extends Controller
 {
@@ -214,15 +216,54 @@ class siswaController extends Controller
     public function detail_pembayaran(Request $request)
     {
         $data = $request->except('_token');
-        // dd($data);
         return view('pages.pembayaran.siswa.detail_pembayaran', compact('data'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function generate_sertiv()
     {
-        //
+        $templatePath = public_path('assets/certificate.jpg');
+        if (!file_exists($templatePath)) {
+            abort(404, "Template sertifikat tidak ditemukan.");
+        }
+
+        $template = imagecreatefromjpeg($templatePath);
+        $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $bln = $array_bln[date('n')];
+
+        // Teks No Sertifikat
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
+        $box->setBox(680, 240, 450, 120);
+        $box->setTextAlign('center', 'top');
+        $box->draw("No : " . 12 . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+
+        // Teks Nama
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(55);
+        $box->setBox(500, 330, 800, 160);
+        $box->setTextAlign('center', 'center');
+        $box->draw(ucwords("Ricky Agung Sumiranto"));
+
+        // Teks Pelatihan
+        $box = new Box($template);
+        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(24);
+        $box->setBox(500, 490, 800, 200);
+        $box->setTextAlign('center', 'top');
+        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper("7B") . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
+
+        // Buat file gambar sementara
+        return response()->streamDownload(function () use ($template) {
+            imagejpeg($template);
+            imagedestroy($template);
+        }, "sertifikat_17.jpg");
     }
 }

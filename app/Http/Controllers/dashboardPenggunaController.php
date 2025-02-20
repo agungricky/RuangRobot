@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\akun;
+use App\Models\kelas;
+use App\Models\pembelajaran;
 use App\Models\pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +16,25 @@ class dashboardPenggunaController extends Controller
      */
     public function index_Admin()
     {
-        return view('pages.dashboard.dashboard');
+        $total_siswa = akun::where('role', 'siswa')->count();
+        $total_pengajar = akun::where('role', 'pengajar')->count();
+        $total_kelas = kelas::count();
+
+        $total = [
+            'siswa' => $total_siswa,
+            'pengajar' => $total_pengajar,
+            'kelas' => $total_kelas
+        ];
+
+        $absenTerbaru = pembelajaran::whereNotNull('pembelajaran.tanggal')
+            ->join('kelas', 'pembelajaran.kelas_id', 'kelas.id')
+            ->select('pembelajaran.*', 'kelas.nama_kelas')
+            ->orderBy('tanggal', 'desc')
+            ->limit(8)
+            ->get();
+
+
+        return view('pages.dashboard.dashboard_admin', compact('total', 'absenTerbaru'));
     }
 
     public function index_Pengajar()

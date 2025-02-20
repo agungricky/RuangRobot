@@ -243,7 +243,7 @@
                                 Terima kasih telah berpartisipasi dalam kelas ini. <br> Semoga ilmu yang
                                 didapatkan bermanfaat dan Tetap Semangat👍.</p>
 
-                            <form method="post" action="{{ route('kelas.selesai', ['id' => $kelas->id]) }}">
+                            <form method="post" action="{{ route('sertiv.siswa') }}">
                                 @csrf
                                 <input type="hidden" name="status_kelas" value="selesai">
                                 <button type="submit" class="btn btn-success btn-lg mt-3">
@@ -284,66 +284,4 @@
             }
         }
     </style>
-    <script>
-        $(document).ready(function() {
-            let id; //id Pertemuan
-            let id_kelas; //id Kelas
-
-            // Detail Pertemuan Selesai
-            // $(".btn-detail").on("click", function() {
-            //     id = $(this).data("id");
-            //     // console.log(id);
-
-            //     $.ajax({
-            //         type: "GET",
-            //         url: `{{ url('/detail/Absen/${id}/json') }}`,
-            //         dataType: "json",
-            //         success: function(response) {
-            //             $("#getpengajar").text(response.absen.pengajar);
-
-            //             let tanggal = response.absen.tanggal;
-            //             let date = new Date(tanggal);
-            //             let pertemuan = {
-            //                 weekday: 'long',
-            //                 year: 'numeric',
-            //                 month: 'long',
-            //                 day: 'numeric'
-            //             };
-            //             let formattedDate = date.toLocaleDateString('id-ID', pertemuan);
-            //             $("#gettanggal").text(formattedDate);
-
-            //             $("#getmateri").text(response.absen.materi);
-            //             $("#getcatatan").html(response.absen.catatan_pengajar ? response.absen
-            //                 .catatan_pengajar : "-");
-
-            //             $.each(response.data, function(index, siswa) {
-            //                 let statusClass = siswa.presensi === "H" ?
-            //                     "border-start border-4 border-success" :
-            //                     "border-start border-4 border-danger";
-            //                 let icon = siswa.presensi === "H" ?
-            //                     '<i class="bi bi-check-circle-fill text-success"></i>' :
-            //                     '<i class="bi bi-x-circle-fill text-danger"></i>';
-
-            //                 let listItem = `
-        //                     <div class="d-flex align-items-center p-3 mb-2 bg-putih ${statusClass} rounded">
-        //                         <div class="me-3 fs-4">${icon}</div>
-        //                         <div class="fw-bold">${siswa.nama}</div>
-        //                     </div>
-        //                 `;
-
-            //                 $("#list_siswa").append(listItem);
-            //             });
-
-            //             // Tampilkan modal
-            //             $("#detailmodal").modal("show");
-            //         },
-            //         error: function(xhr) {
-            //             console.log("salah Bos : " + xhr.responseJSON.message);
-            //             alert("Terjadi kesalahan saat mengambil data.");
-            //         }
-            //     });
-            // });
-
-        });
-    </script>
 @endsection

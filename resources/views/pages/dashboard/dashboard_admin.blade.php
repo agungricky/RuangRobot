@@ -7,9 +7,9 @@
 
             <div class="section-body">
                 <div class="row">
-                    <x-card_dashboard style="card-icon bg-success" icon="fas fa-users" titlecard="Siswa" value="90"/>
-                    <x-card_dashboard style="card-icon bg-primary" icon="far fa-user" titlecard="Pengajar" value="15"/>
-                    <x-card_dashboard style="card-icon bg-danger" icon="far fa-newspaper" titlecard="Kelas" value="89"/>
+                    <x-card_dashboard style="card-icon bg-success" icon="fas fa-users" titlecard="Siswa" value="{{$total['siswa']}}"/>
+                    <x-card_dashboard style="card-icon bg-primary" icon="far fa-user" titlecard="Pengajar" value="{{$total['pengajar']}}"/>
+                    <x-card_dashboard style="card-icon bg-danger" icon="far fa-newspaper" titlecard="Kelas" value="{{$total['kelas']}}"/>
                     <x-card_dashboard style="card-icon bg-warning" icon="fas fa-money-bill-alt" titlecard="Income" value="100.00"/>
                 </div>
                 <div class="row">
@@ -95,19 +95,18 @@
                             </div>
                             <div class="card-body p-0">
                                 <div class="tickets-list">
-                                    {{-- @foreach ($sesi_kelas as $item)
-                                        <a href="{{ route('admin.listsiswa', \App\Kelas::where(['uuid' => $item->id_kelas])->first()->id) }}"
-                                            class="ticket-item">
+                                    @foreach ($absenTerbaru as $item)
+                                        <div class="ticket-item">
                                             <div class="ticket-title">
-                                                <h4>{{ $item->materi }}</h4>
+                                                <h4 class="text-primary">{{ $item->nama_kelas }}</h4>
                                             </div>
                                             <div class="ticket-info">
-                                                <div>{{ Ceksiswa::get_kelas($item->id_kelas)->nama_kelas }}</div>
+                                                <div>{{ $item->pengajar }}</div>
                                                 <div class="bullet"></div>
-                                                <div>{{ Ceksiswa::get_kelas($item->id_kelas)->pengajar->nama_pengajar }}</div>
+                                                <div>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d,m,Y') }}</div>
                                             </div>
-                                        </a>
-                                    @endforeach --}}
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

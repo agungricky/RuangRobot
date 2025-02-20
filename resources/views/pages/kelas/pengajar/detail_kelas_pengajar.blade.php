@@ -332,7 +332,7 @@
                             </form>
                             <button class="btn btn-block btn-warning btn-lg mb-2" id="pengajar_bantu"
                                 data-id="{{ $pertemuan->id }}" data-id_kelas="{{ $kelas->id }}"
-                                onclick="return confirm('<?php echo $dataLogin->nama; ?>, Apakah yakin ingin melakukan absen sebagai pengajar bantu?')">
+                                {{-- onclick="return" --}}>
                                 <i class="fas fa-clipboard-check"></i>
                                 Absen
                             </button>
@@ -368,7 +368,7 @@
 
             // Detail Pertemuan Selesai
             $(".btn-detail").on("click", function() {
-                let id = $(this).data("id");
+                id = $(this).data("id");
 
                 $.ajax({
                     type: "GET",
@@ -404,11 +404,11 @@
                                 '<i class="bi bi-x-circle-fill text-danger"></i>';
 
                             let listItem = `
-                    <div class="d-flex align-items-center p-3 mb-2 bg-putih ${statusClass} rounded">
-                        <div class="me-3 fs-4">${icon}</div>
-                        <div class="fw-bold">${siswa.nama}</div>
-                    </div>
-                `;
+                                <div class="d-flex align-items-center p-3 mb-2 bg-putih ${statusClass} rounded">
+                                    <div class="me-3 fs-4">${icon}</div>
+                                    <div class="fw-bold">${siswa.nama}</div>
+                                </div>
+                            `;
 
                             $("#list_siswa").append(listItem);
                         });
@@ -427,22 +427,26 @@
             // Absen Pengajar Bantu
             $("#pengajar_bantu").on("click", function() {
                 id_kelas = $(this).data("id_kelas");
+                let dataLogin = "{{ $dataLogin->nama }}";
+
+                let result = confirm(
+                    `${dataLogin}, Apakah yakin ingin melakukan absen sebagai pengajar bantu?`);
 
                 let formdata = $("#absen_pengajar_bantu").serialize();
                 formdata += "&_token=" + $('meta[name="csrf-token"]').attr("content");
                 formdata += "&idpembelajaran=" + id;
                 formdata += "&id_kelas=" + id_kelas;
 
-
-                // console.log(formdata);
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/pengajar/bantu/absen/${id}') }}`,
                     data: formdata,
                     dataType: "json",
                     success: function(response) {
-                        Swal.fire("Berhasil!", response.message, "success");
-                        $("#detailmodal").modal("hide");
+                        if (result == true) {
+                            Swal.fire("Berhasil!", response.message, "success");
+                            $("#detailmodal").modal("hide");
+                        }
                     },
                     error: function(xhr) {
                         Swal.fire("Error!", "Terjadi kesalahan", "error");
@@ -684,7 +688,7 @@
                 let no_sertiv = `${tanggal}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
 
                 pilihNilai().then((nilai) => {
-                    console.log("Nilai yang dipilih:", nilai);
+                    // console.log("Nilai yang dipilih:", nilai);
                     $.ajax({
                         type: "POST",
                         url: `{{ url('/siswa/selesai/${id_kelas}/${id_siswa}') }}`,
@@ -696,8 +700,7 @@
                             _token: $('meta[name="csrf-token"]').attr("content"),
                         },
                         success: function(response) {
-                            console.log("Sukses:", response);
-
+                            // console.log("Sukses:", response);
                             Swal.fire({
                                 icon: "success",
                                 title: "Berhasil!",

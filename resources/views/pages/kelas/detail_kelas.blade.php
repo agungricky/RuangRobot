@@ -243,8 +243,8 @@
                 </div>
                 <div class="modal-footer pt-3">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="submit_sekolah" class="btn btn-success"><i
-                            class="fa-solid fa-add fa-lg"></i> Tambahkan Siswa</button>
+                    <button type="button" id="submit_sekolah" class="btn btn-success">
+                        <i class="fa-solid fa-add fa-lg"></i> Tambahkan Siswa</button>
                 </div>
             </div>
         </div>
@@ -521,8 +521,6 @@
             });
 
 
-
-
             // Event klik untuk baris
             $('#siswa_kelas tbody').on('click', 'tr', function(e) {
                 // Abaikan klik pada checkbox agar tidak memicu dua kali
@@ -600,23 +598,18 @@
             $('#submit_sekolah').on('click', function() {
                 let selectedSiswa = [];
                 $('.select-checkbox:checked').each(function() {
+                    let no_invoice = $(this).data('no_invoice') || '';
 
-                    let no_invoice = $(this).data('no_invoice') ||
-                        ''; // Mendapatkan no_invoice terlebih dahulu
-
-                    // Jika no_invoice kosong, buat invoice baru
                     if (!no_invoice) {
                         let currentDate = new Date();
                         let year = currentDate.getFullYear();
                         let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
                         let day = ('0' + currentDate.getDate()).slice(-2);
                         let randomNum = Math.floor(1000 + Math.random() * 9000);
-                        no_invoice = 'INV' + '-' + month + year + '-' +
-                            randomNum; // Mengubah nilai no_invoice
+                        no_invoice = 'INV' + '-' + month + year + '-' + randomNum;
                     }
 
-                    // Format tanggal
-                    let currentDate = new Date(); // Mendapatkan tanggal dan waktu saat ini
+                    let currentDate = new Date();
                     let formattedDate = currentDate.toISOString();
 
                     selectedSiswa.push({
@@ -641,7 +634,11 @@
                     return;
                 }
 
-                console.log(selectedSiswa);
+                let $button = $('#submit_sekolah');
+                let originalHTML = $button.html(); // Simpan tampilan awal tombol
+                $button.prop('disabled', true).html(
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Sending...');
+
                 $.ajax({
                     url: "{{ route('add_siswa.update', ['id' => $data->id]) }}",
                     method: "POST",
@@ -651,36 +648,52 @@
                     },
                     success: function(response) {
                         $('#tambah_siswa').modal('hide');
+                        Swal.fire({
+                            title: "Siswa berhasil ditamah!",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                         location.reload();
-                        // console.log(response);
-                        alert('Data siswa berhasil ditambahkan!');
                     },
                     error: function(xhr) {
-                        alert(xhr.responseText);
-                        console.error("Error:", xhr.responseText);
+                        Swal.fire({
+                            title: "Gagal Menambahkan Siswa!",
+                            icon: "error",
+                            timer: 2000,
+                            showConfirmButton: true
+                        });
                     },
+                    complete: function() {
+                        $button.prop('disabled', false).html(originalHTML);
+                    }
                 });
             });
 
             // Tambah data pertemuan kelas
             $('#submit').on('click', function() {
-                let form = $('#form_pertemuankelas'); // Tangkap form
-                let formData = form.serialize(); // Ambil data dari form
+                let form = $('#form_pertemuankelas');
+                let formData = form.serialize(); 
 
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('pembelajaran.store') }}", // Pastikan rutenya sesuai
+                    url: "{{ route('pembelajaran.store') }}",
                     data: formData,
                     success: function(response) {
-                        alert('Data berhasil disimpan');
-                        form.trigger('reset'); // Reset form setelah berhasil
-                        $('#pertemuan_kelas').modal('hide'); // Tutup modal
+                        Swal.fire({
+                            title: "Data berhasil dihapus!",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        form.trigger('reset'); 
+                        $('#pertemuan_kelas').modal('hide'); 
                         location.reload();
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);
                         let errors = xhr.responseJSON
-                            .errors; // Ambil error dari response JSON
+                            .errors; 
 
                         for (let key in errors) {
                             if (errors.hasOwnProperty(key)) {
@@ -710,11 +723,21 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        alert("Data berhasil dihapus");
-                        location.reload();
+                        Swal.fire({
+                            title: "Data berhasil dihapus!",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $('#data_siswa').DataTable().ajax.reload();
                     },
                     error: function(xhr, status, error) {
-                        alert(xhr.responseText);
+                        Swal.fire({
+                            title: "Data gagal dihapus!",
+                            icon: "error",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     }
                 });
             });
@@ -726,8 +749,8 @@
 
             // Ketika tombol Edit ditekan
             $(document).on('click', '#editBtn', function() {
-                selectedId = $(this).data('id'); // Ambil ID dari data-id
-                console.log('ID yang dipilih:', selectedId);
+                selectedId = $(this).data('id');
+                // console.log('ID yang dipilih:', selectedId);
             });
 
             // Ketika tombol Kirim ditekan
@@ -736,8 +759,7 @@
 
                 $.ajax({
                     url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
-                        .replace('__selectedId__',
-                            selectedId), // Ubah URL dengan menggantikan selectedId
+                        .replace('__selectedId__', selectedId), 
                     type: 'POST',
                     data: {
                         _method: 'PATCH',
@@ -745,35 +767,16 @@
                         pertemuan: pertemuanKe,
                     },
                     success: function(response) {
-                        $('#editPertemuanModal').modal('hide'); // Menutup modal
+                        $('#editPertemuanModal').modal('hide'); 
+                        $('#edit_pertemuan_form').trigger('reset');
+                        location.reload();
 
-                        // Menampilkan notifikasi
-                        const notification = $('<div>')
-                            .text('Pertemuan berhasil diupdate!')
-                            .css({
-                                position: 'fixed',
-                                top: '20px',
-                                right: '20px',
-                                padding: '10px 40px',
-                                background: '#4CAF50',
-                                color: '#fff',
-                                borderRadius: '5px',
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                zIndex: 9999,
-
-                            })
-                            .appendTo('body');
-
-                        // Menghilangkan notifikasi setelah 3 detik dan reload halaman
-                        setTimeout(function() {
-                            notification.fadeOut(300, function() {
-                                $(this).remove();
-                                const form = $(
-                                    '#edit_pertemuan_form');
-                                form.trigger('reset');
-                                location.reload();
-                            });
-                        }, 2000);
+                        Swal.fire({
+                            title: "Data berhasil diupdate!",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     },
                     error: function(xhr) {
                         // alert(xhr.responseText);
