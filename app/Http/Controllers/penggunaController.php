@@ -142,22 +142,22 @@ class penggunaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        pengguna::where('id', $id)->update([
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'alamat' => $request->alamat,
-            'no_telp' => $request->no_telp,
-            'sekolah_id' => $request->sekolah_id,
-            'elektronik' => $request->elektronik,
-            'mekanik' => $request->mekanik,
-            'pemrograman' => $request->pemrograman,
+    // public function update(Request $request, string $id)
+    // {
+    //     pengguna::where('id', $id)->update([
+    //         'nama' => $request->nama,
+    //         'email' => $request->email,
+    //         'alamat' => $request->alamat,
+    //         'no_telp' => $request->no_telp,
+    //         'sekolah_id' => $request->sekolah_id,
+    //         'elektronik' => $request->elektronik,
+    //         'mekanik' => $request->mekanik,
+    //         'pemrograman' => $request->pemrograman,
 
-        ]);
+    //     ]);
 
-        return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguan berhasil diUpdate');
-    }
+    //     return redirect()->route('admin',['id' => 'Admin'])->with('success','Data pengguan berhasil diUpdate');
+    // }
 
     /**
      * Remove the specified resource from storage.
