@@ -20,14 +20,18 @@ class kelaspengajarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function kelas_aktif(Request $request)
+    public function kelas_aktif(Request $request, $id)
     {
         $kelas_aktif = kelas::where('kelas.status_kelas', 'aktif')
+            ->where('kelas.kategori_kelas_id', $id)
             ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
             ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas')
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas', 'kategori_kelas.kategori_kelas')
             ->orderBy('kelas.id', 'desc')
             ->get();
+
+        // dd($kelas_aktif);
 
         if (request()->ajax()) {
             return response()->json([
@@ -35,7 +39,7 @@ class kelaspengajarController extends Controller
             ]);
         }
 
-        return view('pages.kelas.pengajar.kelas_pengajar_aktif');
+        return view('pages.kelas.pengajar.kelas_pengajar_aktif', compact('id'));
     }
 
     public function kelas_selesai(Request $request)
@@ -43,7 +47,8 @@ class kelaspengajarController extends Controller
         $kelas_selesai = kelas::where('kelas.status_kelas', 'selesai')
             ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
             ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas')
+            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas', 'kategori_kelas.kategori_kelas')
             ->get();
 
         if (request()->ajax()) {

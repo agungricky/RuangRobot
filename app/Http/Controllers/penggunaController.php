@@ -167,6 +167,7 @@ class penggunaController extends Controller
     public function destroy(string $id, $role)
     {
         pengguna::find($id)->delete();
+        akun::find($id)->delete();
         return redirect()->route('pengguna', ['id' => $role])->with('success','Data pengguna berhasil dihapus');
 
     }

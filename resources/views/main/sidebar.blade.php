@@ -114,14 +114,27 @@
                     <a href="{{ url('/dashboard/pengajar') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 </li>
                 <li class="menu-header">Manage Kelas</li>
-                <li>
+                {{-- <li>
                     <a href="{{ url('/kelas_pengajar') }}">
                         <i class="fas fa-chalkboard-teacher"></i>
                         <span>Kelas Aktif</span>
                     </a>
+                </li> --}}
+                <li>
+                    <a href="#kelas" class="nav-link" data-bs-toggle="collapse">
+                        <i class="fas fa-chalkboard-teacher"></i><span>Kelas Aktif</span>
+                    </a>
+                    <div class="collapse ps-4" id="kelas">
+                        <ul class="list-unstyled">
+                            @foreach ($kategori as $item)
+                                <li><a href="{{ route('kelas_aktif.pengajar', ['id'=> $item->id]) }}" class="nav-link"><i
+                                            class="fa-solid fa-minus"></i>{{$item->kategori_kelas}}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </li>
                 <li>
-                    <a href="{{ url('/kelas_pengajar/selesai') }}">
+                    <a href="{{ route('kelas_selesai.pengajar') }}">
                         <i class="fas fa-graduation-cap"></i>
                         <span>Kelas Selesai</span>
                     </a>

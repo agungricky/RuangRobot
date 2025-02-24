@@ -141,7 +141,6 @@
 </div>
 
 <style>
-    /* Pastikan dropdown muncul di atas elemen lain */
     .ui-autocomplete {
         z-index: 9999;
         max-height: 200px;
@@ -273,16 +272,12 @@
                 url: "{{ route('sekolah_form.json') }}",
                 method: "GET",
                 success: function(response) {
-                    // Periksa respons yang diterima
-                    console.log(response);
-
-                    // Buat array objek dengan hanya nama_sekolah
                     var programs = response.map(function(item) {
                         return {
                             label: item
-                                .nama_sekolah, // Nama sekolah yang ditampilkan di autocomplete
-                            value: item.nama_sekolah, // Nilai input teks
-                            id: item.id // ID yang disimpan di input hidden
+                                .nama_sekolah,
+                            value: item.nama_sekolah, 
+                            id: item.id
                         };
                     });
 
@@ -292,13 +287,9 @@
                         minLength: 1,
                         autoFocus: true,
                         select: function(event, ui) {
-                            // Periksa apa yang ada di ui.item
-                            console.log(ui.item);
-
-                            // Pastikan ID yang benar disimpan ke input hidden
-                            $('#sekolah_id').val(ui.item.id); // Simpan ID di input hidden
+                            $('#sekolah_id').val(ui.item.id);
                             $(this).val(ui.item
-                                .label); // Tampilkan nama sekolah di input teks
+                                .label);
                             return false;
                         }
                     });

@@ -10,7 +10,7 @@
                     <x-card_dashboard style="card-icon bg-success" icon="fas fa-users" titlecard="Siswa" value="{{$total['siswa']}}"/>
                     <x-card_dashboard style="card-icon bg-primary" icon="far fa-user" titlecard="Pengajar" value="{{$total['pengajar']}}"/>
                     <x-card_dashboard style="card-icon bg-danger" icon="far fa-newspaper" titlecard="Kelas" value="{{$total['kelas']}}"/>
-                    <x-card_dashboard style="card-icon bg-warning" icon="fas fa-money-bill-alt" titlecard="Income" value="100.00"/>
+                    <x-card_dashboard style="card-icon bg-warning" icon="fas fa-money-bill-alt" titlecard="Income" value="0"/>
                 </div>
                 <div class="row">
                     <div class="col-md-8">
@@ -51,11 +51,15 @@
                                                     <td class="font-weight-bold text-success">+{{ number_format($item->jumlah) }}</td>
                                                 </tr>
                                             @endforeach --}}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Tidak ada data</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="card">
                             <div class="card-header">
                                 <h4>Laporan Keuangan</h4>
@@ -78,13 +82,16 @@
                                                     <td class="text-success">Rp {{ number_format($item->data) }}</td>
                                                 </tr>
                                             @endforeach --}}
+                                            <tr>
+                                                <td colspan="4" class="text-center">Tidak ada data</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
                     <div class="col-md-4">
                         <div class="card card-hero">
                             <div class="card-header">
