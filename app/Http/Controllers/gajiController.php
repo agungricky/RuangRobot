@@ -238,10 +238,33 @@ class gajiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function verif_all($id)
     {
-        //
+        $gaji = gajiUtama::where('status', 'pending')
+        ->where('pengajar', $id)
+        ->get();
+        $transport = gajiTransport::where('status', 'pending')
+        ->where('pengajar', $id)
+        ->get();
+        $custom = gajiCustom::where('status', 'pending')
+        ->where('pengajar', $id)
+        ->get();
+
+        foreach ($gaji as $item) {
+            $item->update(['status' => 'diverifikasi']);
+        }
+
+        foreach ($transport as $item) {
+            $item->update(['status' => 'diverifikasi']);
+        }
+
+        foreach ($custom as $item) {
+            $item->update(['status' => 'diverifikasi']);
+        }
+
+        return redirect()->back()->with('success', 'Semua data telah diverifikasi.');
     }
+
 
     public function historigaji(Request $request)
     {

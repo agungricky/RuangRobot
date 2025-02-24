@@ -68,8 +68,8 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 
 
 // ========= Kelas ========= //
-Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
-Route::get('/kelas/json', [kelasController::class, 'index'])->name('kelas.json');
+Route::get('/kelas/{id}', [kelasController::class, 'index'])->name('kelas');
+Route::get('/kelas/json/{id}', [kelasController::class, 'index'])->name('kelas.json');
 Route::get('/form_programbelajar/json', [kelasController::class, 'program_belajar'])->name('form_programbelajar.json');
 Route::get('/pengajar/json', [kelasController::class, 'pengajar'])->name('pengajar.json');
 Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.store');
@@ -124,6 +124,7 @@ Route::get('detail/gaji/{id}', [gajiController::class, 'show'])->name('gaji_deta
 Route::patch('/gaji_utama/verifikasi/{id}', [gajiController::class, 'gaji_utama'])->name('gaji.verifikasi');
 Route::patch('/gaji_transport/verifikasi/{id}', [gajiController::class, 'gaji_transport'])->name('transport.verifikasi');
 Route::patch('/gaji_custom/verifikasi/{id}', [gajiController::class, 'gaji_custom'])->name('custom.verifikasi');
+Route::patch('/gaji_all/verifikasi/{id}', [gajiController::class, 'verif_all'])->name('verifikasi.all');
 Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->name('gaji.terbayar');
 
 // ========= Histori Gaji ========= //

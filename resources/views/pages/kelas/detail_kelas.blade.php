@@ -681,7 +681,7 @@
                     data: formData,
                     success: function(response) {
                         Swal.fire({
-                            title: "Data berhasil dihapus!",
+                            title: "Data berhasil ditambahkan!",
                             icon: "success",
                             timer: 2000,
                             showConfirmButton: false

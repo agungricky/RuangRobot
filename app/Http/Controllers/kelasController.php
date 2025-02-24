@@ -23,22 +23,23 @@ class kelasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
-        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
+        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
+            ->where('kelas.kategori_kelas_id', $id)
             ->select('kelas.*', 'kategori_kelas.kategori_kelas')
             ->orderByDesc('created_at')
             ->get();
         $kategori = Kategori::all();
         $programbelajar = programbelajar::all();
-        // dd($kategori);
+        // dd($data);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
             ]);
         }
 
-        return view('pages.kelas.kelas', compact('data', 'kategori', 'programbelajar'));
+        return view('pages.kelas.kelas', compact('data', 'kategori', 'programbelajar', 'id'));
     }
 
     public function program_belajar()
