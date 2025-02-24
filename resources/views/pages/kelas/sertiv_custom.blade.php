@@ -5,7 +5,7 @@
     @endif
     <div class="main-content">
         <section class="section">
-            <x-title_halaman title="Generate Seriv Custom" />
+            <x-title_halaman title="Generate Sertif Custom" />
 
             <div class="section-body">
                 <div class="row">
@@ -16,7 +16,7 @@
                                     @csrf
                                     <div class="row">
                                         <div class="col-12 mb-3">
-                                            <label for="nominal">No Sertivikat</label>
+                                            <label for="nominal">No Sertifikat</label>
                                             <input type="text" class="form-control" placeholder="Masukan No E-sertiv"
                                                 name="no_sertiv" value="{{ old('no_sertiv') }}">
                                             <x-validation_form.error name="no_sertiv" />
