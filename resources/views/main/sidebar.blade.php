@@ -43,7 +43,7 @@
                             Belajar</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('generate.show') }}"><i class="fa-solid fa-note-sticky"></i><span>Seriv
+                    <a href="{{ route('generate.show') }}"><i class="fa-solid fa-note-sticky"></i><span>Sertif
                             Custom</span></a>
                 </li>
                 <li>
