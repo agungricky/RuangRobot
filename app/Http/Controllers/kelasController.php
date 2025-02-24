@@ -405,4 +405,8 @@ class kelasController extends Controller
 
         return $outputPath;
     }
+
+    public function generate_show(){
+        return view('pages.kelas.sertiv_custom');
+    }
 }

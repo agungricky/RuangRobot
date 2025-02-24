@@ -62,6 +62,11 @@ Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit
 Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
 Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
 
+// ========= Generate Sertiv Custom ========= //
+Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
+Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+
+
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
 Route::get('/kelas/json', [kelasController::class, 'index'])->name('kelas.json');

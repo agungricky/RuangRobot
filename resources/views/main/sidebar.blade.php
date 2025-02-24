@@ -1,7 +1,7 @@
 <!-- Sidebar outter -->
 <div class="main-sidebar">
     <!-- sidebar wrapper -->
-    <aside id="sidebar-wrapper">
+    <aside id="sidebar-wrapper" class="h-100 overflow-auto">
         <!-- sidebar brand -->
         <div class="sidebar-brand my-3">
             <a href=""><img src="{{ asset('images/ruangrobot.png') }}" alt="" width="150px"></a>
@@ -41,6 +41,10 @@
                 <li>
                     <a href="{{ route('program_belajar') }}"><i class="fa-solid fa-layer-group"></i><span>Program
                             Belajar</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('generate.show') }}"><i class="fa-solid fa-note-sticky"></i><span>Seriv
+                            Custom</span></a>
                 </li>
                 <li>
                     <a href="#pengguna" class="nav-link" data-bs-toggle="collapse">
@@ -90,9 +94,6 @@
             @endif
 
 
-
-
-
             {{-- ===================================================== --}}
             <!------------------ menu dashboard Pengajar ----------------->
             {{-- ===================================================== --}}
@@ -118,10 +119,12 @@
 
                 <li class="menu-header">Gaji</li>
                 <li>
-                    <a href="{{ route('gaji.pengajar', ['id'=> $dataLogin->id]) }}"><i class="fas fa-wallet"></i> <span>Gaji</span></a>
+                    <a href="{{ route('gaji.pengajar', ['id' => $dataLogin->id]) }}"><i class="fas fa-wallet"></i>
+                        <span>Gaji</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('riwayatgaji.pengajar', ['id'=> $dataLogin->id]) }}"><i class="fas fa-file-invoice-dollar"></i> <span>Riwayat
+                    <a href="{{ route('riwayatgaji.pengajar', ['id' => $dataLogin->id]) }}"><i
+                            class="fas fa-file-invoice-dollar"></i> <span>Riwayat
                             Gaji</span></a>
                 </li>
             @endif
@@ -137,14 +140,14 @@
                 </li>
                 <li class="menu-header">Manage Kelas</li>
                 <li>
-                    <a href="{{ route('siswa.kelas.json', ['id'=> $dataLogin->id]) }}">
+                    <a href="{{ route('siswa.kelas.json', ['id' => $dataLogin->id]) }}">
                         <i class="fas fa-chalkboard-teacher"></i>
                         <span>Kelas Saya</span>
                     </a>
                 </li>
                 <li class="menu-header">Pembayaran Kelas</li>
                 <li>
-                    <a href="{{ route('pembayaran.siswa', ['id'=>$dataLogin->id]) }}">
+                    <a href="{{ route('pembayaran.siswa', ['id' => $dataLogin->id]) }}">
                         <i class="fas fa-receipt"></i>
                         <span>Pembayaran</span>
                     </a>
