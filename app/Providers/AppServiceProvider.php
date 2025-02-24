@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\akun;
+use App\Models\Kategori;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -25,13 +26,17 @@ class AppServiceProvider extends ServiceProvider
     {
         Carbon::setLocale('id'); // Mengatur Carbon ke bahasa Indonesia
         setlocale(LC_TIME, 'id_ID.utf8');
-        
+
         View::composer('*', function ($view) {
             $id = isset(Auth::user()->id) ? Auth::user()->id : null;
             $dataLogin = akun::where('akun.id', $id)
                 ->join('profile', 'profile.id', 'akun.id')
                 ->first();
-            $view->with('dataLogin', $dataLogin);
+            $kategori = Kategori::all();
+            $view->with([
+                'dataLogin' => $dataLogin,
+                'kategori' => $kategori
+            ]);
         });
     }
 }

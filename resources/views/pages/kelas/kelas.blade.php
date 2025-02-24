@@ -147,7 +147,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('kelas.json') }}",
+                    url: "{{ route('kelas.json', ['id'=>$id]) }}",
                     dataSrc: 'data',
                 },
                 columns: [{

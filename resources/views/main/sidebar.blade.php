@@ -36,7 +36,17 @@
                     <a href="{{ route('sekolah') }}"><i class="fa-solid fa-font-awesome"></i><span>Sekolah</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('kelas') }}"><i class="fa-solid fa-book-open"></i><span>Kelas</span></a>
+                    <a href="#kelas" class="nav-link" data-bs-toggle="collapse">
+                        <i class="fa-solid fa-book-open"></i><span>Kelas</span>
+                    </a>
+                    <div class="collapse ps-4" id="kelas">
+                        <ul class="list-unstyled">
+                            @foreach ($kategori as $item)
+                                <li><a href="{{ route('kelas', ['id'=> $item->id]) }}" class="nav-link"><i
+                                            class="fa-solid fa-minus"></i>{{$item->kategori_kelas}}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </li>
                 <li>
                     <a href="{{ route('program_belajar') }}"><i class="fa-solid fa-layer-group"></i><span>Program

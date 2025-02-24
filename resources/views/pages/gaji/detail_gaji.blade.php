@@ -45,7 +45,7 @@
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                <form
+                                                                {{-- <form
                                                                     action="{{ route('gaji.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
                                                                     @csrf
@@ -55,7 +55,7 @@
                                                                     <button type="submit" class="btn btn-success btn-sm">
                                                                         <i class="fas fa-check"></i> Verifikasi
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
 
                                                                 <form
                                                                     action="{{ route('gaji.verifikasi', ['id' => $item->id]) }}"
@@ -127,7 +127,7 @@
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                <form
+                                                                {{-- <form
                                                                     action="{{ route('transport.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
                                                                     @csrf
@@ -137,7 +137,7 @@
                                                                     <button type="submit" class="btn btn-success btn-sm">
                                                                         <i class="fas fa-check"></i> Verifikasi
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
 
                                                                 <form
                                                                     action="{{ route('transport.verifikasi', ['id' => $item->id]) }}"
@@ -208,7 +208,7 @@
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                <form
+                                                                {{-- <form
                                                                     action="{{ route('custom.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
                                                                     @csrf
@@ -218,7 +218,7 @@
                                                                     <button type="submit" class="btn btn-success btn-sm">
                                                                         <i class="fas fa-check"></i> Verifikasi
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
 
                                                                 <form
                                                                     action="{{ route('custom.verifikasi', ['id' => $item->id]) }}"
@@ -259,7 +259,14 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="mb-2">
+                                <div class="mb-2 d-flex gap-3">
+                                    <form action="{{ route('verifikasi.all', ['id' => $data->id]) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Verifikasi Semua
+                                        </button>
+                                    </form>
                                     <form action="{{ route('gaji.terbayar', ['id' => $data->id]) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
