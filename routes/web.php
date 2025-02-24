@@ -62,6 +62,11 @@ Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit
 Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
 Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
 
+// ========= Generate Sertiv Custom ========= //
+Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
+Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+
+
 // ========= Kelas ========= //
 Route::get('/kelas', [kelasController::class, 'index'])->name('kelas');
 Route::get('/kelas/json', [kelasController::class, 'index'])->name('kelas.json');
@@ -93,16 +98,17 @@ Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('mur
 
 
 // ========= Pengguna ========= //
-Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('admin');
-Route::get('/data_admin/{id}/json', [penggunaController::class, 'pengguna'])->name('admin.json');
-
+Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
+Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
+Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
+Route::get('/kelas/diikuti/{id}', [penggunaController::class, 'kelas_diikuti'])->name('kelas.diikuti');
 Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
 Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
 
 // Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
-Route::get('/pengguna/edit/{id}', [penggunaController::class, 'edit'])->name('pengguna.edit');
-Route::patch('/pengguna/update/{id}', [penggunaController::class, 'update'])->name('pengguna.update');
-Route::delete('/pengguna/delete/{id}', [penggunaController::class,'destroy'])->name('pengguna.delete');
+Route::get('/pengguna/edit/{id}/{role}', [penggunaController::class, 'edit'])->name('pengguna.edit');
+Route::patch('/pengguna/update/{id}/{role}', [penggunaController::class, 'update'])->name('pengguna.update');
+Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class,'destroy'])->name('pengguna.delete');
 
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
@@ -131,6 +137,7 @@ Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pe
 Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
 Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
 Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
+Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
 
 
 //route edit
@@ -179,6 +186,7 @@ Route::get('/kelas/saya/{id}', [siswaController::class, 'index'])->name('siswa.k
 Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('siswa_kelas.detail.json');
 Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
 Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
+Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
 
 
 

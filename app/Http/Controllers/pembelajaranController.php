@@ -86,7 +86,9 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
     {
         $data = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
             ->select('pembelajaran.*', 'kelas.durasi_belajar')
-            ->where('kelas_id', $id)->get();
+            ->where('kelas_id', $id)
+            ->orderBy('pertemuan', 'asc')
+            ->get();
         return response()->json(['data' => $data]);
     }
 
@@ -280,7 +282,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
 *💡 #Invoice Tagihan Pembayaran 📚*
     
 Halo 👋 $data->nama,
-Sehubungan dengan pembelajaran dalam Kelas $pembelajaran->nama_kelas, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
+Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
     
 Pembelajaran : *$pembelajaran->nama_kelas*
 Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "

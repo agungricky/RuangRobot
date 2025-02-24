@@ -143,8 +143,8 @@ class pembayaranController extends Controller
         if ($kekurangan == 0) {
             $tangal_lunas = now()->format('d-m-Y');
             $jatuh_tempo = "Status Pembayaran : *LUNAS* / $tangal_lunas";
-        }else{
-            $jatuh_tempo = "Jatuh Tempo : ". $datasiswa['jatuh_tempo'];
+        } else {
+            $jatuh_tempo = "Jatuh Tempo : " . $datasiswa['jatuh_tempo'];
             $alert = "Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
 Bank: BCA (Bank Central Asia)
 Nomor Rekening: 9203123456
@@ -152,14 +152,14 @@ Atas Nama: Julian Sahertian";
         }
 
         $response = Http::withHeaders([
-            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
         ])->post('https://api.fonnte.com/send', [
             'target' => $data->no_telp,
             'message' => "
 *💡 #INFORMASI PEMBAYARAN DITERIMA 📚*
 
 Halo 👋 $data->nama,
-Sehubungan dengan pembelajaran dalam Kelas $kelas->nama_kelas, kami ingin menginformasikan mengenai pembayaran masuk. 
+Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran masuk. 
 Berikut kami sampaikan rinciannya :
 
 Pembelajaran : *$kelas->nama_kelas*
@@ -168,7 +168,7 @@ Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
 Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
 $jatuh_tempo
 
-". ($alert?? '') . "
+" . ($alert ?? '') . "
 
 Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
 📞 https://wa.me/+6285655770506
@@ -198,8 +198,59 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function penagihan(Request $request)
     {
-        //
+        $data = $request->pembayaran;
+
+        $cariSiswa = [];
+        foreach ($data as $key => $value) {
+            $siswa = pengguna::where('id', $value['id'])->first();
+
+            if ($siswa) {
+                $cariSiswa[] = array_merge($siswa->toArray(), $value);
+            }
+        }
+
+        foreach ($cariSiswa as $value) {
+            Http::withHeaders([
+                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $value['no_telp'],
+                'message' => "
+📢 *Pemberitahuan Kekurangan Pembayaran Kelas*
+
+Yth. *{$value['nama']}*,  
+Terima kasih telah belajar bersama Ruang Robot. Kami ingin menginformasikan mengenai kekurangan pembayaran yang belum dibayarkan. Berikut adalah rinciannya:
+
+💳 *Rincian Pembayaran:*  
+🔹 *Nama Siswa:* {$value['nama']}  
+🔹 *Kelas:* {$value['namaKelas']}  
+🔹 *Jumlah Dibayarkan:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "  
+🔹 *Total Tagihan:* Rp. " . number_format($value['tagihan'], 0, ',', '.') . "  
+🔹 *Sisa Pembayaran:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
+
+Mohon segera melunasi sebelum tanggal jatuh tempo pada {$value['jatuh_tempo']} demi kelancaran pembelajaran.
+
+📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di:  
+📞 https://wa.me/+6285655770506  
+
+Terima kasih atas perhatian dan kerjasamanya. 🙏😊  
+
+Salam hormat,  
+*Ruang Robot*  
+Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234  
+            ",
+                'countryCode' => '62',
+                'filename' => 'Tagihanku',
+                'schedule' => 0,
+                'typing' => false,
+                'delay' => '0',
+                'followup' => 0,
+            ]);
+        }
+
+        return response()->json([
+            'data' => $cariSiswa
+        ]);
     }
 }

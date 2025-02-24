@@ -157,7 +157,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('admin.json', ['id' => $id]) }}",
+                    url: "{{ route('pengguna.json', ['id' => $id]) }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -169,9 +169,18 @@
                     {
                         data: 'nama',
                         render: function(data, type, row) {
-                            return `<div class="text-start text-tabel fw-bold">${data}</div>`;
+                            console.log(row);
+                            return `<div class="text-start text-tabel fw-bold"><a href="{{ url('/kelas/diikuti/${row.id}') }}">${data}</a></div>`;
                         }
                     },
+                    @if ($id == 'Siswa')
+                        {
+                            data: 'nama_sekolah',
+                            render: function(data, type, row) {
+                                return `<div class="text-start text-tabel">${data}</div>`;
+                            }
+                        },
+                    @endif
                     @if ($id == 'Siswa')
                         {
                             data: 'nama_sekolah',
@@ -208,21 +217,22 @@
                     {
                         data: null,
                         render: function(data, type, row) {
+                            let role = '{{ $id }}';
                             return `
-                        <div class="d-flex justify-content-center gap-1">
-                                <form action="" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-info btn-sm">Reset Password</button>
-                                </form>
-                                <a href="{{ url('/pengguna/edit/${row.id}') }}" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="{{ url('/pengguna/delete/${row.id}') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                </form>
-                        </div>
-                        `;
+                                    <div class="d-flex justify-content-center gap-1">
+                                            <form action="{{ url('/pengguna/reset/${row.id}') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-info btn-sm">Reset Password</button>
+                                            </form>
+                                            <a href="{{ url('/pengguna/edit/${row.id}/${role}') }}" class="btn btn-primary btn-sm">Edit</a>
+                                            <form action="{{ url('/pengguna/delete/${row.id}/${role}') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                            </form>
+                                    </div>
+                                `;
                         }
                     }
                 ]

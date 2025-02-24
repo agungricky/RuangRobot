@@ -26,6 +26,7 @@ class kelaspengajarController extends Controller
             ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
             ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
             ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas')
+            ->orderBy('kelas.id', 'desc')
             ->get();
 
         if (request()->ajax()) {
@@ -199,7 +200,7 @@ class kelaspengajarController extends Controller
             pengguna::where('id', $request->pengajar)->increment('elektronik', $program_belajar->elektronik ?? 0);
             pengguna::where('id', $request->pengajar)->increment('mekanik', $program_belajar->mekanik ?? 0);
             pengguna::where('id', $request->pengajar)->increment('pemrograman', $program_belajar->pemrograman ?? 0);
-            
+
             gajiUtama::create([
                 'pengajar' => $request->pengajar,
                 'nominal' => $request->gaji_pengajar,
@@ -238,14 +239,22 @@ class kelaspengajarController extends Controller
      */
     public function store(Request $request, $id)
     {
+        $message = [
+            'pengajar.required' => 'Pengajar harus diisi',
+            'tanggal.required' => 'Tanggal harus diisi',
+            'materi.required' => 'Materi harus diisi',
+            'absensi.required' => 'Absensi harus diisi',
+            'status_tersimpan.required' => 'Status harus diisi',
+        ];
+
         $request->validate([
             'pengajar'           => 'required',
             'tanggal'            => 'required',
             'materi'             => 'required',
             'absensi'            => 'required',
             'status_tersimpan'   => 'required',
-        ]);
-        
+        ], $message);
+
         try {
             pembelajaran::where('id', $id)->update([
                 'pengajar' => $request->pengajar,
@@ -279,6 +288,31 @@ class kelaspengajarController extends Controller
                     'status_pengajar' => "Pengajar Utama",
                     'pembelajaran_id' => $id,
                 ]);
+            }
+
+            $poin_siswa = $request->absensi;
+
+            foreach ($poin_siswa as $siswa) {
+                $id = $siswa['id'];
+                $presensi = $siswa['presensi'];
+
+                $elektronik = 0;
+                $mekanik = 0;
+                $pemrograman = 0;
+                if ($presensi == 'H') {
+                    $elektronik = $program_belajar->elektronik; 
+                    $mekanik = $program_belajar->mekanik; 
+                    $pemrograman = $program_belajar->pemrograman; 
+                } elseif ($presensi == 'I') {
+                    $elektronik = 0; 
+                    $mekanik = 0; 
+                    $pemrograman = 0; 
+                } 
+
+                // Tambahkan poin ke kategori yang sesuai
+                pengguna::where('id', $id)->increment('elektronik', $elektronik);
+                pengguna::where('id', $id)->increment('mekanik', $mekanik);
+                pengguna::where('id', $id)->increment('pemrograman', $pemrograman);
             }
 
             return response()->json(['message' => 'Kelas Selesai'], 200);

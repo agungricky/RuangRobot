@@ -251,9 +251,11 @@
                         <div id="siswa_hadir"></div>
 
                         <h6 class="mt-4">Tanggal Pertemuan :</h6>
+                        <span class="error-tanggal text-danger"></span>
                         <input type="date" name="tanggal" placeholder="Tanggal" class="form-control mb-4">
 
                         <h6>Materi :</h6>
+                        <span class="error-materi text-danger"></span>
                         <input type="text" name="materi" placeholder="Materi" class="form-control mb-4">
 
                         <h6>Catatan Pengajar :</h6>
@@ -330,7 +332,7 @@
                             </form>
                             <button class="btn btn-block btn-warning btn-lg mb-2" id="pengajar_bantu"
                                 data-id="{{ $pertemuan->id }}" data-id_kelas="{{ $kelas->id }}"
-                                onclick="return confirm('<?php echo $dataLogin->nama; ?>, Apakah yakin ingin melakukan absen sebagai pengajar bantu?')">
+                                {{-- onclick="return" --}}>
                                 <i class="fas fa-clipboard-check"></i>
                                 Absen
                             </button>
@@ -368,8 +370,6 @@
             $(".btn-detail").on("click", function() {
                 id = $(this).data("id");
 
-                // console.log(id);
-
                 $.ajax({
                     type: "GET",
                     url: `{{ url('/detail/Absen/${id}/json') }}`,
@@ -391,6 +391,9 @@
                         $("#getmateri").text(response.absen.materi);
                         $("#getcatatan").html(response.absen.catatan_pengajar ? response.absen
                             .catatan_pengajar : "-");
+
+                        // Bersihkan daftar sebelum menambahkan data baru
+                        $("#list_siswa").empty();
 
                         $.each(response.data, function(index, siswa) {
                             let statusClass = siswa.presensi === "H" ?
@@ -420,25 +423,30 @@
                 });
             });
 
+
             // Absen Pengajar Bantu
             $("#pengajar_bantu").on("click", function() {
                 id_kelas = $(this).data("id_kelas");
+                let dataLogin = "{{ $dataLogin->nama }}";
+
+                let result = confirm(
+                    `${dataLogin}, Apakah yakin ingin melakukan absen sebagai pengajar bantu?`);
 
                 let formdata = $("#absen_pengajar_bantu").serialize();
                 formdata += "&_token=" + $('meta[name="csrf-token"]').attr("content");
                 formdata += "&idpembelajaran=" + id;
                 formdata += "&id_kelas=" + id_kelas;
 
-                
-                // console.log(formdata);
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/pengajar/bantu/absen/${id}') }}`,
                     data: formdata,
                     dataType: "json",
                     success: function(response) {
-                        Swal.fire("Berhasil!", response.message, "success");
-                        $("#detailmodal").modal("hide");
+                        if (result == true) {
+                            Swal.fire("Berhasil!", response.message, "success");
+                            $("#detailmodal").modal("hide");
+                        }
                     },
                     error: function(xhr) {
                         Swal.fire("Error!", "Terjadi kesalahan", "error");
@@ -460,34 +468,42 @@
             }
 
             // 🔹 Saat tombol absen diklik (ambil data dari API jika LocalStorage kosong)
+            let dataAbsen = [];
             $(".absen").on("click", function() {
                 let id_kelas = $(this).data("idkelas");
-                let id = $(this).data("id");
 
-                // Cek apakah sudah ada di localStorage
+                // Ambil data dari localStorage
                 let savedData = ambilDariStorage(id_kelas);
 
-                if (savedData.length > 0) {
-                    dataAbsen = savedData;
-                    renderAbsen();
-                } else {
-                    // Jika tidak ada di localStorage, ambil dari database
-                    $.ajax({
-                        type: "GET",
-                        url: `{{ url('/absen/siswa/${id_kelas}') }}`,
-                        dataType: "json",
-                        success: function(response) {
-                            dataAbsen = response.data.map(siswa => ({
-                                id: siswa.id,
-                                nama: siswa.nama,
-                                presensi: siswa.presensi || "I" // Default "I"
-                            }));
+                // Ambil data terbaru dari API
+                $.ajax({
+                    type: "GET",
+                    url: `{{ url('/absen/siswa/${id_kelas}') }}`,
+                    dataType: "json",
+                    success: function(response) {
+                        let apiData = response.data.map(siswa => ({
+                            id: siswa.id,
+                            nama: siswa.nama,
+                            presensi: siswa.presensi || "I" // Default "I"
+                        }));
 
-                            simpanKeStorage(id_kelas);
-                            renderAbsen();
-                        }
-                    });
-                }
+                        // Gabungkan data baru dengan data di localStorage tanpa menghapus data lama
+                        apiData.forEach(siswaBaru => {
+                            let existingSiswa = savedData.find(siswa => siswa.id ===
+                                siswaBaru.id);
+                            if (!existingSiswa) {
+                                savedData.push(siswaBaru);
+                            }
+                        });
+
+                        // Simpan kembali ke localStorage
+                        simpanKeStorage(id_kelas, savedData);
+
+                        // Render data absen
+                        dataAbsen = savedData;
+                        renderAbsen();
+                    }
+                });
 
                 $("#absen_siswa").modal("show");
             });
@@ -560,7 +576,7 @@
 
             // 🔹 Simpan Sementara
             $("#simpan_sementara").on("click", function() {
-                let id_kelas = $(".absen").data("idkelas"); // Ambil ID kelas aktif
+                let id_kelas = $(".absen").data("idkelas");
                 simpanKeStorage(id_kelas);
                 Swal.fire("Berhasil!", "Data berhasil di simpan", "success");
                 $("#absen_siswa").modal("hide");
@@ -570,6 +586,7 @@
             $("#final-submit").on("click", function() {
                 let id_kelas = $(".absen").data("idkelas");
                 let id = $(".absen").data("id");
+                let gaji_transport = '{{ $kelas->gaji_transport }}'
 
                 simpanKeStorage(id_kelas);
 
@@ -586,8 +603,8 @@
                 formObject.absensi = savedData;
                 formObject.status_tersimpan = "permanen";
                 formObject.id_kelas = id_kelas;
+                formObject.gaji_transport = gaji_transport;
 
-                console.log(formObject);
                 $.ajax({
                     type: "POST",
                     url: `{{ url('/absen/siswa/store/${id}') }}`,
@@ -599,10 +616,16 @@
                     success: function(response) {
                         Swal.fire("Berhasil!", response.message, "success");
                         localStorage.removeItem(`dataAbsen_Kelas_${id_kelas}`);
+                        $("#form_absen")[0].reset();
                         $("#detailmodal").modal("hide");
                         location.reload();
                     },
                     error: function(xhr, status, error) {
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            $(".error-tanggal").text(errors.tanggal ? errors.tanggal[0] : "");
+                            $(".error-materi").text(errors.materi ? errors.materi[0] : "");
+                        }
                         Swal.fire("Gagal!", response.message, "error");
                     }
                 });
@@ -667,7 +690,7 @@
                 let no_sertiv = `${tanggal}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
 
                 pilihNilai().then((nilai) => {
-                    console.log("Nilai yang dipilih:", nilai);
+                    // console.log("Nilai yang dipilih:", nilai);
                     $.ajax({
                         type: "POST",
                         url: `{{ url('/siswa/selesai/${id_kelas}/${id_siswa}') }}`,
@@ -679,8 +702,7 @@
                             _token: $('meta[name="csrf-token"]').attr("content"),
                         },
                         success: function(response) {
-                            console.log("Sukses:", response);
-
+                            // console.log("Sukses:", response);
                             Swal.fire({
                                 icon: "success",
                                 title: "Berhasil!",
