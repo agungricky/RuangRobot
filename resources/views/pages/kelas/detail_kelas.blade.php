@@ -13,7 +13,7 @@
 
             {{-- Button --}}
             <div class="row">
-                <div class="col d-flex">
+                <div class="col d-flex gap-3">
                     <a href="{{ route('jurnal_kelas', ['id' => $data->id]) }}" class="btn btn-success mb-4 mr-3"><i
                             class="fas fa-file"></i>
                         Generate Report</a>

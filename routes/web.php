@@ -154,7 +154,7 @@ Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.j
 Route::get('/dashboard/pengajar', [dashboardPenggunaController::class, 'index_Pengajar'])->name('dashboard_pengajar');
 
 // ========= Kelas Pengajar ========= //
-Route::get('/kelas_pengajar', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
+Route::get('/kelas_pengajar/{id}/aktif', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
 Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
 Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
 Route::get('/detail_kelas/selesai/{id}', [kelaspengajarController::class, 'show_selesai'])->name('pengajar.detail_kelas.selesai');

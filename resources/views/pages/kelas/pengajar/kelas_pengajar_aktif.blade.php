@@ -26,7 +26,7 @@
         $(document).ready(function() {
             function loadKelas(searchTerm = '') {
                 $.ajax({
-                    url: "{{ route('kelas_aktif.pengajar') }}",
+                    url: "{{ route('kelas_aktif.pengajar', ['id' => $id]) }}",
                     type: "GET",
                     dataType: "json",
                     success: function(response) {
@@ -43,25 +43,25 @@
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
                         } else {
                             data.forEach(item => {
-                                let randomColors = ['primary', 'success', 'danger',
-                                    'warning',
-                                ];
-                                let randomColor = randomColors[Math.floor(Math.random() *
-                                    randomColors.length)];
-
-
+                                // let randomColors = ['primary', 'success', 'danger',
+                                //     'warning',
+                                // ];
+                                // let randomColor = randomColors[Math.floor(Math.random() *
+                                //     randomColors.length)];
 
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/${item.id}') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
-                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
+                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px; height: 200px !important;">
                                                 <div class="hero-inner">
                                                     <h5 class="text-wrap w-100">
                                                         ${item.nama_kelas}
                                                     </h5>
-
-                                                    <span class="badge badge-${randomColor}">
+                                                    <span class="badge badge-success text-light">
+                                                        ${item.kategori_kelas}
+                                                    </span>
+                                                    <span class="badge badge-secondary text-dark">
                                                         ${item.tipe_kelas}
                                                     </span>
                                                     <p class="lead">${item.nama_program || "Program tidak tersedia"}</p>

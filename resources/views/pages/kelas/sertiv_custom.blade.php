@@ -52,7 +52,7 @@
 
                                         <input type="hidden" name="tanggal_diterbitkan" id="tanggal_diterbitkan">
 
-                                        <button class="btn btn-success btn-lg shadow-sm" type="submit">
+                                        <button class="btn btn-success btn-lg shadow-sm mt-2" type="submit">
                                             <i class="fas fa-save me-2" style="font-size: 1rem;"></i> Simpan
                                         </button>
                                     </div>
