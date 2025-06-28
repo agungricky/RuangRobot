@@ -3,6 +3,7 @@
     @if (session('success'))
     <x-sweetalert.success/>
     @endif
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -48,7 +49,7 @@
                     <form id="kategoriForm" method="POST">
                         @csrf
                         <div id="inputFieldsContainer" class="mb-0">
-                            <x-form.input_text label="Nama Kelas" name="tipe_kls"
+                            <x-form.input_text label="Tipe Kelas" name="tipe_kls"
                                 placeholder="Meker | Game Programing | dll ...." />
                             <div id="errorMessages" class="text-danger"></div>
                         </div>

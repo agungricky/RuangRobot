@@ -39,13 +39,13 @@
     <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
-    {{-- Style CSS Custom --}}
-    <link rel="stylesheet" href="{{ asset('css_custom/style.css') }}">
-
     <!-- CSS Clock Picker -->
     <link rel="stylesheet" href="{{ url('https://cdn.jsdelivr.net/npm/clockpicker/dist/jquery-clockpicker.min.css') }}">
     {{-- Css jquery ui untuk auto complate --}}
     <link rel="stylesheet" href="{{ asset('assets/css/jquery-ui.css') }}">
+
+    {{-- Style CSS Custom --}}
+    <link rel="stylesheet" href="{{ asset('css_custom/style.css') }}">
 </head>
 
 <body>

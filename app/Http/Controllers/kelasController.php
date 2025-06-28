@@ -11,6 +11,7 @@ use App\Models\pengguna;
 use App\Models\programbelajar;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF;
+use Carbon\Carbon;
 use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
 use GDText\Box;
@@ -335,7 +336,9 @@ class kelasController extends Controller
             $zip->close();
             File::deleteDirectory($tempDir);
 
-            return response()->download($zipFileName, $participants->nama_kelas)->deleteFileAfterSend(true);
+            // return response()->download($zipFileName, $participants->nama_kelas)->deleteFileAfterSend(true);
+            $namaFileAman = str_replace(['/', '\\'], '_', $participants->nama_kelas);
+            return response()->download($zipFileName, $namaFileAman . '.zip')->deleteFileAfterSend(true);
         }
 
         return response()->json(['error' => 'Gagal membuat file ZIP'], 500);
@@ -385,8 +388,8 @@ class kelasController extends Controller
         $box->setFontFace('assets/arial.ttf');
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(25);
-        $box->setStrokeColor(new Color(0, 0, 0)); // Set stroke color
-        $box->setStrokeSize(.6); // Stroke size in pixels
+        $box->setStrokeColor(new Color(0, 0, 0));
+        $box->setStrokeSize(.6);
         $box->setBox(750, 610, 300, 70);
         $box->setTextAlign('center', 'center');
         $box->draw($nilai);
@@ -398,7 +401,7 @@ class kelasController extends Controller
         $box->setFontSize(25);
         $box->setBox(880, 690, 400, 460);
         $box->setTextAlign('center', 'top');
-        $box->draw("Kediri, " . now() . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
+        $box->draw("Kediri, " . Carbon::now()->format('d-m-Y') . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
 
         $outputPath = public_path('generated/temp_sertifikat/' . $id . '_' . str_replace(' ', '_', $nama) . '.jpg');
         imagejpeg($template, $outputPath);
@@ -407,7 +410,8 @@ class kelasController extends Controller
         return $outputPath;
     }
 
-    public function generate_show(){
+    public function generate_show()
+    {
         return view('pages.kelas.sertiv_custom');
     }
 }

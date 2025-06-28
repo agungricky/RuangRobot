@@ -111,6 +111,16 @@ class siswaController extends Controller
         $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
         $daftar_siswa = json_decode($daftar_siswa->murid);
 
+        $status_pembayaran = '';
+        $kekurangan = '';
+        foreach ($daftar_siswa as $value) {
+            if ($value->id == $siswa->id) {
+                $status_pembayaran = $value->pembayaran == $value->tagihan ? 'Lunas' : 'Belum Lunas';
+                $kekurangan = $value->tagihan - $value->pembayaran;
+                break;
+            }
+        }
+
         $kehadiran = [];
         $totalPertemuan = $pembelajaran->count();
 
@@ -146,15 +156,6 @@ class siswaController extends Controller
             $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
         }
 
-        $status_pembayaran = '';
-        $kekurangan = '';
-        foreach ($daftar_siswa as $value) {
-            if ($value->id == $siswa->id) {
-                $status_pembayaran = $value->pembayaran == $value->tagihan ? 'Lunas' : 'Belum Lunas';
-                $kekurangan = $value->tagihan - $value->pembayaran;
-                break;
-            }
-        }
 
         return view('pages.kelas.siswa.detail_kelas', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa', 'status_pembayaran', 'kekurangan'));
     }

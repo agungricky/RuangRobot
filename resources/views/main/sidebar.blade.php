@@ -1,7 +1,6 @@
 <!-- Sidebar outter -->
 <div class="main-sidebar">
-    <!-- sidebar wrapper -->
-    <aside id="sidebar-wrapper" class="h-100 overflow-auto">
+    <aside id="sidebar-wrapper" class="h-100 overflow-auto pb-3">
         <!-- sidebar brand -->
         <div class="sidebar-brand my-3">
             <a href=""><img src="{{ asset('images/ruangrobot.png') }}" alt="" width="150px"></a>
@@ -42,8 +41,8 @@
                     <div class="collapse ps-4" id="kelas">
                         <ul class="list-unstyled">
                             @foreach ($kategori as $item)
-                                <li><a href="{{ route('kelas', ['id'=> $item->id]) }}" class="nav-link"><i
-                                            class="fa-solid fa-minus"></i>{{$item->kategori_kelas}}</a></li>
+                                <li><a href="{{ route('kelas', ['id' => $item->id]) }}" class="nav-link"><i
+                                            class="fa-solid fa-minus"></i>{{ $item->kategori_kelas }}</a></li>
                             @endforeach
                         </ul>
                     </div>
@@ -127,8 +126,9 @@
                     <div class="collapse ps-4" id="kelas">
                         <ul class="list-unstyled">
                             @foreach ($kategori as $item)
-                                <li><a href="{{ route('kelas_aktif.pengajar', ['id'=> $item->id]) }}" class="nav-link"><i
-                                            class="fa-solid fa-minus"></i>{{$item->kategori_kelas}}</a></li>
+                                <li><a href="{{ route('kelas_aktif.pengajar', ['id' => $item->id]) }}"
+                                        class="nav-link"><i
+                                            class="fa-solid fa-minus"></i>{{ $item->kategori_kelas }}</a></li>
                             @endforeach
                         </ul>
                     </div>

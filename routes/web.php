@@ -25,8 +25,6 @@ Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 
-// Route::view('/x', 'main.layout');
-
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
 
@@ -143,7 +141,7 @@ Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('pen
 
 //route edit
 // Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
-Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');
+// Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');
 
 
 // ====================================================================================== //

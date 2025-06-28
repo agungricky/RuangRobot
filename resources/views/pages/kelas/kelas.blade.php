@@ -3,6 +3,7 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
+    
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
