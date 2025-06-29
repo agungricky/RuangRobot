@@ -77,18 +77,7 @@
                                     </div>
                                 </form>
                                 <div class="text-muted text-center">
-                                    Tidak mempunyai akun? <a
-                                        href="https://wa.me/6285655770506?text={{ urlencode('Halo Ruang Robot.
-                                                                                                                                                                                                                                                                                                                                                                        Saya Mau daftar.
-                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                        Nama Lengkap:
-                                                                                                                                                                                                                                                                                                                                                                        Nomor Telfon:
-                                                                                                                                                                                                                                                                                                                                                                        Sekolah:
-                                                                                                                                                                                                                                                                                                                                                                        Tanggal Lahir:
-                                                                                                                                                                                                                                                                                                                                                                        Alamat:
-                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                        Terimakasih.') }}">Daftar
-                                        Disini</a>
+                                    Tidak mempunyai akun? <a href="{{ route('register') }}">Daftar Disini</a>
                                 </div>
                             </div>
                         </div>

@@ -24,6 +24,8 @@ Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+
 
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');

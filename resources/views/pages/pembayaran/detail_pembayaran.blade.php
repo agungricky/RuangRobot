@@ -134,6 +134,45 @@
         </div>
     </div>
 
+    {{-- Modal Buku Pembayaran --}}
+    <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="">
+                        <h5 class="modal-title text-dark fw-bold mb-1" id="modalLabel"># Detail Pembayaran</h5>
+
+                        <div class="border rounded px-3 py-2 bg-light">
+                            <div class="d-flex justify-content-between small text-muted gap-5">
+                                <span><strong>Nama Siswa:</strong> Budi Santoso</span>
+                                <span><strong>Kelas:</strong> VII-A</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%;">No</th>
+                                <th class="col-1">Jenis Pembayaran</th>
+                                <th class="col-1">Nominal</th>
+                                <th class="col-3">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
         $(document).ready(function() {
             // Menampilkan Tabel Siswa diKelas
@@ -151,8 +190,15 @@
                     },
                     {
                         data: 'nama',
+                        className: 'text-start', 
                         render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-primary">${data}</div>`;
+                            return `
+                                <a href="#" class="text-primary fw-bold" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#modalDetail" 
+                                   data-id="${row.id}">
+                                    ${data}
+                                </a>`;
                         }
                     },
                     {
@@ -346,6 +392,148 @@
                     }
                 });
             });
+
+            $('#modalDetail').on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const id = button.data('id');
+
+                const data = [{
+                        col1: '1',
+                        col2: 'Uang Pendaftaran',
+                        col3: 'Rp. 100.000',
+                        col4: '2023-01-01'
+                    },
+                    {
+                        col1: '2',
+                        col2: 'Seragam',
+                        col3: 'Rp. 50.000',
+                        col4: '2023-01-05'
+                    },
+                    {
+                        col1: '3',
+                        col2: 'Buku Paket',
+                        col3: 'Rp. 75.000',
+                        col4: '2023-01-10'
+                    },
+                    {
+                        col1: '4',
+                        col2: 'Kegiatan Sekolah',
+                        col3: 'Rp. 60.000',
+                        col4: '2023-01-12'
+                    },
+                    {
+                        col1: '5',
+                        col2: 'SPP Januari',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-01-15'
+                    },
+                    {
+                        col1: '6',
+                        col2: 'SPP Februari',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-02-01'
+                    },
+                    {
+                        col1: '7',
+                        col2: 'SPP Maret',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-03-01'
+                    },
+                    {
+                        col1: '8',
+                        col2: 'Ujian Tengah Semester',
+                        col3: 'Rp. 80.000',
+                        col4: '2023-03-10'
+                    },
+                    {
+                        col1: '9',
+                        col2: 'Praktikum',
+                        col3: 'Rp. 70.000',
+                        col4: '2023-03-15'
+                    },
+                    {
+                        col1: '10',
+                        col2: 'SPP April',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-04-01'
+                    },
+                    {
+                        col1: '11',
+                        col2: 'Uang Gedung',
+                        col3: 'Rp. 300.000',
+                        col4: '2023-04-10'
+                    },
+                    {
+                        col1: '12',
+                        col2: 'SPP Mei',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-05-01'
+                    },
+                    {
+                        col1: '13',
+                        col2: 'Kegiatan Akhir Semester',
+                        col3: 'Rp. 100.000',
+                        col4: '2023-05-20'
+                    },
+                    {
+                        col1: '14',
+                        col2: 'SPP Juni',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-06-01'
+                    },
+                    {
+                        col1: '15',
+                        col2: 'Perpustakaan',
+                        col3: 'Rp. 40.000',
+                        col4: '2023-06-10'
+                    },
+                    {
+                        col1: '16',
+                        col2: 'SPP Juli',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-07-01'
+                    },
+                    {
+                        col1: '17',
+                        col2: 'LKS Semester 1',
+                        col3: 'Rp. 90.000',
+                        col4: '2023-07-10'
+                    },
+                    {
+                        col1: '18',
+                        col2: 'SPP Agustus',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-08-01'
+                    },
+                    {
+                        col1: '19',
+                        col2: 'Kegiatan Pramuka',
+                        col3: 'Rp. 55.000',
+                        col4: '2023-08-15'
+                    },
+                    {
+                        col1: '20',
+                        col2: 'SPP September',
+                        col3: 'Rp. 150.000',
+                        col4: '2023-09-01'
+                    }
+                ];
+
+
+                let rows = '';
+                data.forEach(d => {
+                    rows += `
+            <tr>
+                <td>${d.col1}</td>
+                <td>${d.col2}</td>
+                <td>${d.col3}</td>
+                <td>${d.col4}</td>
+            </tr>`;
+                });
+
+                $('#modalTableBody').html(rows);
+            });
+
 
         });
     </script>
