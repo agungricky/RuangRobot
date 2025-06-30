@@ -20,12 +20,26 @@
 </head>
 
 <body class="bg-white">
+    @if (session('success'))
+        <div style="position: absolute; top: 1rem; right: 1rem; z-index: 1055; max-width: 90vw;">
+            <div id="alert-box" class="d-flex align-items-center gap-5 px-3 py-2 rounded-3 shadow-sm text-white"
+                style="background: #38b000; font-size: 0.9rem; transition: opacity 0.3s ease;">
+                <span class="flex-grow-1">
+                    {{ session('success') }}Registrasi berhasil, Anda akan dihubungi oleh Admin. 
+                </span>
+                <button type="button" onclick="closeAlert()"
+                    style="all: unset; cursor: pointer; font-size: 1rem; line-height: 1;" aria-label="Close" class="px-3">x</button>
+            </div>
+        </div>
+    @endif
+
     <div id="app">
         <section class="section">
             <div class="container mt-5">
                 <div class="row">
                     <div
                         class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+
                         <div class="login-brand">
                             <img src="{{ asset('images/ruangrobot.png') }}" alt="logo" width="150">
                         </div>
@@ -116,6 +130,20 @@
             });
         });
     </script>
+
+    <script>
+        function closeAlert() {
+            const alert = document.getElementById('alert-box');
+            if (alert) {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }
+
+        setTimeout(closeAlert, 5000);
+    </script>
+
+
 </body>
 
 </html>

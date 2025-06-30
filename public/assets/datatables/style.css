@@ -1,10 +1,14 @@
+.dt-paging{
+    padding-top: 20px;
+}
+
 /* Menargetkan tombol pagination */
 .dt-paging-button {
     border: none;
     border-radius: 5px;
-    padding: 10px 15px;
+    padding: 5px 15px;
     margin: 0 5px;
-    background-color: #007bff;
+    background-color: #30be0d;
     color: white;
     cursor: pointer;
     font-size: 14px;

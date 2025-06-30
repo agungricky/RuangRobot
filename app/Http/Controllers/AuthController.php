@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\akun;
+use App\Models\pengguna;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -27,11 +29,9 @@ class AuthController extends Controller
             $role = Auth::user()->role;
             if ($role == 'Admin') {
                 return redirect()->intended(route('dashboard'));
-            }
-            elseif ($role == 'Pengajar') {
+            } elseif ($role == 'Pengajar') {
                 return redirect()->intended(route('dashboard_pengajar'));
-            }
-            else{
+            } else {
                 return redirect()->intended(route('dashboard_siswa'));
             }
         } else {
@@ -52,6 +52,45 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
+
+    public function register_post(Request $request)
+    {
+        $message = [
+            'nama.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'no_telp.required' => 'No Telp harus diisi.',
+            'sekolah_id.required' => 'Sekolah harus diisi.',
+            'alamat.required' => 'Alamat harus diisi.',
+        ];
+
+        $validated = $request->validate([
+            'nama' => 'required',
+            'email' => 'required|email',
+            'no_telp' => 'required',
+            'sekolah_id' => 'required',
+            'alamat' => 'required',
+        ], $message);
+
+        $validated['mekanik'] = 0;
+        $validated['elektronik'] = 0;
+        $validated['pemrograman'] = 0;
+
+        $akun = akun::create([
+            'username' => "null",
+            'password' => Hash::make("ruangrobot"),
+            'role' => 'Siswa',
+        ]);
+
+        $validated['id'] = $akun->id;
+
+        if ($validated['sekolah_id'] == 'lainnya') {
+            $validated['sekolah_id'] = null;
+        }
+
+        pengguna::create($validated);
+        return redirect()->route('login')->with('success', 'Registrasi berhasil, Anda akan dihubungi oleh Admin.');
+    }
+
 
     /**
      * Store a newly created resource in storage.

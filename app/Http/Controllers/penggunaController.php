@@ -32,6 +32,7 @@ class penggunaController extends Controller
                 ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
                 ->select('profile.*', 'akun.role', 'akun.username', 'sekolah.nama_sekolah')
                 ->where('akun.role', 'Siswa')
+                ->where('profile.status_verifikasi', 'yes')
                 ->get();
         }
 
@@ -43,6 +44,18 @@ class penggunaController extends Controller
         }
 
         return view('pages.pengguna.pengguna', compact('data', 'id'));
+    }
+
+    public function permintaan_mendaftar($id, Request $request)
+    {
+        $data = Pengguna::with('akun')
+            ->where('status_verifikasi', 'no')
+            ->whereHas('akun', function ($query) {
+                $query->where('role', 'Siswa');
+            })
+            ->get();
+
+        return response()->json($data, 200);
     }
 
     public function sekolah()
@@ -158,7 +171,7 @@ class penggunaController extends Controller
             'no_telp' => $request->no_telp,
         ]);
 
-        return redirect()->route('pengguna',['id' => $role ])->with('success','Data pengguan berhasil diUpdate');
+        return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguan berhasil diUpdate');
     }
 
     /**
@@ -168,18 +181,18 @@ class penggunaController extends Controller
     {
         pengguna::find($id)->delete();
         akun::find($id)->delete();
-        return redirect()->route('pengguna', ['id' => $role])->with('success','Data pengguna berhasil dihapus');
-
+        return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguna berhasil dihapus');
     }
 
-    public function kelas_diikuti($id){
+    public function kelas_diikuti($id)
+    {
         $data = invoice::where('invoice.profile_id', $id)
-        ->join('kelas', 'invoice.kelas_id', 'kelas.id')
-        ->join('profile', 'invoice.profile_id', 'profile.id')
-        ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-        ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
-        ->orderBy('invoice.created_at', 'desc')
-        ->get();
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
+            ->join('profile', 'invoice.profile_id', 'profile.id')
+            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
+            ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
+            ->orderBy('invoice.created_at', 'desc')
+            ->get();
         return view('pages.pengguna.kelas_diikuti', compact('data'));
     }
 }

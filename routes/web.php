@@ -25,6 +25,7 @@ Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register/{ktg-kls}', [AuthController::class, 'register_post'])->name('register.post');
 
 
 // ========= Admin ========= //
@@ -79,8 +80,6 @@ Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.
 Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
 Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
 
-
-
 // ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
 Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
@@ -101,6 +100,7 @@ Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('mur
 Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
 Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
 Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
+Route::get('/permintaan_mendaftar/{id}/json', [penggunaController::class, 'permintaan_mendaftar'])->name('permintaan_join.json');
 Route::get('/kelas/diikuti/{id}', [penggunaController::class, 'kelas_diikuti'])->name('kelas.diikuti');
 Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
 Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
