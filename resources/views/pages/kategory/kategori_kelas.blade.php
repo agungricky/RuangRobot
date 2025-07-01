@@ -22,6 +22,8 @@
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 15%;" class="text-center">Jenis Kelas</th>
+                                                <th style="width: 15%;" class="text-center">Link Form</th>
+                                                <th style="width: 15%;" class="text-center">Background</th>
                                                 <th style="width: 80%;" class="text-start">Opsi</th>
                                             </tr>
                                         </thead>
@@ -44,13 +46,30 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kategori Kelas</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body" style="padding-bottom: 0;">
-                    <form id="kategoriForm" method="POST">
+                    <form id="kategoriForm" method="POST" class="bg-white p-6 rounded-xl shadow-md space-y-5">
                         @csrf
-                        <div id="inputFieldsContainer" class="mb-0">
-                            <x-form.input_text label="Nama Kategori" name="kategori"
-                                placeholder="Kelas Reguler | Kelas Lomba | dll ...." />
-                            <div id="errorMessages" class="text-danger"></div>
+
+                        <div class="space-y-4">
+                            {{-- Input Nama Kategori --}}
+                            <div class="mb-2">
+                                <x-form.input_text label="Kategori" name="kategori_kelas"
+                                    placeholder="Reguler | Lomba | dll ...." />
+                            </div>
+
+                            {{-- Input Warna --}}
+                            <div class="mb-4">
+                                <label for="color_bg" class="block text-sm font-semibold text-gray-700 mb-1">
+                                    Warna Background
+                                </label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="color" name="color_bg" id="color_bg"
+                                        class="rounded-lg border border-gray-400 shadow"
+                                        value="{{ old('color_bg', '#3490dc') }}" style="width: 100%; height: 80px;">
+                                </div>
+                            </div>
+
                         </div>
                     </form>
                 </div>
@@ -83,6 +102,18 @@
                         data: 'kategori_kelas',
                         render: function(data, type, row, meta) {
                             return `<div class="text-start fw-bold text-tabel">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'link',
+                        render: function(data, type, row) {
+                            return `<a href="${data}" target="_blank" class="text-decoration-none text-primary">${data}</a>`;
+                        }
+                    },
+                    {
+                        data: 'color_bg',
+                        render: function(data, type, row) {
+                            return `<div class="text-start fw-bold text-tabel" style="background-color: ${data}; width: 100%; height: 30px;"></div>`;
                         }
                     },
                     {

@@ -135,7 +135,8 @@
 
             <!-- Kanan -->
             <div class="col-lg-8 p-2 p-md-4 pt-md-5">
-                <h3 class="fw-semibold mb-4 text-center text-secondary d-none d-md-block">Form Register Siswa</h3>
+                <h3 class="fw-semibold mb-4 text-center text-secondary d-none d-md-block">Register Kelas
+                    {{ $ktg }}</h3>
 
                 <form action="{{ route('register.post') }}" id="pengguna_form" method="POST" class="mx-2">
                     @csrf
@@ -149,7 +150,6 @@
                                     {{ $errors->first('nama') }}
                                 </span>
                             @endif
-
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -165,7 +165,7 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label for="no_telp" class="form-label">No HP</label>
+                            <label for="no_telp" class="form-label">No HP (whatsapp)</label>
                             <input type="text" class="form-control" id="no_telp" name="no_telp"
                                 placeholder="Masukkan nomor HP" value="{{ old('no_telp', '+62') }}">
                             @if ($errors->has('no_telp'))
@@ -173,7 +173,6 @@
                                     {{ $errors->first('no_telp') }}
                                 </span>
                             @endif
-
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -188,16 +187,44 @@
                             @endif
                         </div>
 
-                        <div class="col-12">
-                            <label for="alamat" class="form-label">Alamat</label>
-                            <input type="text" class="form-control" id="alamat" name="alamat"
-                                placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
-                            @if ($errors->has('alamat'))
-                                <span class="error text-danger mb-2">
-                                    {{ $errors->first('alamat') }}
-                                </span>
-                            @endif
-                        </div>
+                       @if ($ktg != 'Ekskul' && $ktg != 'Eskul' && $ktg != 'Eskull')
+                            <div class="col-12">
+                                <label for="alamat" class="form-label">Alamat</label>
+                                <input type="text" class="form-control" id="alamat" name="alamat"
+                                    placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
+                                @if ($errors->has('alamat'))
+                                    <span class="error text-danger mb-2">
+                                        {{ $errors->first('alamat') }}
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
+
+                        @if ($ktg == 'Ekskul' || $ktg == 'Eskul' || $ktg == 'Eskull')
+                            <div class="col-12 col-md-6">
+                                <label for="alamat" class="form-label">Alamat</label>
+                                <input type="text" class="form-control" id="alamat" name="alamat"
+                                    placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
+                                @if ($errors->has('alamat'))
+                                    <span class="error text-danger mb-2">
+                                        {{ $errors->first('alamat') }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="nama" class="form-label">Kelas</label>
+                                <input type="text" class="form-control" id="kelas" name="kelas"
+                                    placeholder="Masukkan Kelas" value="{{ old('kelas') }}">
+                                @if ($errors->has('kelas'))
+                                    <span class="error text-danger mb-2">
+                                        {{ $errors->first('kelas') }}
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
+
+                        <input type="hidden" name="kategori" value="{{ $ktg }}">
 
                         <div class="col-12 p-3 rounded-2 mb-3">
                             <div class="form-check d-flex align-items-start mb-2">

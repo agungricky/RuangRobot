@@ -14,6 +14,7 @@ use App\Http\Controllers\kelasController;
 use App\Http\Controllers\kelaspengajarController;
 use App\Http\Controllers\pembayaranController;
 use App\Http\Controllers\pembelajaranController;
+use App\Http\Controllers\pendaftaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
@@ -24,8 +25,8 @@ Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
-Route::get('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/register/{ktg-kls}', [AuthController::class, 'register_post'])->name('register.post');
+Route::get('/register/{kategori}', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [pendaftaranController::class, 'store'])->name('register.post');
 
 
 // ========= Admin ========= //

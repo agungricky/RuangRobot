@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\akun;
 use App\Models\invoice;
+use App\Models\pendaftaran;
 use App\Models\pengguna;
 use App\Models\sekolah;
 use Illuminate\Http\Request;
@@ -32,7 +33,6 @@ class penggunaController extends Controller
                 ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
                 ->select('profile.*', 'akun.role', 'akun.username', 'sekolah.nama_sekolah')
                 ->where('akun.role', 'Siswa')
-                ->where('profile.status_verifikasi', 'yes')
                 ->get();
         }
 
@@ -48,13 +48,7 @@ class penggunaController extends Controller
 
     public function permintaan_mendaftar($id, Request $request)
     {
-        $data = Pengguna::with('akun')
-            ->where('status_verifikasi', 'no')
-            ->whereHas('akun', function ($query) {
-                $query->where('role', 'Siswa');
-            })
-            ->get();
-
+        $data = pendaftaran::where('kategori', 'Reguler')->get();
         return response()->json($data, 200);
     }
 

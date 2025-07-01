@@ -48,9 +48,10 @@ class AuthController extends Controller
     }
 
 
-    public function register()
+    public function register($kategori)
     {
-        return view('auth.register');
+        $ktg = $kategori;
+        return view('auth.register', compact('ktg'));
     }
 
     public function register_post(Request $request)

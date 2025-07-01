@@ -39,13 +39,15 @@ class kategoriController extends Controller
             'max' => 'tidak boleh lebih dari 20 karakter'
         ];
 
-        $request->validate([
-            'kategori' => 'required|unique:kategori_kelas,kategori_kelas|max:20',
+        $validated = $request->validate([
+            'kategori_kelas' => 'required|unique:kategori_kelas,kategori_kelas|max:20',
+            'color_bg' => 'nullable|string|max:7',
         ], $messages);
 
-        Kategori::create([
-            'kategori_kelas' => $request->kategori,
-        ]);
+        $validated['link'] = 'register' . '/' . $validated['kategori_kelas'];
+
+        Kategori::create($validated);
+        return redirect()->back()->with('success', 'Data Berhasil ditambahkan');
     }
 
     /**
