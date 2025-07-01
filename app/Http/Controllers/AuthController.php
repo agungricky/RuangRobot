@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\akun;
+use App\Models\indexPendaftaran;
 use App\Models\pengguna;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,10 +49,26 @@ class AuthController extends Controller
     }
 
 
-    public function register($kategori)
+    public function register($kategori, $id)
     {
         $ktg = $kategori;
-        return view('auth.register', compact('ktg'));
+        $indexPendaftaran = indexPendaftaran::where('code', $id)->first();
+        return view('auth.register', compact('ktg', 'indexPendaftaran'));
+    }
+
+    public function register_reguler($kategori)
+    {
+        $ktg = $kategori;
+        $indexPendaftaran = collect([
+            [
+                "title" => "Pendaftaran Kelas Reguler",
+                "kategori_id" => "Reguler",
+                "code" => "00001",
+            ]
+        ]);
+
+        $indexPendaftaran = (object) $indexPendaftaran->first();
+        return view('auth.register', compact('ktg', 'indexPendaftaran'));
     }
 
     public function register_post(Request $request)

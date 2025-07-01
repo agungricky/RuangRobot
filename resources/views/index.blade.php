@@ -185,7 +185,7 @@
                                 <!-- layer 3 -->
                                 <div class="layer-3 wow fadeInUp" data-wow-delay="0.7s">
                                     <a href="{{ route('login') }}" class="ready-btn" method="POST">Login</a>
-                                    <a class="ready-btn" href="{{ route('register') }}">Register</a>
+                                    <a class="ready-btn" href="{{ route('register.reguler', ['kategori' => 'Reguler']) }}">Register</a>
                                 </div>
                             </div>
                         </div>

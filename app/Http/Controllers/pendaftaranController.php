@@ -12,7 +12,6 @@ class pendaftaranController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**

@@ -15,8 +15,17 @@
                     <a href="{{ route('dashboard') }}"><i class="fa-solid fa-fire"></i><span>Dashboard</span></a>
                 </li>
 
+                <li class="menu-header">Administrasi</li>
+                <li>
+                    <a href="{{ route('pendaftaran.index') }}">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Pendaftaran</span>
+                    </a>
+                </li>
+
                 <!-- menu header -->
                 <li class="menu-header">Manage Pembelajaran</li>
+
                 <!-- Dropdown Menu -->
                 <li>
                     <a href="#kategori_menu" class="nav-link" data-bs-toggle="collapse">

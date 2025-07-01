@@ -9,6 +9,7 @@ use App\Http\Controllers\dashboardUser;
 use App\Http\Controllers\dashboardUserController;
 use App\Http\Controllers\gajiController;
 use App\Http\Controllers\gajiPengajarController;
+use App\Http\Controllers\IndexPendaftaranController;
 use App\Http\Controllers\kategoriController;
 use App\Http\Controllers\kelasController;
 use App\Http\Controllers\kelaspengajarController;
@@ -19,18 +20,25 @@ use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
 use App\Http\Controllers\siswaController;
+use App\Models\indexPendaftaran;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
-Route::get('/register/{kategori}', [AuthController::class, 'register'])->name('register');
+Route::get('/register/{kategori}/{id}', [AuthController::class, 'register'])->name('register');
+Route::get('/register/{kategori}', [AuthController::class, 'register_reguler'])->name('register.reguler');
 Route::post('/register', [pendaftaranController::class, 'store'])->name('register.post');
 
 
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
+
+// ========= Pendaftaran ========= //
+Route::resource('/pendaftaran', IndexPendaftaranController::class)->names('pendaftaran');
+Route::get('/pendaftaran/json', [IndexPendaftaranController::class, 'indexPendaftaran'])->name('pendaftaran.json');
+
 
 // ========= Kategori & Tipe Kelas ========= //
 Route::get('/kategori_kelas', [kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas');

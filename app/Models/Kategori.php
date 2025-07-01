@@ -9,4 +9,8 @@ class Kategori extends Model
     protected $table = 'kategori_kelas';
     protected $fillable = ['id', 'kategori_kelas', 'link', 'color_bg'];
     public $timestamps = false;
+
+    public function indexPendaftaran(){
+        return $this->hasMany(indexPendaftaran::class, 'kategori_id', 'id');
+    }
 }
