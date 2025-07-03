@@ -20,6 +20,7 @@ class IndexPendaftaranController extends Controller
                 'data' => $data
             ]);
         }
+
         return view('pages.administrasi.pendaftaran');
     }
 
@@ -30,8 +31,7 @@ class IndexPendaftaranController extends Controller
     {
         $kelas = kelas::all();
         $kategori  = Kategori::all();
-
-        return view('pages.administrasi.pendaftaran_create', compact('kelas', 'kategori'));
+        return view('pages.administrasi.pendaftaran.pendaftaran_create', compact('kelas', 'kategori'));
     }
 
     /**

@@ -39,6 +39,10 @@ Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->n
 Route::resource('/pendaftaran', IndexPendaftaranController::class)->names('pendaftaran');
 Route::get('/pendaftaran/json', [IndexPendaftaranController::class, 'indexPendaftaran'])->name('pendaftaran.json');
 
+// ========= Validasi Pendaftaran ========= //
+Route::resource('/validasi', pendaftaranController::class)->names('validasi');
+Route::get('/validasi/fix/{code}', [pendaftaranController::class, 'fix'])->name('validasi.fix');
+
 
 // ========= Kategori & Tipe Kelas ========= //
 Route::get('/kategori_kelas', [kategoriController::class, 'index_jeniskelas'])->name('kategori_kelas');

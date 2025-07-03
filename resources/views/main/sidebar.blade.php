@@ -22,6 +22,12 @@
                         <span>Pendaftaran</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('validasi.index') }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Validasi</span>
+                    </a>
+                </li>
 
                 <!-- menu header -->
                 <li class="menu-header">Manage Pembelajaran</li>

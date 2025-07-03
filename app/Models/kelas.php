@@ -21,5 +21,10 @@ class kelas extends Model
         'jatuh_tempo',
         'created_at',
         'updated_at'
-    ]; 
+    ];
+
+    public function indexPendaftaran()
+    {
+        return $this->hasMany(indexPendaftaran::class, 'kelas_id', 'id');
+    }
 }

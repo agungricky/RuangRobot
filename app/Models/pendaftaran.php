@@ -9,6 +9,7 @@ class pendaftaran extends Model
     protected $primaryKey = 'id';
     protected $table = 'pendaftaran';
     protected $fillable = [
+        'code_id',
         'nama',
         'email',
         'no_telp',
@@ -19,4 +20,12 @@ class pendaftaran extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function indexPendaftaran(){
+        return $this->belongsTo(indexPendaftaran::class, 'code_id', 'code');
+    }
+
+    public function sekolah(){
+        return $this->belongsTo(sekolah::class, 'sekolah_id', 'id');
+    }
 }

@@ -26,4 +26,12 @@ class indexPendaftaran extends Model
     public function kategori(){
         return $this->belongsTo(Kategori::class, 'kategori_id', 'id');
     }
+
+    public function pendaftaran(){
+        return $this->hasMany(pendaftaran::class, 'code_id', 'code');
+    }
+
+    public function kelas(){
+        return $this->belongsTo(kelas::class, 'kelas_id', 'id');
+    }
 }

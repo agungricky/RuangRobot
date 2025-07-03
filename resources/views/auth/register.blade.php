@@ -141,6 +141,8 @@
                     <form action="{{ route('register.post') }}" id="pengguna_form" method="POST" class="mx-2">
                         @csrf
                         <div class="row g-2">
+                            <input type="hidden" name="code_id" value="{{ $indexPendaftaran->code }}">
+
                             <div class="col-12 col-md-6">
                                 <label for="nama" class="form-label">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama" name="nama"
