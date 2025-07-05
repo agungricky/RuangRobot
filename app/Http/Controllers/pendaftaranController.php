@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\akun;
 use App\Models\indexPendaftaran;
+use App\Models\invoice;
+use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pendaftaran;
+use App\Models\pengguna;
+use App\Models\sekolah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class pendaftaranController extends Controller
 {
@@ -60,7 +66,7 @@ class pendaftaranController extends Controller
      */
     public function show(string $id, Request $request)
     {
-        $indexPendaftaran = indexPendaftaran::find($id);
+        $indexPendaftaran = indexPendaftaran::with('kategori')->find($id);
         $data = pendaftaran::with('sekolah')->where('code_id', $indexPendaftaran->code)->get();
         $count = $data->count();
         if ($request->ajax()) {
@@ -96,45 +102,92 @@ class pendaftaranController extends Controller
         //
     }
 
-    public function fix($code)
+    public function acc_pendaftaran(Request $request, $idKelas)
     {
-        $dataIndex_form = indexPendaftaran::where('code', $code)->first();
-        $dataPendaftar = pendaftaran::where('code_id', $code)->get();
-        // dd($dataPendaftar->toArray());
+        $sekolah = sekolah::where('id', $request->sekolah_id)->first();
+        $kelas = kelas::where('id', $idKelas)->first();
 
-        // $dataPendaftar = pendaftaran::with(['indexPendaftaran', 'indexPendaftaran.kelas'])->where('code_id', $code)
-        //     ->get()
-        //     ->map(function ($item) {
-        //         return [
-        //             'id' => $item->id,
-        //             'nama' => $item->nama,
-        //             'sekolah' => $item->sekolah->nama ?? '-',
-        //             'nilai' => 'Belum Dinilai',
-        //             'tagihan' => 300000,
-        //             'no_sertiv' => null,
-        //             'created_at' => $item->created_at,
-        //             'updated_at' => $item->updated_at,
-        //             // 'no_invoice' => generateNoInvoice($item), // kamu bisa bikin fungsi sendiri
-        //             'pembayaran' => 0,
-        //             'jatuh_tempo' => '2025-12-31', // bisa juga pakai Carbon nanti
-        //             'status_sertiv' => 'Belum Terbit',
-        //         ];
-        //     })->toArray();
+        // ================= Pembuatan Akun ================= //
+        $akun = akun::create([
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
 
-            // dd($dataPendaftar->toArray());
+        $profile = pengguna::create([
+            'id' => $akun->id,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'no_telp' => $request->no_telp,
+            'alamat' => $request->alamat,
+            'akun_id' => $akun->id,
+            'sekolah_id' => $request->sekolah_id,
+            'mekanik' => $request->mekanik,
+            'elektronik' => $request->elektronik,
+            'pemrograman' => $request->pemrograman,
+        ]);
 
-        $datamurid_kelas = muridKelas::where('kelas_id', $dataIndex_form->kelas_id)->first();
+        $dataPendaftar = [
+            [
+                "id" => $akun->id,
+                "nama" => $profile->nama,
+                "nilai" => "Belum Dinilai",
+                "sekolah" => $sekolah->nama_sekolah,
+                "tagihan" => $kelas->harga,
+                "no_sertiv" => "Belum Terbit",
+                "created_at" => $akun->created_at,
+                "no_invoice" => "INV-coba",
+                "pembayaran" => "0",
+                "updated_at" => $akun->updated_at,
+                "jatuh_tempo" => $kelas->jatuh_tempo,
+                "status_sertiv" => "Belum Terbit",
+            ],
+        ];
 
+
+        // ================= Masukkan siswa ke kelas ================= //
+        $datamurid_kelas = muridKelas::where('kelas_id', $idKelas)->first();
 
         if ($datamurid_kelas == null) {
-            muridKelas::create([
-                'murid' => [],
-                'kelas_id' => $dataIndex_form->kelas_id,
+            $datamurid_kelas = muridKelas::create([
+                'murid' => json_encode([]),
+                'kelas_id' => $idKelas,
             ]);
-        } else {
-            // $datamurid_kelas->update([
-            //     'murid' => $dataPendaftar->toArray(),
-            // ]);
         }
+
+        $existing = $datamurid_kelas->murid ?? [];
+
+        if (!is_array($existing)) {
+            $existing = json_decode($existing, true);
+        }
+
+        $indexed = [];
+        foreach ($existing as $item) {
+            $indexed[$item['id']] = $item;
+        }
+
+        foreach ($dataPendaftar as $item) {
+            $indexed[$item['id']] = $item;
+        }
+
+        $dataGabungArray = array_values($indexed);
+        $dataGabungObject = json_decode(json_encode($dataGabungArray));
+
+        $datamurid_kelas->update([
+            'murid' => $dataGabungObject,
+        ]);
+
+        // ================= Pembuatan Invoice ================= //
+        invoice::create([
+            'profile_id' => $profile->id,
+            'kelas_id' => $idKelas,
+        ]);
+
+        // ================= Menghapus Pendaftaran ================= //
+        pendaftaran::where('id', $request->id)->delete();
+
+        
+
+        return redirect()->back()->with('success', 'Data berhasil diupdate');
     }
 }

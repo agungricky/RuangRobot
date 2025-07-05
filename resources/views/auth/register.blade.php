@@ -614,7 +614,7 @@
                             `<option value="${sekolah.id}">${sekolah.nama_sekolah}</option>`
                         );
                     });
-                    sekolahSelect.append('<option value="lainnya">Lainnya</option>');
+                    // sekolahSelect.append('<option value="lainnya">Lainnya</option>');
                     sekolahSelect.trigger('change');
                 },
                 error: function(xhr) {

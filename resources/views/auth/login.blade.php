@@ -91,7 +91,7 @@
                                     </div>
                                 </form>
                                 <div class="text-muted text-center">
-                                    Tidak mempunyai akun? <a href="{{ route('register.reguler', ['kategori' => 'Reguler']) }}">Daftar Disini</a>
+                                    Tidak mempunyai akun? <a href="https://wa.me/6281234567890?text=Hai%20min%2C%20saya%20ingin%20mendaftar%20kelas%20reguler." target="__blank">Daftar Disini</a>
                                 </div>
                             </div>
                         </div>

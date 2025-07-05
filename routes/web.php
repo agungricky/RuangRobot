@@ -37,11 +37,13 @@ Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->n
 
 // ========= Pendaftaran ========= //
 Route::resource('/pendaftaran', IndexPendaftaranController::class)->names('pendaftaran');
-Route::get('/pendaftaran/json', [IndexPendaftaranController::class, 'indexPendaftaran'])->name('pendaftaran.json');
 
 // ========= Validasi Pendaftaran ========= //
 Route::resource('/validasi', pendaftaranController::class)->names('validasi');
-Route::get('/validasi/fix/{code}', [pendaftaranController::class, 'fix'])->name('validasi.fix');
+Route::post('/validasi/acc/{idKelas}', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
+
+
+
 
 
 // ========= Kategori & Tipe Kelas ========= //
@@ -126,7 +128,7 @@ Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class,'destro
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
 
-Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
+// Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
 // Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
 
 

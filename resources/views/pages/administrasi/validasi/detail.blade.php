@@ -16,13 +16,9 @@
                             <div class="card-body">
                                 <div class="table-responsive">
 
-
                                     <div class="container my-3">
                                         <!-- Tombol atas -->
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <a href="{{ route('validasi.fix', ['code'=> $indexPendaftaran->code]) }}">
-                                                <button class="btn btn-primary">Validasi Semua</button>
-                                            </a>
+                                        <div class="d-flex justify-content-end align-items-center mb-4">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-success btn-filter"
                                                     data-target="pagado">{{ $count }} Mendaftar</button>
@@ -58,6 +54,133 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal_pengguna" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Cheking data duplicate</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-0">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <table class="table table-sm" id="tabel-hasil">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Email</th>
+                                        <th>Telp</th>
+                                        <th>Alamat</th>
+                                        <th>Checked</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="section_validasi" class="">
+                        <h1 class="fs-4">Form data siswa</h1>
+                        <hr>
+                        <form action="{{ route('validasi.acc', ['idKelas' => $indexPendaftaran->kelas_id]) }}"
+                            id="validasi_pendaftaran" method="POST">
+                            @csrf
+                            <div class="field">
+                                <div class="row">
+                                    <input type="hidden" name="id" id="id">
+
+                                    <div class="col-4">
+                                        <label for="username">Username</label>
+                                        <input type="text" name="username" id="username" class="form-control"
+                                            placeholder="Masukkan username" required>
+                                        <div id="error-username" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <label for="password">Password</label>
+                                        <input type="text" class="form-control bg-secondary" id="password"
+                                            name="password" value="ruangrobot" readonly>
+                                        <div id="error-password" class="text-danger"></div>
+                                    </div>
+
+                                    <input type="hidden" name="role" value="Siswa">
+
+                                    <div class="col-4">
+                                        <label for="sekolah">Sekolah</label>
+                                        <input type="text" id="sekolah" class="form-control bg-secondary"
+                                            placeholder="Masukan nama Sekolah" readonly>
+                                        <input type="hidden" id="sekolah_id" name="sekolah_id">
+                                        <div id="error-sekolah_id" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-6 mt-3">
+                                        <label for="nama">Nama</label>
+                                        <input type="text" name="nama" id="nama"
+                                            class="form-control bg-secondary" placeholder="Masukkan nama" readonly>
+                                        <div id="error-nama" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-6 mt-3">
+                                        <label for="kelas">Kelas di Sekolah</label>
+                                        <input type="text" name="kelas" id="kelas_siswa"
+                                            class="form-control bg-secondary" placeholder="Masukkan Kelas" readonly>
+                                        <div id="error-kelas" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-12 mt-3">
+                                        <label for="email">Email</label>
+                                        <input type="email" name="email" id="email"
+                                            class="form-control bg-secondary" placeholder="Masukkan email" readonly>
+                                        <div id="error-email" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-12 mt-3">
+                                        <label for="alamat">Alamat</label>
+                                        <input type="text" name="alamat" id="alamat"
+                                            class="form-control bg-secondary" placeholder="Masukkan alamat" readonly>
+                                        <div id="error-alamat" class="text-danger"></div>
+                                    </div>
+
+                                    <div class="col-12 mt-3">
+                                        <label for="no_telp">No HP</label>
+                                        <input type="text" name="no_telp" id="no_telp"
+                                            class="form-control bg-secondary" placeholder="Masukkan nomor HP" readonly>
+                                        <div id="error-no_telp" class="text-danger"></div>
+                                    </div>
+
+                                    <input type="hidden" name="mekanik" value="0">
+                                    <input type="hidden" name="elektronik" value="0">
+                                    <input type="hidden" name="pemrograman" value="0">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer my-2">
+                    <button type="submit" form="validasi_pendaftaran" id="btn-buat-akun"
+                        class="btn btn-success btn-sm">
+                        <i class="fas fa-user-plus"></i> Buat Akun & Masuk Kelas
+                    </button>
+
+                    <button id="btn-masukkan-kelas" class="btn btn-primary btn-sm" disabled>
+                        <i class="fas fa-door-open"></i> Masukkan Kelas
+                    </button>
+
+                    <button class="btn btn-warning btn-sm" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Tutup
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
 
 
@@ -98,7 +221,8 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center fw-bold text-tabel">${data.sekolah.nama_sekolah}</div>`;
+                            return `<div class="text-center">${row.sekolah?.nama_sekolah ?? '-'}</div>`;
+
                         }
                     },
                     {
@@ -115,21 +239,104 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
-                                    <div class="d-flex gap-2">
-                                        <a href="#" class="btn btn-primary btn-sm px-2">
-                                            <i class="fa-solid fa-clock"></i>
-                                        </a>
-                                        
-                                        <a href="#" class="btn btn-danger btn-sm px-2">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </div>
-                        `;
+                                <div class="d-flex gap-2">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-primary btn-sm px-2 btn-verifikasi"
+                                        id="btn-verifikasi"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal_pengguna"
+                                        data-id="${row.id}"
+                                        data-nama="${row.nama}"
+                                        data-email="${row.email}"
+                                        data-alamat="${row.alamat}"
+                                        data-no_telp="${row.no_telp}"
+                                        data-sekolah_nama="${row.sekolah?.nama_sekolah ?? '-'}"
+                                        data-sekolah_id="${row.sekolah_id}"
+                                        data-kelas="${row.kelas}"
+                                    >
+                                        <i class="fa-solid fa-clock"></i>
+                                    </button>
+                                
+                                    <a href="#" class="btn btn-danger btn-sm px-2">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            `;
                         }
                     }
-
                 ]
             });
+        });
+
+
+        $(document).on('click', '.btn-verifikasi', function() {
+            let id = $(this).data('id');
+            let nama = $(this).data('nama');
+            let email = $(this).data('email');
+            let alamat = $(this).data('alamat');
+            let no_telp = $(this).data('no_telp');
+            let sekolahNama = $(this).data('sekolah_nama');
+            let sekolahId = $(this).data('sekolah_id');
+            let kelas = $(this).data('kelas');
+
+            $('#id').val(id);
+            $('#nama').val(nama);
+            $('#email').val(email);
+            $('#alamat').val(alamat);
+            $('#no_telp').val(no_telp);
+            $('#sekolah').val(sekolahNama);
+            $('#sekolah_id').val(sekolahId);
+            $('#kelas_siswa').val(kelas);
+
+            let penggunaSiswa = "Siswa";
+            $.ajax({
+                type: "GET",
+                url: "/pengguna/" + penggunaSiswa,
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    let hasil = response.data.find(item => item.nama === nama);
+                    let button_kontrol = hasil === undefined;
+                    $('#btn-buat-akun').prop('disabled', !button_kontrol);
+
+
+                    let no = 1;
+
+                    if (hasil) {
+                        let html = `
+                            <tr>
+                                <td>${no}</td>
+                                <td>${hasil.nama}</td>
+                                <td>${hasil.email}</td>
+                                <td>${hasil.no_telp}</td>
+                                <td>${hasil.alamat}</td>
+                                <td style="width: 1%; white-space: nowrap;" class="text-center align-middle">
+                                    <input type="checkbox" class="form-check-input" style="transform: scale(1.5);" name="pilih[]" value="${hasil.id}">
+                                </td>
+                            </tr>
+                        `;
+
+                        $('#tabel-hasil tbody').html(html);
+                    } else {
+                        $('#tabel-hasil tbody').html('<tr><td colspan="6">Tidak ditemukan</td></tr>');
+                    }
+                }
+            });
+
+            $(document).on('change', 'input[name="pilih[]"]', function() {
+                let jumlahTercentang = $('input[name="pilih[]"]:checked').length;
+
+                $('#btn-masukkan-kelas').prop('disabled', jumlahTercentang !== 1);
+                $('#btn-buat-akun').prop('disabled', jumlahTercentang >= 1);
+
+                if (jumlahTercentang > 0) {
+                    $('#section_validasi').addClass('d-none');
+                } else {
+                    $('#section_validasi').removeClass('d-none');
+                }
+            });
+
         });
     </script>
 @endsection
