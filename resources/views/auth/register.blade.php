@@ -135,7 +135,7 @@
 
             <!-- Kanan -->
             <div class="col-lg-8 p-2 p-md-4 pt-md-5">
-                @if ($ktg == 'Reguler' || $indexPendaftaran->status_pendaftaran == 'open')
+                @if ($indexPendaftaran->status_pendaftaran == 'open')
                     <h3 class="fw-semibold mb-4 text-center text-secondary d-none d-md-block">{{$indexPendaftaran->title}}</h3>
 
                     <form action="{{ route('register.post') }}" id="pengguna_form" method="POST" class="mx-2">

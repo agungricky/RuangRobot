@@ -1,12 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\dashboardAdminController;
-use App\Http\Controllers\dashboardController;
-use App\Http\Controllers\dashboardPengajarController;
 use App\Http\Controllers\dashboardPenggunaController;
-use App\Http\Controllers\dashboardUser;
-use App\Http\Controllers\dashboardUserController;
 use App\Http\Controllers\gajiController;
 use App\Http\Controllers\gajiPengajarController;
 use App\Http\Controllers\IndexPendaftaranController;
@@ -20,27 +15,44 @@ use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
 use App\Http\Controllers\sekolahController;
 use App\Http\Controllers\siswaController;
-use App\Models\indexPendaftaran;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckRole;
 
 Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
-Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
 Route::get('/register/{kategori}/{id}', [AuthController::class, 'register'])->name('register');
-Route::get('/register/{kategori}', [AuthController::class, 'register_reguler'])->name('register.reguler');
 Route::post('/register', [pendaftaranController::class, 'store'])->name('register.post');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
+
+    Route::middleware('CheckRole:Admin,Pengajar,Siswa')->group(function () {});
+
+    Route::middleware('CheckRole:Admin')->group(function () {
+        // ========= Pembuatan Form Index Pendaftaran ========= //
+        Route::resource('/pendaftaran', IndexPendaftaranController::class)->names('pendaftaran');
+
+        // ========= Validasi Pendaftaran ========= //
+        Route::resource('/validasi', pendaftaranController::class)->names('validasi');
+        Route::post('/validasi/acc/{idKelas}', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
+        Route::get('/siswa/{id}/json', [pendaftaranController::class, 'search_siswa'])->name('search_siswa');
+        Route::post('/validasi/masukkls/{idKelas}', [pendaftaranController::class, 'masuk_kelasAcc'])->name('validasi.Masuk_kelasAcc');
+
+    });
+
+    Route::middleware('CheckRole:Pengajar')->group(function () {});
+
+    Route::middleware('CheckRole:Siswa')->group(function () {});
+});
 
 
 // ========= Admin ========= //
 Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
 
-// ========= Pendaftaran ========= //
-Route::resource('/pendaftaran', IndexPendaftaranController::class)->names('pendaftaran');
 
-// ========= Validasi Pendaftaran ========= //
-Route::resource('/validasi', pendaftaranController::class)->names('validasi');
-Route::post('/validasi/acc/{idKelas}', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
+
+
 
 
 
@@ -123,7 +135,7 @@ Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('
 // Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
 Route::get('/pengguna/edit/{id}/{role}', [penggunaController::class, 'edit'])->name('pengguna.edit');
 Route::patch('/pengguna/update/{id}/{role}', [penggunaController::class, 'update'])->name('pengguna.update');
-Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class,'destroy'])->name('pengguna.delete');
+Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class, 'destroy'])->name('pengguna.delete');
 
 Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 // Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
@@ -188,8 +200,8 @@ Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->nam
 Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
 
 // ========= Edit Profile ========= //
-Route::get('/edit_profile/{id}', [dashboardPenggunaController::class,'edit'])->name('edit_profile');
-Route::patch('/update_profile/{id}', [dashboardPenggunaController::class,'update'])->name('update_profile');
+Route::get('/edit_profile/{id}', [dashboardPenggunaController::class, 'edit'])->name('edit_profile');
+Route::patch('/update_profile/{id}', [dashboardPenggunaController::class, 'update'])->name('update_profile');
 
 
 // ====================================================================================== //
@@ -203,6 +215,3 @@ Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('
 Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
 Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
 Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
-
-
-

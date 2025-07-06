@@ -6,6 +6,7 @@ use App\Models\indexPendaftaran;
 use App\Models\Kategori;
 use App\Models\kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class IndexPendaftaranController extends Controller
 {
@@ -51,8 +52,10 @@ class IndexPendaftaranController extends Controller
 
         $kategori = Kategori::find($request->kategori_id);
         $kategori = $kategori->kategori_kelas;
-        $validated['link_form'] = 'register' . '/' . $kategori . '/' . $validated['kategori_id'] . $validated['kelas_id'];
-        $validated['code'] = $validated['kategori_id'] . $validated['kelas_id'];
+
+        $code = strtoupper(Str::random(5));
+        $validated['link_form'] = 'register' . '/' . $kategori . '/' . $code;
+        $validated['code'] = $code;
 
         indexPendaftaran::create($validated);
         return redirect()->route('pendaftaran.index')->with('success', 'Data berhasil ditambahkan');

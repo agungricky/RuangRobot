@@ -48,26 +48,10 @@ class AuthController extends Controller
         return redirect('login');
     }
 
-
     public function register($kategori, $id)
     {
         $ktg = $kategori;
         $indexPendaftaran = indexPendaftaran::where('code', $id)->first();
-        return view('auth.register', compact('ktg', 'indexPendaftaran'));
-    }
-
-    public function register_reguler($kategori)
-    {
-        $ktg = $kategori;
-        $indexPendaftaran = collect([
-            [
-                "title" => "Pendaftaran Kelas Reguler",
-                "kategori_id" => "Reguler",
-                "code" => "00001",
-            ]
-        ]);
-
-        $indexPendaftaran = (object) $indexPendaftaran->first();
         return view('auth.register', compact('ktg', 'indexPendaftaran'));
     }
 

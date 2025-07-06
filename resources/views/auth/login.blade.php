@@ -25,7 +25,7 @@
             <div id="alert-box" class="d-flex align-items-center gap-5 px-3 py-2 rounded-3 shadow-sm text-white"
                 style="background: #38b000; font-size: 0.9rem; transition: opacity 0.3s ease;">
                 <span class="flex-grow-1">
-                    {{ session('success') }}Registrasi berhasil, Anda akan dihubungi oleh Admin. 
+                    {{ session('success') }}
                 </span>
                 <button type="button" onclick="closeAlert()"
                     style="all: unset; cursor: pointer; font-size: 1rem; line-height: 1;" aria-label="Close" class="px-3">x</button>

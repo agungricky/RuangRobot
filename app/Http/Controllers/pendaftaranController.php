@@ -29,6 +29,14 @@ class pendaftaranController extends Controller
         return view('pages.administrasi.validasi');
     }
 
+    public function search_siswa($id)
+    {
+        $data = akun::with('pengguna')->where('id', $id)->first();
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -104,6 +112,10 @@ class pendaftaranController extends Controller
 
     public function acc_pendaftaran(Request $request, $idKelas)
     {
+        $request->validate([
+            'username' => 'required',
+        ]);
+
         $sekolah = sekolah::where('id', $request->sekolah_id)->first();
         $kelas = kelas::where('id', $idKelas)->first();
 
@@ -136,7 +148,7 @@ class pendaftaranController extends Controller
                 "tagihan" => $kelas->harga,
                 "no_sertiv" => "Belum Terbit",
                 "created_at" => $akun->created_at,
-                "no_invoice" => "INV-coba",
+                "no_invoice" => 'INV-' . date('dmy') . '-' . rand(1000, 9999),
                 "pembayaran" => "0",
                 "updated_at" => $akun->updated_at,
                 "jatuh_tempo" => $kelas->jatuh_tempo,
@@ -184,10 +196,14 @@ class pendaftaranController extends Controller
         ]);
 
         // ================= Menghapus Pendaftaran ================= //
-        pendaftaran::where('id', $request->id)->delete();
-
-        
+        pendaftaran::where('id', $request->id)->delete(); 
 
         return redirect()->back()->with('success', 'Data berhasil diupdate');
+    }
+
+    public function masuk_kelasAcc(Request $request, $id){
+        return response()->json([
+            'data' => $request->all() 
+        ]);
     }
 }

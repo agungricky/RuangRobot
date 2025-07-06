@@ -183,10 +183,8 @@
         </div>
     </div>
 
-
     <script>
         $(document).ready(function() {
-
             // Menampilkan Data Tabel
             $('#example').DataTable({
                 ajax: {
@@ -270,6 +268,7 @@
         });
 
 
+        // Form Disable Buat Akun
         $(document).on('click', '.btn-verifikasi', function() {
             let id = $(this).data('id');
             let nama = $(this).data('nama');
@@ -289,17 +288,14 @@
             $('#sekolah_id').val(sekolahId);
             $('#kelas_siswa').val(kelas);
 
-            let penggunaSiswa = "Siswa";
+            // Menampilakn Tabel data duplikat
             $.ajax({
                 type: "GET",
-                url: "/pengguna/" + penggunaSiswa,
+                url: "/pengguna/Siswa",
                 dataType: "json",
                 success: function(response) {
-                    console.log(response);
-                    let hasil = response.data.find(item => item.nama === nama);
-                    let button_kontrol = hasil === undefined;
-                    $('#btn-buat-akun').prop('disabled', !button_kontrol);
-
+                    let hasil = response.data.find(item => item.nama.toLowerCase() === nama
+                        .toLowerCase());
 
                     let no = 1;
 
@@ -312,7 +308,7 @@
                                 <td>${hasil.no_telp}</td>
                                 <td>${hasil.alamat}</td>
                                 <td style="width: 1%; white-space: nowrap;" class="text-center align-middle">
-                                    <input type="checkbox" class="form-check-input" style="transform: scale(1.5);" name="pilih[]" value="${hasil.id}">
+                                    <input type="checkbox" class="form-check-input pilih-data" style="transform: scale(1.5);" name=pilih[] value="${hasil.id}">
                                 </td>
                             </tr>
                         `;
@@ -324,6 +320,7 @@
                 }
             });
 
+            // Logika Mengelola Button
             $(document).on('change', 'input[name="pilih[]"]', function() {
                 let jumlahTercentang = $('input[name="pilih[]"]:checked').length;
 
@@ -334,6 +331,56 @@
                     $('#section_validasi').addClass('d-none');
                 } else {
                     $('#section_validasi').removeClass('d-none');
+                }
+            });
+        });
+
+        // Logika data pengguna yang di centang checkbox
+        $('#btn-masukkan-kelas').on('click', function() {
+            // Ambil semua checkbox yang dicentang, karna banyak di tambahkan s (ids)
+            let ids = [];
+            $('.pilih-data:checked').each(function() {
+                ids.push($(this).val());
+            });
+
+            let idTerpilih = parseInt(ids[0]);
+            $.ajax({
+                type: "GET",
+                url: `/siswa/${idTerpilih}/json`,
+                dataType: "json",
+                success: function(response) {
+                    // Ambil CSRF token dan set ke semua request Ajax
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    // Id Form untuk mencari kelas
+                    let idForm_index = {{ $indexPendaftaran->kelas_id }};
+
+                    let dataForm = {
+                        id: response.data.id,
+                        nama: response.data.pengguna.nama,
+                        sekolah_id: response.data.pengguna.sekolah_id,
+                    };
+
+                    console.log(response);
+
+                    $.ajax({
+                        type: "POST",
+                        url: `/validasi/masukkls/${idForm_index}`,
+                        data: dataForm,
+                        dataType: "json",
+                        success: function(response) {
+                            console.log('data yang dikirim :', dataForm )
+                            console.log('Respon berhasil:', response.data);
+                        },
+                        error: function(xhr) {
+                            console.log('Gagal:', xhr.responseText);
+                        }
+                    });
+
                 }
             });
 
