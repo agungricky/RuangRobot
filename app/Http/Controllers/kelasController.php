@@ -33,7 +33,7 @@ class kelasController extends Controller
             ->get();
         $kategori = Kategori::all();
         $programbelajar = programbelajar::all();
-        // dd($data);
+        // dd($id);
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
@@ -413,5 +413,19 @@ class kelasController extends Controller
     public function generate_show()
     {
         return view('pages.kelas.sertiv_custom');
+    }
+
+    public function kodeKelas(Request $request, $kategori_id)
+    {
+        $data_kelas = kelas::with('kategori')->where('kategori_kelas_id', $kategori_id)->get();
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data_kelas
+            ]);
+        }
+
+        // dd($kategori_id, $data_kelas->toArray());
+
+        return view('pages.kelas.kode_kelas', compact('data_kelas', 'kategori_id'));
     }
 }

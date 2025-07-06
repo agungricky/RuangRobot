@@ -267,9 +267,13 @@
             });
         });
 
-
         // Form Disable Buat Akun
+        let idPendaftaran_siswa = null;
         $(document).on('click', '.btn-verifikasi', function() {
+            // Untuk mengisi Variabel global
+            idPendaftaran_siswa = $(this).data('id');
+
+            // Untuk mengisi Form
             let id = $(this).data('id');
             let nama = $(this).data('nama');
             let email = $(this).data('email');
@@ -363,9 +367,8 @@
                         id: response.data.id,
                         nama: response.data.pengguna.nama,
                         sekolah_id: response.data.pengguna.sekolah_id,
+                        idPendaftaran: idPendaftaran_siswa,
                     };
-
-                    console.log(response);
 
                     $.ajax({
                         type: "POST",
@@ -373,13 +376,21 @@
                         data: dataForm,
                         dataType: "json",
                         success: function(response) {
-                            console.log('data yang dikirim :', dataForm )
-                            console.log('Respon berhasil:', response.data);
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.message ?? 'Data berhasil diproses.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
                         },
                         error: function(xhr) {
                             console.log('Gagal:', xhr.responseText);
                         }
                     });
+
 
                 }
             });

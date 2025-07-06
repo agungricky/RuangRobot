@@ -27,4 +27,8 @@ class kelas extends Model
     {
         return $this->hasMany(indexPendaftaran::class, 'kelas_id', 'id');
     }
+
+    public function kategori(){
+        return $this->belongsTo(Kategori::class, 'kategori_kelas_id', 'id');
+    }
 }

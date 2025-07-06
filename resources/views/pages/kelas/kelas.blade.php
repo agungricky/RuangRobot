@@ -3,7 +3,7 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
-    
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -14,11 +14,15 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="add-items d-flex">
+                                <div class="add-items d-flex gap-3">
                                     <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
+                                    <a href="{{ route('kelas.kodeKelas', ['kategori_id'=> $id]) }}" class="btn btn-success mb-3 d-inline-flex align-items-center gap-2">
+                                        <i class="fa-solid fa-hashtag"></i> Info Kode Kelas
+                                    </a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
@@ -148,7 +152,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('kelas.json', ['id'=>$id]) }}",
+                    url: "{{ route('kelas.json', ['id' => $id]) }}",
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -220,14 +224,14 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-flex gap-1">
-                                    <a href="{{ url('/kelas/detail/${row.id}') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
-                                    <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i>Edit</a>
+                            <div class="d-flex justify-content-center gap-3">
+                                    <a href="{{ url('/kelas/detail/${row.id}') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i></a>
+                                    <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
                                     <form action="{{ url('/kelas/delete/${row.id}') }}" method="POST" class="d-inline">
                                         <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
                             </div>

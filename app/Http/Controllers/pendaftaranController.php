@@ -10,6 +10,7 @@ use App\Models\muridKelas;
 use App\Models\pendaftaran;
 use App\Models\pengguna;
 use App\Models\sekolah;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -147,10 +148,10 @@ class pendaftaranController extends Controller
                 "sekolah" => $sekolah->nama_sekolah,
                 "tagihan" => $kelas->harga,
                 "no_sertiv" => "Belum Terbit",
-                "created_at" => $akun->created_at,
+                "created_at" => Carbon::now(),
                 "no_invoice" => 'INV-' . date('dmy') . '-' . rand(1000, 9999),
                 "pembayaran" => "0",
-                "updated_at" => $akun->updated_at,
+                "updated_at" => Carbon::now(),
                 "jatuh_tempo" => $kelas->jatuh_tempo,
                 "status_sertiv" => "Belum Terbit",
             ],
@@ -196,14 +197,78 @@ class pendaftaranController extends Controller
         ]);
 
         // ================= Menghapus Pendaftaran ================= //
-        pendaftaran::where('id', $request->id)->delete(); 
+        pendaftaran::where('id', $request->id)->delete();
 
         return redirect()->back()->with('success', 'Data berhasil diupdate');
     }
 
-    public function masuk_kelasAcc(Request $request, $id){
+    public function masuk_kelasAcc(Request $request, $id)
+    {
+        $data_siswa = akun::with('pengguna')->where('id', $request->id)->first();
+        $sekolah = sekolah::where('id', $data_siswa->pengguna->sekolah_id)->first();
+        $kelas = kelas::where('id', $id)->first();
+
+        $dataPendaftar = [
+            [
+                "id" => $data_siswa->id,
+                "nama" => $data_siswa->pengguna->nama,
+                "nilai" => "Belum Dinilai",
+                "sekolah" => $sekolah->nama_sekolah,
+                "tagihan" => $kelas->harga,
+                "no_sertiv" => "Belum Terbit",
+                "created_at" => Carbon::now(),
+                "no_invoice" => 'INV-' . date('dmy') . '-' . rand(1000, 9999),
+                "pembayaran" => "0",
+                "updated_at" => Carbon::now(),
+                "jatuh_tempo" => $kelas->jatuh_tempo,
+                "status_sertiv" => "Belum Terbit",
+            ],
+        ];
+
+
+        // ================= Masukkan siswa ke kelas ================= //
+        $datamurid_kelas = muridKelas::where('kelas_id', $id)->first();
+
+        if ($datamurid_kelas == null) {
+            $datamurid_kelas = muridKelas::create([
+                'murid' => json_encode([]),
+                'kelas_id' => $id,
+            ]);
+        }
+
+        $existing = $datamurid_kelas->murid ?? [];
+
+        if (!is_array($existing)) {
+            $existing = json_decode($existing, true);
+        }
+
+        $indexed = [];
+        foreach ($existing as $item) {
+            $indexed[$item['id']] = $item;
+        }
+
+        foreach ($dataPendaftar as $item) {
+            $indexed[$item['id']] = $item;
+        }
+
+        $dataGabungArray = array_values($indexed);
+        $dataGabungObject = json_decode(json_encode($dataGabungArray));
+
+        $datamurid_kelas->update([
+            'murid' => $dataGabungObject,
+        ]);
+
+        // ================= Pembuatan Invoice ================= //
+        invoice::create([
+            'profile_id' => $data_siswa->id,
+            'kelas_id' => $id,
+        ]);
+
+        // ================= Menghapus Pendaftaran ================= //
+        pendaftaran::where('id', $request->idPendaftaran)->delete();
+
         return response()->json([
-            'data' => $request->all() 
+            'message' => "Berhasil Menambahkan siswa di kelas",
         ]);
     }
 }

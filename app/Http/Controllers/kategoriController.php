@@ -44,8 +44,6 @@ class kategoriController extends Controller
             'color_bg' => 'nullable|string|max:7',
         ], $messages);
 
-        $validated['link'] = 'register' . '/' . $validated['kategori_kelas'];
-
         Kategori::create($validated);
         return redirect()->back()->with('success', 'Data Berhasil ditambahkan');
     }

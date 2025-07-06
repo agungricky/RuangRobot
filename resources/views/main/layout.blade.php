@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
-
+    {{-- Boostrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -25,7 +25,6 @@
     <link href="{{ url('https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css') }}" rel="stylesheet"
         integrity="sha384 iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('assets/datatables/style.css') }}">
-
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
@@ -39,8 +38,8 @@
     {{-- <script src="{{ asset('assets/js/jquery-3.3.1.min.js') }}"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> --}}
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    {{-- Jquery --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- CSS Clock Picker -->
     <link rel="stylesheet" href="{{ url('https://cdn.jsdelivr.net/npm/clockpicker/dist/jquery-clockpicker.min.css') }}">
@@ -50,9 +49,12 @@
     {{-- Style CSS Custom --}}
     <link rel="stylesheet" href="{{ asset('css_custom/style.css') }}">
 
+    {{-- Iput Search --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    {{-- Editor Fied Text Area --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -100,6 +102,9 @@
     {{-- Sweet Alert --}}
     <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+    {{-- Editor Fied Text Area Sumernote --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
 
 </body>
 

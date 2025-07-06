@@ -24,7 +24,7 @@
                 </li>
                 <li>
                     <a href="{{ route('validasi.index') }}">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fa-solid fa-check-circle"></i>
                         <span>Validasi</span>
                     </a>
                 </li>
@@ -34,57 +34,105 @@
 
                 <!-- Dropdown Menu -->
                 <li>
-                    <a href="#kategori_menu" class="nav-link" data-bs-toggle="collapse">
-                        <i class="fa-solid fa-list"></i><span>Kategori</span>
+                    <a href="#kategori_menu"
+                        class="nav-link d-flex align-items-center {{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? '' : 'collapsed' }}"
+                        data-bs-toggle="collapse"
+                        aria-expanded="{{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? 'true' : 'false' }}"
+                        aria-controls="kategori_menu">
+                        <i class="fa-solid fa-list me-2"></i>
+                        <span class="flex-grow-1 ps-3">Kategori</span>
+                        <i class="fa-solid fa-chevron-down small"></i>
                     </a>
-                    <div class="collapse ps-4" id="kategori_menu">
+
+                    <div class="collapse ps-4 {{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? 'show' : '' }}"
+                        id="kategori_menu">
                         <ul class="list-unstyled">
-                            <li><a href="{{ route('tipe_kelas') }}" class="nav-link"><i
-                                        class="fa-solid fa-minus"></i>Tipe Kelas</a></li>
-                            <li><a href="{{ route('kategori_kelas') }}" class="nav-link"><i
-                                        class="fa-solid fa-minus"></i>Kategory Kelas</a></li>
+                            <li>
+                                <a href="{{ route('tipe_kelas') }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('tipe_kelas') ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-minus me-2"></i> Tipe Kelas
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('kategori_kelas') }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('kategori_kelas') ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-minus me-2"></i> Kategori Kelas
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
+
                 <li>
                     <a href="{{ route('sekolah') }}"><i class="fa-solid fa-font-awesome"></i><span>Sekolah</span></a>
-                </li>
-                <li>
-                    <a href="#kelas" class="nav-link" data-bs-toggle="collapse">
-                        <i class="fa-solid fa-book-open"></i><span>Kelas</span>
-                    </a>
-                    <div class="collapse ps-4" id="kelas">
-                        <ul class="list-unstyled">
-                            @foreach ($kategori as $item)
-                                <li><a href="{{ route('kelas', ['id' => $item->id]) }}" class="nav-link"><i
-                                            class="fa-solid fa-minus"></i>{{ $item->kategori_kelas }}</a></li>
-                            @endforeach
-                        </ul>
-                    </div>
                 </li>
                 <li>
                     <a href="{{ route('program_belajar') }}"><i class="fa-solid fa-layer-group"></i><span>Program
                             Belajar</span></a>
                 </li>
                 <li>
+                    <a href="#kelas"
+                        class="nav-link d-flex align-items-center {{ request()->routeIs('kelas') ? '' : 'collapsed' }}"
+                        data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('kelas') ? 'true' : 'false' }}"
+                        aria-controls="kelas">
+                        <i class="fa-solid fa-book-open me-2"></i>
+                        <span class="flex-grow-1 ps-3">Kelas</span>
+                        <i class="fa-solid fa-chevron-down small"></i>
+                    </a>
+
+                    <div class="collapse ps-4 {{ request()->routeIs('kelas') ? 'show' : '' }}" id="kelas">
+                        <ul class="list-unstyled">
+                            @foreach ($kategori as $item)
+                                <li>
+                                    <a href="{{ route('kelas', ['id' => $item->id]) }}"
+                                        class="nav-link d-flex align-items-center {{ request()->routeIs('kelas') && request()->route('id') == $item->id ? 'active fw-bold text-primary' : '' }}">
+                                        <i class="fa-solid fa-minus me-2"></i>{{ $item->kategori_kelas }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </li>
+
+                <li>
                     <a href="{{ route('generate.show') }}"><i class="fa-solid fa-note-sticky"></i><span>Sertif
                             Custom</span></a>
                 </li>
                 <li>
-                    <a href="#pengguna" class="nav-link" data-bs-toggle="collapse">
-                        <i class="fa-solid fa-users"></i><span>Pengguna</span>
+                    <a href="#pengguna"
+                        class="nav-link d-flex align-items-center {{ request()->routeIs('pengguna') ? '' : 'collapsed' }}"
+                        data-bs-toggle="collapse"
+                        aria-expanded="{{ request()->routeIs('pengguna') ? 'true' : 'false' }}"
+                        aria-controls="pengguna">
+                        <i class="fa-solid fa-users me-2"></i>
+                        <span class="flex-grow-1 ps-3">Pengguna</span>
+                        <i class="fa-solid fa-chevron-down small"></i>
                     </a>
-                    <div class="collapse ps-4" id="pengguna">
+
+                    <div class="collapse ps-4 {{ request()->routeIs('pengguna') ? 'show' : '' }}" id="pengguna">
                         <ul class="list-unstyled">
-                            <li><a href="{{ route('pengguna', ['id' => 'Admin']) }}" class="nav-link"><i
-                                        class="fa-solid fa-user-tie"></i>Admin</a></li>
-                            <li><a href="{{ route('pengguna', ['id' => 'Pengajar']) }}" class="nav-link"><i
-                                        class="fa-solid fa-chalkboard-user"></i>Pengajar</a></li>
-                            <li><a href="{{ route('pengguna', ['id' => 'Siswa']) }}" class="nav-link"><i
-                                        class="fa-solid fa-user"></i>Siswa</a></li>
+                            <li>
+                                <a href="{{ route('pengguna', ['id' => 'Admin']) }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('pengguna') && request()->route('id') == 'Admin' ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-user-tie me-2"></i> Admin
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pengguna', ['id' => 'Pengajar']) }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('pengguna') && request()->route('id') == 'Pengajar' ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-chalkboard-user me-2"></i> Pengajar
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pengguna', ['id' => 'Siswa']) }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('pengguna') && request()->route('id') == 'Siswa' ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-user me-2"></i> Siswa
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
+
 
                 <!-- menu header -->
                 <li class="menu-header">Keuangan</li>

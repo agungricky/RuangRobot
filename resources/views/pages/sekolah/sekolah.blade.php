@@ -18,7 +18,7 @@
                                     <x-button.button_add_modal message="Tambah Sekolah" id="#form_sekolah" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 align-middle" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>
@@ -63,9 +63,12 @@
                                     <div id="error-guru" class="text-danger"></div>
                                 </div>
                                 <div class="col-4">
-                                    <x-form.input_text name="no_hp" label="No HP" placeholder="Gunakan +62....." />
+                                    <label for="no_hp">No HP (Whatsapp)</label>
+                                    <input type="text" id="no_telp" name="no_hp" class="form-control"
+                                        placeholder="Gunakan +62....." value="+62" />
                                     <div id="error-no_hp" class="text-danger"></div>
                                 </div>
+
                             </div>
                         </div>
                     </form>
@@ -118,13 +121,13 @@
                             return `
                             <div class="d-flex gap-1">
                                 <a href="{{ url('/sekolah/edit/${row.id}') }}" class="btn btn-primary btn-sm">
-                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <form action="{{ url('/sekolah/delete/${row.id}') }}" method="POST" class="d-inline">
                                     <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -161,6 +164,47 @@
                     }
                 });
             });
+
+            // Validasi No Telp
+            const $input = $('#no_telp');
+
+            if (!$input.val()) {
+                $input.val('+62');
+            }
+
+            $input.on('focus', function() {
+                if (!$input.val().startsWith('+62')) {
+                    $input.val('+62');
+                }
+            });
+
+            $input.on('keydown', function(e) {
+                const pos = this.selectionStart;
+
+                // Cegah hapus bagian +62
+                if (pos <= 3 && (e.key === 'Backspace' || e.key === 'Delete')) {
+                    e.preventDefault();
+                }
+
+                // Cegah angka 0 langsung setelah +62
+                if (pos === 3 && e.key === '0') {
+                    e.preventDefault();
+                }
+            });
+
+            $input.on('input', function() {
+                let val = $input.val();
+
+                // Pastikan selalu diawali +62
+                if (!val.startsWith('+62')) {
+                    val = '+62';
+                }
+
+                // Ambil angka setelah +62 dan hilangkan karakter selain angka
+                const angka = val.substring(3).replace(/\D/g, '');
+                $input.val('+62' + angka);
+            });
+
         });
     </script>
 @endsection
