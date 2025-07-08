@@ -10,6 +10,7 @@ class kelas extends Model
     protected $fillable = [
         'id',
         'nama_kelas',
+        'kode_kelas',
         'harga',
         'durasi_belajar',
         'program_belajar_id',
@@ -30,5 +31,17 @@ class kelas extends Model
 
     public function kategori(){
         return $this->belongsTo(Kategori::class, 'kategori_kelas_id', 'id');
+    }
+
+    public function program_belajar(){
+        return $this->belongsTo(programbelajar::class, 'program_belajar_id', 'id');
+    }
+
+    public function pengajar(){
+        return $this->belongsTo(pengguna::class, 'penanggung_jawab', 'id');
+    }
+
+    public function pembelajaran(){
+        return $this->hasMany(pembelajaran::class, 'kelas_id', 'id');
     }
 }

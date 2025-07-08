@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AlldataExport;
+use App\Exports\JurnalIndexnExport;
 use App\Models\akun;
+use App\Models\invoice;
 use App\Models\Kategori;
 use App\Models\kelas;
 use App\Models\muridKelas;
@@ -17,6 +20,7 @@ use Illuminate\Http\Request;
 use GDText\Box;
 use GDText\Color;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
 
 class kelasController extends Controller
@@ -26,21 +30,15 @@ class kelasController extends Controller
      */
     public function index(Request $request, $id)
     {
-        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->where('kelas.kategori_kelas_id', $id)
-            ->select('kelas.*', 'kategori_kelas.kategori_kelas')
-            ->orderByDesc('created_at')
-            ->get();
-        $kategori = Kategori::all();
-        $programbelajar = programbelajar::all();
-        // dd($id);
+        $data = kelas::with('kategori')->where('kelas.kategori_kelas_id', $id)->orderByDesc('created_at')->get();
+
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
             ]);
         }
 
-        return view('pages.kelas.kelas', compact('data', 'kategori', 'programbelajar', 'id'));
+        return view('pages.kelas.kelas', compact('data', 'id'));
     }
 
     public function program_belajar()
@@ -64,6 +62,7 @@ class kelasController extends Controller
     {
         $message = [
             'nama_kelas.required' => 'Nama Kelas harus diisi.',
+            'kode_kelas.required' => 'Kode Kelas harus diisi.',
             'harga_kelas.required' => 'Harga harus diisi.',
             'mulai.required' => 'Tanggal Mulai harus diisi.',
             'selesai.required' => 'Tanggal Selesai harus diisi.',
@@ -80,12 +79,13 @@ class kelasController extends Controller
 
         $request->validate([
             'nama_kelas' => 'required',
+            'kode_kelas' => 'required',
             'harga_kelas' => 'required',
             'mulai' => 'required',
             'selesai' => 'required',
             'nama_program' => 'required|exists:program_belajar,id',
             'kategori_kelas' => 'required',
-            'penanggung_jawab' => 'required|exists:profile,nama',
+            'penanggung_jawab' => 'required|exists:profile,id',
             'gaji_pengajar' => 'required',
             'gaji_transport' => 'required',
             'status_kelas' => 'required',
@@ -96,6 +96,7 @@ class kelasController extends Controller
 
         $kelas = kelas::create([
             'nama_kelas' => $request->nama_kelas,
+            'kode_kelas' => $request->kode_kelas,
             'harga' => $request->harga_kelas,
             'durasi_belajar' => $durasi_belajar,
             'program_belajar_id' => $request->nama_program,
@@ -109,7 +110,7 @@ class kelasController extends Controller
 
         muridKelas::create([
             'kelas_id' => $kelas->id,
-            'murid' => json_encode(new \stdClass()),
+            'murid' => json_encode([]),
         ]);
     }
 
@@ -191,15 +192,12 @@ class kelasController extends Controller
      */
     public function edit(string $id)
     {
-        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.*', 'program_belajar.nama_program', 'kategori_kelas.kategori_kelas')
-            ->where('kelas.id', $id)
-            ->first();
-
+        $data = kelas::with(['program_belajar', 'kategori', 'pengajar'])->where('kelas.id', $id)->first();
+        $pengajarList = akun::with('pengguna')->where('role', 'Pengajar')->get();
+        $programBelajar = ProgramBelajar::all();
         $kategori = Kategori::all();
-        // dd($data);
-        return view('pages.kelas.edit_kelas', compact('data', 'kategori'));
+
+        return view('pages.kelas.edit_kelas', compact('data', 'kategori', 'pengajarList', 'programBelajar'));
     }
 
     /**
@@ -226,7 +224,7 @@ class kelasController extends Controller
             'durasi_belajar' => 'required',
             'programId' => 'required|exists:program_belajar,id',
             'kategori_kelas' => 'required',
-            'penanggung_jawab' => 'required|exists:profile,nama',
+            'penanggung_jawab' => 'required|exists:profile,id',
             'gaji_pengajar' => 'required',
             'gaji_transport' => 'required',
             'status_kelas' => 'required',
@@ -234,7 +232,6 @@ class kelasController extends Controller
             'harga_kelas' => 'required',
         ], $message);
 
-        // dd($request);
         kelas::where('id', $id)->update([
             'nama_kelas' => $request->nama_kelas,
             'durasi_belajar' => $request->durasi_belajar,
@@ -247,7 +244,7 @@ class kelasController extends Controller
             'jatuh_tempo' => $request->jatuh_tempo,
         ]);
 
-        return redirect('kelas')->with('success', 'Data Kelas Berhasil Diupdate');
+        return redirect(route('kelas', ['id' => $request->kategoriKelas]))->with('success', 'Data Kelas Berhasil Diupdate');
     }
 
     public function kelasselesai($id)
@@ -262,38 +259,20 @@ class kelasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        invoice::where('kelas_id', $id)->delete();
         muridKelas::where('kelas_id', $id)->delete();
+        pembelajaran::where('kelas_id', $id)->delete();
         kelas::where('id', $id)->delete();
-        return redirect('kelas')->with('success', 'Data Kelas Berhasil Dihapus');
+        return redirect(route('kelas', ['id' => $request->kelas]))->with('success', 'Data Kelas Berhasil Dihapus');
     }
 
     public function jurnalkelas(string $id)
     {
-        $data = kelas::where('kelas.id', $id)
-            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->select('kelas.*', 'program_belajar.nama_program')
-            ->first();
-
-        $data_pertemuan = pembelajaran::where('pembelajaran.kelas_id', $id)
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('pembelajaran.pertemuan', 'pembelajaran.tanggal', 'pembelajaran.materi', 'pembelajaran.pengajar', 'kelas.durasi_belajar')
-            ->get();
-
-        $absensi_siswa = pembelajaran::where('pembelajaran.kelas_id', $id)
-            ->select('pertemuan', 'absensi')
-            ->get();
-
-        $absensi_siswa->each(function ($item) {
-            $item->absensi = json_decode($item->absensi, true);
-        });
-
-        // Kirim data ke view PDF
-        $pdf = FacadePdf::loadView('pdf.jurnal_kelas', compact('data', 'data_pertemuan', 'absensi_siswa'));
-
-        // Tampilkan terlebih dahulu
-        return $pdf->stream('jurnal_kelas.pdf');
+        $kelas = Kelas::findOrFail($id);
+        $namaFile = 'Jurnal Kelas - ' . preg_replace('/[\/\\\\:*?"<>|]/', '-', $kelas->nama_kelas) . '.xlsx';
+        return Excel::download(new JurnalIndexnExport($id), $namaFile);
     }
 
     public function generateAndDownloadZip($id)
@@ -413,19 +392,5 @@ class kelasController extends Controller
     public function generate_show()
     {
         return view('pages.kelas.sertiv_custom');
-    }
-
-    public function kodeKelas(Request $request, $kategori_id)
-    {
-        $data_kelas = kelas::with('kategori')->where('kategori_kelas_id', $kategori_id)->get();
-        if ($request->ajax()) {
-            return response()->json([
-                'data' => $data_kelas
-            ]);
-        }
-
-        // dd($kategori_id, $data_kelas->toArray());
-
-        return view('pages.kelas.kode_kelas', compact('data_kelas', 'kategori_id'));
     }
 }

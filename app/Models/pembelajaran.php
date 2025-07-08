@@ -20,4 +20,8 @@ class pembelajaran extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function kelas(){
+        return $this->belongsTo(kelas::class, 'kelas_id' , 'id');
+    }
 }

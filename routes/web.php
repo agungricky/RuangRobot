@@ -67,7 +67,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('/sekolah/delete/{id}', [sekolahController::class, 'destroy'])->name('sekolah.delete');
 
         // ========= Kelas ========= //
-        Route::get('/info_kodeKelas/{kategori_id}', [kelasController::class, 'kodeKelas'])->name('kelas.kodeKelas');
+        Route::get('/kelas/{id}', [kelasController::class, 'index'])->name('kelas');
+        Route::get('/form_programbelajar/json', [kelasController::class, 'program_belajar'])->name('form_programbelajar.json');
+        Route::get('/pengajar/json', [kelasController::class, 'pengajar'])->name('pengajar.json');
+        Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.store');
+        Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
+        Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
+        Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
+        Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
+
+        // ========= Detail Kelas ========= //
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -92,19 +101,12 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 
 
 // ========= Kelas ========= //
-Route::get('/kelas/{id}', [kelasController::class, 'index'])->name('kelas');
-Route::get('/kelas/json/{id}', [kelasController::class, 'index'])->name('kelas.json');
-Route::get('/form_programbelajar/json', [kelasController::class, 'program_belajar'])->name('form_programbelajar.json');
-Route::get('/pengajar/json', [kelasController::class, 'pengajar'])->name('pengajar.json');
-Route::post('/kelas/store', [kelasController::class, 'store'])->name('kelas.store');
-Route::get('/kelas/edit/{id}', [kelasController::class, 'edit'])->name('kelas.edit');
-Route::patch('/kelas/update/{id}', [kelasController::class, 'update'])->name('kelas.update');
-Route::get('/kelas/detail/{id}', [kelasController::class, 'show'])->name('kelas.detail');
-Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
+// Route::get('/kelas/json/{id}', [kelasController::class, 'index'])->name('kelas.json');
 Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
 
 // ========= PDF Kelas ========= //
 Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
+
 Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
 
 // ========= Pembelajaran ========= //
