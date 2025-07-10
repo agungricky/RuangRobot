@@ -269,9 +269,11 @@
 
         // Form Disable Buat Akun
         let idPendaftaran_siswa = null;
+        let kelas_pendaftar = null;
         $(document).on('click', '.btn-verifikasi', function() {
             // Untuk mengisi Variabel global
             idPendaftaran_siswa = $(this).data('id');
+            kelas_pendaftar = $(this).data('kelas');
 
             // Untuk mengisi Form
             let id = $(this).data('id');
@@ -368,6 +370,7 @@
                         nama: response.data.pengguna.nama,
                         sekolah_id: response.data.pengguna.sekolah_id,
                         idPendaftaran: idPendaftaran_siswa,
+                        kelas_pendaftar: kelas_pendaftar,
                     };
 
                     $.ajax({

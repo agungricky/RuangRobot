@@ -135,6 +135,7 @@ class pendaftaranController extends Controller
             'alamat' => $request->alamat,
             'akun_id' => $akun->id,
             'sekolah_id' => $request->sekolah_id,
+            'kelas' => $request->kelas,
             'mekanik' => $request->mekanik,
             'elektronik' => $request->elektronik,
             'pemrograman' => $request->pemrograman,
@@ -146,6 +147,7 @@ class pendaftaranController extends Controller
                 "nama" => $profile->nama,
                 "nilai" => "Belum Dinilai",
                 "sekolah" => $sekolah->nama_sekolah,
+                "kelas" => $profile->kelas,
                 "tagihan" => $kelas->harga,
                 "no_sertiv" => "Belum Terbit",
                 "created_at" => Carbon::now(),
@@ -214,6 +216,7 @@ class pendaftaranController extends Controller
                 "nama" => $data_siswa->pengguna->nama,
                 "nilai" => "Belum Dinilai",
                 "sekolah" => $sekolah->nama_sekolah,
+                "kelas" => $request->kelas_pendaftar,
                 "tagihan" => $kelas->harga,
                 "no_sertiv" => "Belum Terbit",
                 "created_at" => Carbon::now(),
@@ -225,6 +228,10 @@ class pendaftaranController extends Controller
             ],
         ];
 
+        // Perbarui data siswa
+        pengguna::where('id', $data_siswa->pengguna->id)->update([
+            'kelas' => $request->kelas_pendaftar,
+        ]);
 
         // ================= Masukkan siswa ke kelas ================= //
         $datamurid_kelas = muridKelas::where('kelas_id', $id)->first();

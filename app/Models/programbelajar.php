@@ -10,7 +10,7 @@ class programbelajar extends Model
     protected $fillable = ['id', 'nama_program', 'deskripsi', 'level', 'tipe_kelas_id','mekanik', 'elektronik', 'pemrograman', 'created_at', 'updated_at'];
 
     public function kelas(){
-        return $this->hasMany(kelas::class, 'program_belajar_id', 'id');
+        return $this->hasMany(kelas::class, 'program_belajar_id', 'id')->orderBy('tanggal', 'asc');
     }
 }
 

@@ -23,6 +23,7 @@ class JurnalIndexnExport implements WithMultipleSheets
         return [
             new JurnalPertemuanExport($this->id),
             new JurnalAbsensiExport($this->id),
+            new JurnalNilaiExport($this->id),
         ];
     }
 }

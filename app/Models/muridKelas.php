@@ -13,4 +13,8 @@ class muridKelas extends Model
     ];
 
     public $timestamps = false;
+
+    public function kelas(){
+        return $this->belongsTo(kelas::class, 'kelas_id', 'id');
+    }
 }

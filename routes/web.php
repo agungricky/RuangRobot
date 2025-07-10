@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/kelas/delete/{id}', [kelasController::class, 'destroy'])->name('kelas.delete');
 
         // ========= Detail Kelas ========= //
+        Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -105,7 +106,6 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
 
 // ========= PDF Kelas ========= //
-Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
 
 Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
 

@@ -3,17 +3,21 @@
 namespace App\Exports;
 
 use App\Models\kelas;
+use App\Models\muridKelas;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
 {
     protected $kelas;
     protected $jumlahPertemuan;
     protected $pembelajaran;
+    protected $muridKelas;
     public function __construct($kelas_id)
     {
         $this->kelas = kelas::with(
@@ -29,39 +33,86 @@ class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
         $this->pembelajaran = $this->kelas->pembelajaran;
         $this->jumlahPertemuan = count($this->pembelajaran);
 
-        // dd($this->kelas->toArray());
+        $this->muridKelas = muridKelas::where('kelas_id', $kelas_id)->first();
+
+        // dd($this->muridKelas->toArray());
     }
 
     public function array(): array
     {
         $data = [];
 
-        for ($i = 0; $i < 3; $i++) {
-            $jumlahKolom = 4 + $this->jumlahPertemuan + 2;
+        // Baris kosong untuk header di atas (baris 1-7)
+        for ($i = 0; $i < 7; $i++) {
+            $jumlahKolom = 3 + $this->jumlahPertemuan + 2; // 3 kolom tetap + pertemuan + nilai + keterangan
             $data[] = array_fill(0, $jumlahKolom, '');
         }
 
-        for ($i = 0; $i < 4; $i++) {
-            $data[] = array_fill(0, $jumlahKolom, '');
-        }
-
-        // Header statis
-        $header = ['NO', 'NAMA', 'KELAS', 'TANGGAL'];
-
-        // Tambah kolom P1, P2, ..., sesuai jumlah pertemuan
+        // Baris ke-8: Header kolom
+        $header = ['NO', 'NAMA', 'KELAS'];
         for ($i = 1; $i <= $this->jumlahPertemuan; $i++) {
             $header[] = 'P' . $i;
         }
-
-        // Tambah kolom akhir
         $header[] = 'NILAI';
         $header[] = 'KETERANGAN';
-
-        // Tambahkan ke data array sebagai baris ke-8
         $data[] = $header;
+
+        // Baris ke-9: Tanggal pertemuan
+        $tanggalBaris = ['', '', '']; // untuk NO, NAMA, KELAS
+        foreach ($this->pembelajaran as $p) {
+            $tanggalBaris[] = \Carbon\Carbon::parse($p['tanggal'])->translatedFormat('d M Y');
+        }
+        $tanggalBaris[] = '';
+        $tanggalBaris[] = '';
+        $data[] = $tanggalBaris;
+
+        // Decode JSON murid
+        $muridArray = json_decode($this->muridKelas->murid, true);
+
+        // Tambahkan data murid
+        foreach ($muridArray as $i => $murid) {
+            $row = [
+                $i + 1,
+                $murid['nama'],
+                $murid['kelas']
+            ];
+
+            // Loop pertemuan
+            foreach ($this->pembelajaran as $pertemuan) {
+                $absensi = json_decode($pertemuan['absensi'], true);
+                $hadir = false;
+
+                foreach ($absensi as $siswa) {
+                    if ($siswa['id'] == $murid['id'] && $siswa['presensi'] == "H") {
+                        $hadir = true;
+                        break;
+                    }
+                }
+
+                $row[] = $hadir ? '✔' : '';
+            }
+
+            // Nilai & Keterangan
+            $row[] = $murid['nilai'] ?? '-';
+
+            $keterangan = kelas::with('program_belajar')->find($this->kelas->id);
+            // dd($keterangan->toArray());
+
+            if ($murid['nilai'] == 'A') {
+                $row[] = 'Sangat baik dan aktif dalam mengikuti materi' . ' ' . $keterangan->program_belajar->nama_program;
+            } else if ($murid['nilai'] == 'B') {
+                $row[] = 'Baik dalam mengikuti materi' . ' ' . $keterangan->program_belajar->nama_program;
+            } else {
+                $row[] = 'Belum Menyelesaikan Kelas';
+            }
+            // $row[] = ($murid['nilai'] ?? '') === 'A' ? 'Sangat baik dan aktif dalam mengikuti materi' . ' ' . $keterangan->program_belajar->nama_program : 'Baik dalam mengikuti materi' . $keterangan->program_belajar->nama_program;
+
+            $data[] = $row;
+        }
 
         return $data;
     }
+
 
     public function registerEvents(): array
     {
@@ -69,7 +120,7 @@ class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                $jumlahKolom = 4 + $this->jumlahPertemuan + 2;
+                $jumlahKolom = 3 + $this->jumlahPertemuan + 2;
                 $kolomTerakhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($jumlahKolom);
 
                 // Membuat Header Kelas
@@ -107,6 +158,19 @@ class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
                     'font' => ['bold' => true],
                 ]);
 
+                // Merge kolom A, B, C (NO, NAMA, KELAS)
+                for ($i = 1; $i <= 3; $i++) {
+                    $col = Coordinate::stringFromColumnIndex($i);
+                    $sheet->mergeCells("{$col}8:{$col}9");
+                }
+
+                // Skip kolom P1 - Pn (tidak di-merge), langsung ke kolom setelahnya
+                $startNilaiIndex = 3 + $this->jumlahPertemuan + 1; // kolom setelah terakhir pertemuan (NILAI)
+                for ($i = $startNilaiIndex; $i <= $startNilaiIndex + 1; $i++) { // NILAI dan KETERANGAN
+                    $col = Coordinate::stringFromColumnIndex($i);
+                    $sheet->mergeCells("{$col}8:{$col}9");
+                }
+
                 // Style Header Menu Data
                 $sheet->getStyle("A8:{$kolomTerakhir}8")->applyFromArray([
                     'font' => [
@@ -124,8 +188,72 @@ class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
                     ],
                 ]);
 
+                $startIndex = 4;
+                for ($i = 0; $i < $this->jumlahPertemuan; $i++) {
+                    $colIndex = $startIndex + $i;
+                    $colLetter = Coordinate::stringFromColumnIndex($colIndex);
 
+                    // Style baris 8 dan 9 (judul P dan tanggal)
+                    foreach ([8, 9] as $row) {
+                        $sheet->getStyle("{$colLetter}{$row}")->applyFromArray([
+                            'font' => [
+                                'bold' => true,
+                                'color' => ['rgb' => 'FFFFFF'],
+                            ],
+                            'fill' => [
+                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                                'startColor' => ['rgb' => '000000'],
+                            ],
+                            'alignment' => [
+                                'horizontal' => 'center',
+                                'vertical' => 'center',
+                                'wrapText' => true,
+                            ],
+                        ]);
+                    }
+                }
 
+                // Rata tengah semua isi kolom A dan C
+                $sheet->getStyle('A8:A1000')->getAlignment()->setHorizontal('center')->setVertical('center');
+                $sheet->getStyle('C8:C1000')->getAlignment()->setHorizontal('center')->setVertical('center');
+
+                $jumlahBaris = count($this->muridKelas ? json_decode($this->muridKelas->murid, true) : []) + 9;
+
+                // Mulai dari kolom ke-4 (P1 dimulai dari index ke-4)
+                $startIndex = 4;
+                for ($i = 0; $i < $this->jumlahPertemuan; $i++) {
+                    $colIndex = $startIndex + $i;
+                    $colLetter = Coordinate::stringFromColumnIndex($colIndex);
+                    $sheet->getStyle("{$colLetter}8:{$colLetter}{$jumlahBaris}")
+                        ->getAlignment()
+                        ->setHorizontal('center')
+                        ->setVertical('center');
+                }
+
+                // Kolom KETERANGAN (setelah kolom nilai)
+                $colKeterangan = Coordinate::stringFromColumnIndex(3 + $this->jumlahPertemuan + 1);
+                $sheet->getStyle("{$colKeterangan}8:{$colKeterangan}{$jumlahBaris}")
+                    ->getAlignment()->setHorizontal('center')->setVertical('center');
+
+                // Hitung jumlah kolom dan baris
+                $jumlahKolom = 3 + $this->jumlahPertemuan + 2; // NO, NAMA, KELAS + Pn + NILAI + KETERANGAN
+                $kolomTerakhir = Coordinate::stringFromColumnIndex($jumlahKolom);
+
+                // Hitung jumlah baris (7 baris kosong + 2 header + jumlah murid)
+                $jumlahBarisData = count(json_decode($this->muridKelas->murid, true));
+                $barisAwal = 8; // Header mulai baris 8
+                $barisAkhir = $barisAwal + 1 + $jumlahBarisData; // header + tanggal + murid
+
+                // Terapkan border ke seluruh range dari A8 hingga kolom terakhir dan baris akhir
+                $range = "A{$barisAwal}:{$kolomTerakhir}{$barisAkhir}";
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
 
                 foreach (range('A', $kolomTerakhir) as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);

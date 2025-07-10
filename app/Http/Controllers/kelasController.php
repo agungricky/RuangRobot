@@ -277,17 +277,20 @@ class kelasController extends Controller
 
     public function generateAndDownloadZip($id)
     {
-        $participants = muridKelas::where('murid_kelas.kelas_id', $id)
-            ->join('kelas', 'kelas.id', 'murid_kelas.kelas_id')
-            ->select('murid_kelas.*', 'kelas.nama_kelas')
-            ->first();
+        $participants = muridKelas::with(['kelas.program_belajar', 'kelas.pembelajaran'])->where('murid_kelas.kelas_id', $id)->first();
 
+        $pembelajaran = $participants->kelas->pembelajaran;
+        $tanggalAwal = optional($pembelajaran->first())->tanggal;
+        $tanggalAkhir = optional($pembelajaran->last())->tanggal;
+
+        // dd($tanggalAwal, $tanggalAkhir);
+
+        // dd($participants->toArray());
         if (!$participants) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
 
         $muridData = json_decode($participants->murid, true);
-        // dd($muridData);
 
         $zipFileName = public_path('generated/sertifikat.zip');
         $zip = new ZipArchive;
@@ -296,7 +299,7 @@ class kelasController extends Controller
             $tempDir = public_path('generated/temp_sertifikat/');
             File::makeDirectory($tempDir, 0777, true, true);
 
-            $nama_kelas = $participants->nama_kelas;
+            $nama_kelas = $participants->kelas->nama_kelas;
             foreach ($muridData as $murid) {
                 if (!isset($murid['id'], $murid['nama'], $nama_kelas)) {
                     continue;
@@ -306,7 +309,11 @@ class kelasController extends Controller
                     $murid['id'],
                     $murid['nama'],
                     $nama_kelas,
+                    $murid['sekolah'],
                     $murid['nilai'],
+                    $participants,
+                    $tanggalAwal,
+                    $tanggalAkhir
                 );
 
                 $zip->addFile($certificatePath, basename($certificatePath));
@@ -315,8 +322,7 @@ class kelasController extends Controller
             $zip->close();
             File::deleteDirectory($tempDir);
 
-            // return response()->download($zipFileName, $participants->nama_kelas)->deleteFileAfterSend(true);
-            $namaFileAman = str_replace(['/', '\\'], '_', $participants->nama_kelas);
+            $namaFileAman = str_replace(['/', '\\'], '_', $participants->kelas->nama_kelas);
             return response()->download($zipFileName, $namaFileAman . '.zip')->deleteFileAfterSend(true);
         }
 
@@ -324,70 +330,204 @@ class kelasController extends Controller
     }
 
 
-    private function createCertificate($id, $nama, $kelas, $nilai)
+    // private function createCertificate($id, $nama, $kelas, $sekolah, $nilai, $dataKelas, $tanggalAwal, $tanggalAkhir)
+    // {
+    //     // dd($dataKelas->toArray());
+    //     $templatePath = public_path('assets/sertifikat.jpg');
+    //     if (!file_exists($templatePath)) {
+    //         abort(404, "Template sertifikat tidak ditemukan.");
+    //     }
+
+    //     $template = imagecreatefromjpeg($templatePath);
+    //     $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+    //     $bln = $array_bln[date('n')];
+
+    //     // Buat teks di atas sertifikat menggunakan GDText\Box
+    //     $box = new Box($template);
+    //     $box->setFontFace(public_path('assets/arial.ttf'));
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(24);
+    //     $box->setBox(680, 240, 450, 120); // Area teks (x, y, width, height)
+    //     $box->setTextAlign('center', 'top');
+    //     $box->draw("No : " . $dataKelas->kelas_id . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+
+    //     // Teks Nama
+    //     $box = new Box($template);
+    //     $box->setFontFace(public_path('assets/arial.ttf'));
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(55);
+    //     $box->setBox(500, 330, 800, 160);
+    //     $box->setTextAlign('center', 'center');
+    //     $box->draw(ucwords($nama));
+
+    //     // Text Sekolah
+    //     $box = new Box($template);
+    //     $box->setFontFace(public_path('assets/arial.ttf'));
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(30);
+    //     $box->setBox(500, 450, 800, 200);
+    //     $box->setTextAlign('center', 'top');
+    //     $box->draw("----" . " " . $sekolah . " " . "----");
+
+    //     // Teks Pelatihan
+    //     $box = new Box($template);
+    //     $box->setFontFace(public_path('assets/arial.ttf'));
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(24);
+    //     $box->setBox(500, 530, 800, 200);
+    //     $box->setTextAlign('center', 'top');
+    //     $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($dataKelas->kelas->program_belajar->nama_program) . ' di Ruang Robot yang dilaksanakan pada tanggal ' . $tanggalAwal . ' - ' . $tanggalAkhir . ' dengan predikat : ');
+
+    //     // // Teks Nilai
+    //     $box = new Box($template);
+    //     $box->setFontFace('assets/arial.ttf');
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(30);
+    //     $box->setStrokeColor(new Color(0, 0, 0));
+    //     $box->setStrokeSize(.6);
+    //     $box->setBox(750, 610, 300, 70);
+    //     $box->setTextAlign('center', 'center');
+
+    //     if ($nilai == "A") {
+    //         $keterangan = "Sangat Baik";
+    //     } elseif ($nilai == "B") {
+    //         $keterangan = "Baik";
+    //     } else {
+    //         $keterangan = "Belum LULUS";
+    //     }
+    //     $box->draw($keterangan);
+
+    //     $box->draw(($nilai  == "A") ? "Sangat Baik" : (($nilai == "B") ? "Baik" : (($nilai == "C") ? "Cukup" : "Kurang")));
+
+    //     // Load TT
+
+    //     // Teks Ttd
+    //     $box = new Box($template);
+    //     $box->setFontFace('assets/arial.ttf');
+    //     $box->setFontColor(new Color(0, 0, 0));
+    //     $box->setFontSize(25);
+    //     $box->setBox(880, 690, 400, 460);
+    //     $box->setTextAlign('center', 'top');
+    //     $box->draw("Kediri, " . Carbon::now()->format('d-m-Y') . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
+
+    //     $outputPath = public_path('generated/temp_sertifikat/' . $id . '_' . str_replace(' ', '_', $nama) . '.jpg');
+    //     imagejpeg($template, $outputPath);
+    //     imagedestroy($template);
+
+    //     return $outputPath;
+    // }
+
+    private function createCertificate($id, $nama, $kelas, $sekolah, $nilai, $dataKelas, $tanggalAwal, $tanggalAkhir)
     {
-        $templatePath = public_path('assets/certificate.jpg');
+        $templatePath = public_path('assets/sertifikat.jpg');
+        $ttdPath = public_path('assets/ttd.png');
+        $fontPath = public_path('assets/arial.ttf');
+        $outputPath = public_path('generated/temp_sertifikat/' . $id . '_' . str_replace(' ', '_', $nama) . '.jpg');
+
         if (!file_exists($templatePath)) {
             abort(404, "Template sertifikat tidak ditemukan.");
         }
 
+        if (!file_exists($ttdPath)) {
+            abort(404, "Gambar tanda tangan tidak ditemukan.");
+        }
+
         $template = imagecreatefromjpeg($templatePath);
-        $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $array_bln = [1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
         $bln = $array_bln[date('n')];
 
-        // Buat teks di atas sertifikat menggunakan GDText\Box
+        // --------- Header Sertifikat (Nomor) ------------
         $box = new Box($template);
-        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(24);
-        $box->setBox(680, 240, 450, 120); // Area teks (x, y, width, height)
+        $box->setBox(680, 240, 450, 120);
         $box->setTextAlign('center', 'top');
-        $box->draw("No : " . $id . "/RUANGROBOT/" . $bln . "/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
+        $box->draw("No : {$dataKelas->kelas_id}/RUANGROBOT/{$bln}/" . date('Y') . "\n\nDIBERIKAN KEPADA :");
 
-        // Teks Nama
+        // --------- Nama Peserta ------------
         $box = new Box($template);
-        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(55);
         $box->setBox(500, 330, 800, 160);
         $box->setTextAlign('center', 'center');
         $box->draw(ucwords($nama));
 
-        // Teks Pelatihan
+        // --------- Nama Sekolah ------------
         $box = new Box($template);
-        $box->setFontFace(public_path('assets/arial.ttf'));
+        $box->setFontFace($fontPath);
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(30);
+        $box->setBox(500, 450, 800, 200);
+        $box->setTextAlign('center', 'top');
+        $box->draw("---- $sekolah ----");
+
+        // --------- Deskripsi Pelatihan ------------
+        $box = new Box($template);
+        $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(24);
-        $box->setBox(500, 490, 800, 200);
+        $box->setBox(500, 530, 800, 200);
         $box->setTextAlign('center', 'top');
-        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($kelas) . ' di Ruang Robot yang dilaksanakan pada tanggal ' . '22-04-00' . ' - ' . '25-04-00' . ' dengan predikat');
 
-        // Teks Nilai
+        $tanggalAwalFormatted  = \Carbon\Carbon::parse($tanggalAwal)->format('d-m-Y');
+        $tanggalAkhirFormatted = \Carbon\Carbon::parse($tanggalAkhir)->format('d-m-Y');
+        $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($dataKelas->kelas->program_belajar->nama_program) .
+            ' di Ruang Robot yang dilaksanakan pada tanggal ' .
+            $tanggalAwalFormatted . ' - ' . $tanggalAkhirFormatted . ' dengan predikat :');
+
+        // --------- Nilai / Predikat ------------
         $box = new Box($template);
-        $box->setFontFace('assets/arial.ttf');
+        $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
-        $box->setFontSize(25);
+        $box->setFontSize(30);
         $box->setStrokeColor(new Color(0, 0, 0));
         $box->setStrokeSize(.6);
         $box->setBox(750, 610, 300, 70);
         $box->setTextAlign('center', 'center');
-        $box->draw($nilai);
+        $keterangan = match ($nilai) {
+            "A" => "Sangat Baik",
+            "B" => "Baik",
+            "C" => "Cukup",
+            default => "Kurang"
+        };
+        $box->draw($keterangan);
 
-        // Teks Ttd
+        // --------- Tambah Gambar Tanda Tangan ------------
+        $ttd = imagecreatefrompng($ttdPath);
+        imagealphablending($ttd, true);
+        imagesavealpha($ttd, true);
+
+        // Resize (jika perlu)
+        $ttdWidth = 170;
+        $ttdHeight = 170;
+        $resizedTTD = imagecreatetruecolor($ttdWidth, $ttdHeight);
+        imagealphablending($resizedTTD, false);
+        imagesavealpha($resizedTTD, true);
+        imagecopyresampled($resizedTTD, $ttd, 0, 0, 0, 0, $ttdWidth, $ttdHeight, imagesx($ttd), imagesy($ttd));
+
+        // Tempel tanda tangan ke posisi (sesuaikan X dan Y-nya)
+        imagecopy($template, $resizedTTD, 1005, 715, 0, 0, $ttdWidth, $ttdHeight);
+
+        // --------- Teks Nama Penandatangan ------------
         $box = new Box($template);
-        $box->setFontFace('assets/arial.ttf');
+        $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(25);
         $box->setBox(880, 690, 400, 460);
         $box->setTextAlign('center', 'top');
-        $box->draw("Kediri, " . Carbon::now()->format('d-m-Y') . "\nRuang Robot\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
+        $box->draw("Kediri, " . Carbon::now()->format('d-m-Y') . "\n\n\n\n\n\nJulian Sahertian, S.Pd., M.T.");
 
-        $outputPath = public_path('generated/temp_sertifikat/' . $id . '_' . str_replace(' ', '_', $nama) . '.jpg');
+        // Simpan ke file
         imagejpeg($template, $outputPath);
         imagedestroy($template);
+        imagedestroy($ttd);
+        imagedestroy($resizedTTD);
 
         return $outputPath;
     }
+
 
     public function generate_show()
     {
