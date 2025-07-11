@@ -14,4 +14,8 @@ class sekolah extends Model
     public function pendaftaran(){
         return $this->hasMany(pendaftaran::class, 'sekolah_id', 'id');
     }
+
+    public function pengguna(){
+        return $this->hasMany(pengguna::class, 'sekolah_id', 'id');
+    }
 }

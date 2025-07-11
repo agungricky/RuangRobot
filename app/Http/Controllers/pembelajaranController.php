@@ -84,15 +84,15 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
      */
     public function index($id)
     {
-        $data = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('pembelajaran.*', 'kelas.durasi_belajar')
+        $data = pembelajaran::with('kelas', 'pengajar')
             ->where('kelas_id', $id)
-            ->orderBy('pertemuan', 'asc')
+            ->orderByRaw('tanggal IS NULL, tanggal ASC')
             ->get();
+
         return response()->json(['data' => $data]);
     }
 
-    public function siswa()
+    public function siswa_all()
     {
         $data = pengguna::join('akun', 'akun.id', 'profile.id')
             ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
@@ -128,24 +128,22 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
      */
     public function store(Request $request)
     {
-        $data = $request->jumlah_pertemuan;
-        $id_kelas = $request->id_kelas;
-        $kelas = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->where('kelas.id', $id_kelas)
-            ->count();
+        $request->validate([
+            'jumlah_pertemuan' => 'required',
+        ]);
 
-        $tambah_pertemuan = $kelas + $data;
+        for ($i = 0; $i < $request->jumlah_pertemuan; $i++) {
+            $kode_pertemuan = strtoupper(substr(bin2hex(random_bytes(5)), 0, 10));
 
-        for ($i = $kelas; $i < $tambah_pertemuan; $i++) {
             pembelajaran::create([
-                'pertemuan' => $i + 1,
-                'pengajar' => '',
+                'kode_pertemuan' => $kode_pertemuan,
+                'pengajar' => null,
                 'tanggal' => null,
                 'materi' => '',
                 'catatan_pengajar' => '',
                 'absensi' => json_encode(new \stdClass()),
                 'status_tersimpan' => 'sementara',
-                'kelas_id' => $id_kelas,
+                'kelas_id' => $request->id_kelas,
             ]);
         }
     }
@@ -155,7 +153,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
      */
     public function detailPertemuan(string $id)
     {
-        $data = pembelajaran::where('id', $id)->first();
+        $data = pembelajaran::with('pengajar')->where('id', $id)->first();
         return response()->json(['data' => $data]);
     }
 
@@ -260,7 +258,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
                 ->first();
 
             $pembelajaran = kelas::where('kelas.id', $id)->first();
-            
+
             $muridkelas = muridKelas::where('kelas_id', $id)->first();
             $murid = json_decode($muridkelas->murid, true);
             $datasiswa = null;
@@ -355,8 +353,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
         }
 
         invoice::where('profile_id', $id)
-       ->where('kelas_id', $id_kelas) // AND condition
-       ->delete();
-
+            ->where('kelas_id', $id_kelas) // AND condition
+            ->delete();
     }
 }

@@ -30,18 +30,52 @@
                 </div>
             </div>
 
+            @php
+                $hex = $data->kategori->color_bg;
+                $r = hexdec(substr($hex, 1, 2));
+                $g = hexdec(substr($hex, 3, 2));
+                $b = hexdec(substr($hex, 5, 2));
+                $bb = hexdec(substr($hex, 9, 5));
+                $rgba = "rgba($r, $g, $b, 1)";
+                $rgbb = "rgba($r, $g, $bb, 0.4)";
+            @endphp
             <div class="section-body">
                 {{-- Informasi Kelas --}}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="hero text-white hero-bg-image"
-                            style="background-image: url({{ asset('img_videogaming.jpg') }}); padding:35px;">
-                            <div class="hero-inner">
+                            style="background-image: url({{ asset('img_videogaming1.png') }});
+                                    background-color: {{ $rgba }};
+                                    /* background-blend-mode: overlay; */
+                                    padding:35px";>
+                            <div class="hero-inner d-flex flex-column gap-1">
                                 <h5>{{ $data->nama_kelas }}</h5>
-                                <span class="badge badge-danger">{{ $data->kategori_kelas }}</span>
-                                <span
-                                    class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-warning' : 'badge-success' }}">{{ $data->status_kelas }}</span>
-                                <p class="lead">{{ $data->nama_program }}</p>
+                                <div class="d-flex gap-2">
+                                    <span class="ml-2 badge"
+                                        style="
+                                        background-color: blue;
+                                        background-blend-mode: overlay;
+                                        ">{{ $data->program_belajar->nama_program }}</span>
+                                    <span 
+                                        style="
+                                        background-color: red;
+                                        color: white;
+                                        padding: 1px 15px;
+                                        border-radius: 999px;
+                                        display: inline-block;
+                                    ">
+                                        {{ $data->kategori->kategori_kelas }}
+                                    </span>
+
+                                    @php
+                                        $aktif = "Aktif";
+                                        $selesai = "Selesai";
+                                    @endphp
+                                    <span
+                                        class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-success' : 'badge-secondary-dark' }}">{{ $data->status_kelas == 'aktif' ? $aktif : $selesai }}</span>
+                                </div>
+
+                                <p class="lead d-none d-sm-none d-md-block mt-3" style="width: 55%; text-align: justify; line-height: 1.5;">{{ $data->program_belajar->deskripsi }}</p>
                             </div>
                         </div>
                         <div class="card">
@@ -57,27 +91,27 @@
                                         <ul class="list-group list-group-unbordered">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-play-circle"></i> Pertemuan Kelas</b>
-                                                <div class="profile-desc-item pull-right">{{ $jp }} Pertemuan
+                                                <div class="profile-desc-item pull-right ms-3">{{ $jp }} Pertemuan
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-users"></i> Jumlah Siswa</b>
-                                                <div class="profile-desc-item pull-right">{{ $jumlahSiswa }} Siswa</div>
+                                                <div class="profile-desc-item pull-right ms-3">{{ $jumlahSiswa }} Siswa</div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-user"></i> Penanggung Jawab Kelas </b>
-                                                <div class="profile-desc-item pull-right">{{ $data->penanggung_jawab }}
+                                                <div class="profile-desc-item pull-right ms-3">{{ $data->pengajar->nama }}
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-layer-group"></i> Level </b>
-                                                <div class="profile-desc-item pull-right">
-                                                    @if ($data->level == 'mudah')
-                                                        <span class="badge badge-success"><b>Mudah</b></span>
-                                                    @elseif ($data->level == 'sedang')
-                                                        <span class="badge badge-warning"><b>Sedang</b></span>
-                                                    @elseif ($data->level == 'sulit')
-                                                        <span class="badge badge-danger"><b>Sulit</b></span>
+                                                <div class="profile-desc-item pull-right ms-3">
+                                                    @if ($data->program_belajar->level == 'mudah')
+                                                        <span class="badge badge-success"><b>Beginner</b></span>
+                                                    @elseif ($data->program_belajar->level == 'sedang')
+                                                        <span class="badge badge-warning"><b>Intermediate</b></span>
+                                                    @elseif ($data->program_belajar->level == 'sulit')
+                                                        <span class="badge badge-danger"><b>Advanced</b></span>
                                                     @endif
                                                 </div>
                                             </li>
@@ -87,7 +121,7 @@
                                         <ul class="list-group">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-dollar-sign"></i> Harga Kelas </b>
-                                                <div class="profile-desc-item pull-right text-success">Rp.
+                                                <div class="profile-desc-item pull-right text-success ms-3">Rp.
                                                     {{ number_format($data->harga, 0, ',', '.') }}
                                                 </div>
                                             </li>
@@ -110,11 +144,11 @@
                                                 <div class="profile-desc-item pull-right">
                                                     <ul class="list-star">
                                                         <li>Mekanik : <span style="font-weight:bold"
-                                                                class="text-info">+{{ $data->mekanik }}</span></li>
+                                                                class="text-info">+{{ $data->program_belajar->mekanik }}</span></li>
                                                         <li>Elektronik : <span style="font-weight:bold"
-                                                                class="text-success">+{{ $data->elektronik }}</span></li>
+                                                                class="text-success">+{{ $data->program_belajar->elektronik }}</span></li>
                                                         <li>Pemrograman : <span style="font-weight:bold"
-                                                                class="text-danger">+{{ $data->pemrograman }}</span></li>
+                                                                class="text-danger">+{{ $data->program_belajar->pemrograman }}</span></li>
                                                     </ul>
                                                 </div>
                                             </li>
@@ -136,10 +170,9 @@
                                     <x-button.button_add_modal message="Tambah Pertemuan Kelas" id="#pertemuan_kelas" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="example">
                                         <thead>
                                             <tr>
-                                                <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 8%;" class="text-center">Pertemuan Ke</th>
                                                 <th style="width: 15%;" class="text-center">Pengajar</th>
                                                 <th style="width: 15%;" class="text-center">Taggal Pertemuan</th>
@@ -164,7 +197,7 @@
                                     <x-button.button_add_modal message="Tambah Siswa" id="#tambah_siswa" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="data_siswa">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="data_siswa">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
@@ -228,14 +261,14 @@
                     <form id="sekolah_form" method="POST">
                         @csrf
                         <div class="table-responsive">
-                            <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="siswa_kelas"
+                            <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="siswa_kelas"
                                 data-page-length="100">
                                 <thead>
                                     <tr>
                                         <th style="width: 5%;" class="text-center">Pilih</th>
                                         <th style="width: 5%;" class="text-center">No.</th>
                                         <th style="width: 15%;" class="text-center">Nama Siswa</th>
-                                        <th style="width: 50%;" class="text-start">Sekolah</th>
+                                        <th style="width: 15%;" class="text-start">Sekolah</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -281,6 +314,12 @@
                                 <span id="materi"></span>
                             </div>
                         </li>
+                         <li class="list-group-item">
+                            <b><i class="fas fa-chalkboard-teacher"></i> Catatan Pengajar </b>
+                            <div class="profile-desc-item pull-right">
+                                <span id="cttn_pengajar"></span>
+                            </div>
+                        </li>
                     </ul>
                     <h6 class="mt-3 mb-3">Siswa Yang Hadir :</h6>
                     <div class="inimasuksiswahadir"></div>
@@ -314,6 +353,13 @@
         </div>
     </div>
 
+    <style>
+        .badge-secondary-dark {
+            background-color: #888888 !important;
+            color: white;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel Pertemuan Kelas
@@ -330,15 +376,9 @@
                         }
                     },
                     {
-                        data: 'pertemuan',
+                        data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-tabel text-start fw-bold text-primary">Pertemuan Ke ${data}</div>`;
-                        }
-                    },
-                    {
-                        data: 'pengajar',
-                        render: function(data, type, row) {
-                            return `<div class="text-body-secondary fw-bold text-start">${data}</div>`;
+                            return `<div class="text-body-secondary fw-bold text-center">${data.pengajar ? data.pengajar.nama : '' }</div>`;
                         }
                     },
                     {
@@ -361,9 +401,9 @@
                         }
                     },
                     {
-                        data: 'durasi_belajar',
+                        data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-tabel text-center">${data}</div>`;
+                            return `<div class="text-tabel text-center">${data.kelas ? data.kelas.durasi_belajar : ''}</div>`;
                         }
                     },
                     {
@@ -381,13 +421,13 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-warning btn-sm" id="editBtn" data-bs-toggle="modal" data-bs-target="#editPertemuanModal" data-id="${row.id}">Edit</button>
+                            <div class="d-flex gap-1 justify-content-center align-items-center">
+                               <!-- <button class="btn btn-warning btn-sm" id="editBtn" data-bs-toggle="modal" data-bs-target="#editPertemuanModal" data-id="${row.id}">Edit</button> -->
                                 <form action="{{ url('/pertemuan/delete/${row.id}') }}" method="POST" class="d-inline">
                                     <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    <button type="submit" class="btn btn-danger btn-sm px-4" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -403,7 +443,7 @@
                     type: "GET",
                     url: "{{ route('datasiswa_kelas.json', ['id' => $data->id]) }}",
                     dataSrc: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         return JSON.parse(response.data.murid || '[]');
                     },
                 },
@@ -497,7 +537,7 @@
                         data: null,
                         orderable: false,
                         render: function(data, type, row) {
-                            return `<input type="checkbox" class="select-checkbox" data-id="${row.id}" data-nama="${row.nama}" data-sekolah="${row.nama_sekolah}" />`;
+                            return `<input type="checkbox" class="select-checkbox" data-id="${row.id}" data-nama="${row.nama}" data-sekolah="${row.nama_sekolah}" data-kelas="${row.kelas}"/>`;
                         },
                     },
                     {
@@ -545,7 +585,7 @@
                     success: function(response) {
                         let data = response.data;
 
-                        console.log(data);
+                        // console.log(data);
 
                         // Mendapatkan nama Hari
                         let date = new Date(data.tanggal);
@@ -556,9 +596,10 @@
                             `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
 
                         // Isi data ke dalam elemen modal
-                        $('#pengajar').text(data.pengajar);
+                        $('#pengajar').text(data.pengajar.nama);
                         $('#tanggal').text(`${hari}, ${tanggal}`);
                         $('#materi').text(data.materi);
+                        $('#cttn_pengajar').text(data.catatan_pengajar)
 
                         // Proses data absensi
                         let absensi = JSON.parse(data.absensi);
@@ -593,8 +634,6 @@
                 });
             });
 
-
-
             // submit untuk data yang dipilih
             $('#submit_sekolah').on('click', function() {
                 let selectedSiswa = [];
@@ -616,12 +655,12 @@
                     selectedSiswa.push({
                         id: $(this).data('id'),
                         nama: $(this).data('nama'),
+                        kelas: $(this).data('kelas'),
                         sekolah: $(this).data('sekolah'),
                         tagihan: $(this).data('harga') || {{ $data->harga }},
                         pembayaran: $(this).data('pembayaran') || 0,
                         no_invoice: no_invoice,
-                        jatuh_tempo: $(this).data('jatuh_tempo') ||
-                            '{{ $data->jatuh_tempo }}',
+                        jatuh_tempo: $(this).data('jatuh_tempo') || {{ $data->jatuh_tempo }},
                         no_sertiv: $(this).data('no_sertiv') || '',
                         status_sertiv: $(this).data('status_sertiv') || 'Belum Terbit',
                         nilai: $(this).data('nilai') || '',
@@ -674,7 +713,7 @@
             // Tambah data pertemuan kelas
             $('#submit').on('click', function() {
                 let form = $('#form_pertemuankelas');
-                let formData = form.serialize(); 
+                let formData = form.serialize();
 
                 $.ajax({
                     type: "POST",
@@ -687,14 +726,14 @@
                             timer: 2000,
                             showConfirmButton: false
                         });
-                        form.trigger('reset'); 
-                        $('#pertemuan_kelas').modal('hide'); 
+                        form.trigger('reset');
+                        $('#pertemuan_kelas').modal('hide');
                         location.reload();
                     },
                     error: function(xhr) {
                         alert(xhr.responseText);
                         let errors = xhr.responseJSON
-                            .errors; 
+                            .errors;
 
                         for (let key in errors) {
                             if (errors.hasOwnProperty(key)) {
@@ -711,8 +750,8 @@
                 var murid_id = $(this).data('id');
                 var kelas_id = $(this).data('kelas-id');
 
-                console.log('Murid ID: ' + murid_id);
-                console.log('Kelas ID: ' + kelas_id);
+                // console.log('Murid ID: ' + murid_id);
+                // console.log('Kelas ID: ' + kelas_id);
 
 
                 $.ajax({
@@ -745,49 +784,49 @@
         });
 
         // Edit data Pertemuan 
-        $(document).ready(function() {
-            let selectedId = null;
+        // $(document).ready(function() {
+        //     let selectedId = null;
 
-            // Ketika tombol Edit ditekan
-            $(document).on('click', '#editBtn', function() {
-                selectedId = $(this).data('id');
-                // console.log('ID yang dipilih:', selectedId);
-            });
+        //     // Ketika tombol Edit ditekan
+        //     $(document).on('click', '#editBtn', function() {
+        //         selectedId = $(this).data('id');
+        //         // console.log('ID yang dipilih:', selectedId);
+        //     });
 
-            // Ketika tombol Kirim ditekan
-            $('#Editsubmit').on('click', function() {
-                const pertemuanKe = $('input[name="pertemuan"]').val();
+        //     // Ketika tombol Kirim ditekan
+        //     $('#Editsubmit').on('click', function() {
+        //         const pertemuanKe = $('input[name="pertemuan"]').val();
 
-                $.ajax({
-                    url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
-                        .replace('__selectedId__', selectedId), 
-                    type: 'POST',
-                    data: {
-                        _method: 'PATCH',
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        pertemuan: pertemuanKe,
-                    },
-                    success: function(response) {
-                        $('#editPertemuanModal').modal('hide'); 
-                        $('#edit_pertemuan_form').trigger('reset');
-                        location.reload();
+        //         $.ajax({
+        //             url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
+        //                 .replace('__selectedId__', selectedId),
+        //             type: 'POST',
+        //             data: {
+        //                 _method: 'PATCH',
+        //                 _token: $('meta[name="csrf-token"]').attr('content'),
+        //                 pertemuan: pertemuanKe,
+        //             },
+        //             success: function(response) {
+        //                 $('#editPertemuanModal').modal('hide');
+        //                 $('#edit_pertemuan_form').trigger('reset');
+        //                 location.reload();
 
-                        Swal.fire({
-                            title: "Data berhasil diupdate!",
-                            icon: "success",
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function(xhr) {
-                        // alert(xhr.responseText);
-                        const errors = xhr.responseJSON.errors;
-                        if (errors.pertemuan) {
-                            $('#pertemuanError').text(errors.pertemuan[0]);
-                        }
-                    },
-                });
-            });
-        });
+        //                 Swal.fire({
+        //                     title: "Data berhasil diupdate!",
+        //                     icon: "success",
+        //                     timer: 2000,
+        //                     showConfirmButton: false
+        //                 });
+        //             },
+        //             error: function(xhr) {
+        //                 // alert(xhr.responseText);
+        //                 const errors = xhr.responseJSON.errors;
+        //                 if (errors.pertemuan) {
+        //                     $('#pertemuanError').text(errors.pertemuan[0]);
+        //                 }
+        //             },
+        //         });
+        //     });
+        // });
     </script>
 @endsection

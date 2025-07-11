@@ -20,4 +20,12 @@ class pengguna extends Model
     {
         return $this->hasMany(kelas::class, 'penanggung_jawab', 'id');
     }
+
+    public function pembelajaran(){
+        return $this->hasMany(pembelajaran::class, 'pengajar', 'id');
+    }
+
+    public function sekolah(){
+        return $this->belongsTo(sekolah::class, 'sekolah_id', 'id');
+    }
 }

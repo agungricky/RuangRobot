@@ -119,10 +119,7 @@ class kelasController extends Controller
      */
     public function show(string $id)
     {
-        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
-            ->where('kelas.id', $id)->first();
+        $data = kelas::with('program_belajar', 'kategori', 'pengajar')->where('id', $id)->first();
 
         // Menghitung Jumlah Siswa
         $jm = kelas::where('kelas.id', $id)
@@ -138,7 +135,8 @@ class kelasController extends Controller
 
 
         // Jumlah Pembelajaran
-        $jp = pembelajaran::where('id', $id)->count();
+        $jp = pembelajaran::where('kelas_id', $id)->count();
+
 
         // =============================================== // 
         // Jumlah Pembelajaran Total Absensi Siswa //
@@ -420,7 +418,7 @@ class kelasController extends Controller
     private function createCertificate($id, $nama, $kelas, $sekolah, $nilai, $dataKelas, $tanggalAwal, $tanggalAkhir)
     {
         $templatePath = public_path('assets/sertifikat.jpg');
-        $ttdPath = public_path('assets/ttd.png');
+        $ttdPath = public_path('assets/ttd2.png');
         $fontPath = public_path('assets/arial.ttf');
         $outputPath = public_path('generated/temp_sertifikat/' . $id . '_' . str_replace(' ', '_', $nama) . '.jpg');
 
@@ -454,6 +452,20 @@ class kelasController extends Controller
         $box->setTextAlign('center', 'center');
         $box->draw(ucwords($nama));
 
+        // Garis di tengah
+        $nama = ucwords($nama);
+        $panjang = mb_strlen($nama);
+        $garis = str_repeat('─', $panjang + 5);
+
+        // ---------- Garis Bawah Nama ----------
+        $box = new Box($template);
+        $box->setFontFace($fontPath); // font sama biar rata tengah
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setFontSize(30); // lebih kecil dari nama
+        $box->setBox(500, 423, 800, 160); // posisinya tepat di bawah nama
+        $box->setTextAlign('center', 'top');
+        $box->draw($garis);
+
         // --------- Nama Sekolah ------------
         $box = new Box($template);
         $box->setFontFace($fontPath);
@@ -461,7 +473,7 @@ class kelasController extends Controller
         $box->setFontSize(30);
         $box->setBox(500, 450, 800, 200);
         $box->setTextAlign('center', 'top');
-        $box->draw("---- $sekolah ----");
+        $box->draw($sekolah);
 
         // --------- Deskripsi Pelatihan ------------
         $box = new Box($template);
@@ -475,7 +487,7 @@ class kelasController extends Controller
         $tanggalAkhirFormatted = \Carbon\Carbon::parse($tanggalAkhir)->format('d-m-Y');
         $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($dataKelas->kelas->program_belajar->nama_program) .
             ' di Ruang Robot yang dilaksanakan pada tanggal ' .
-            $tanggalAwalFormatted . ' - ' . $tanggalAkhirFormatted . ' dengan predikat :');
+            $tanggalAwalFormatted . ' s/d ' . $tanggalAkhirFormatted . ' dengan predikat :');
 
         // --------- Nilai / Predikat ------------
         $box = new Box($template);
@@ -489,8 +501,8 @@ class kelasController extends Controller
         $keterangan = match ($nilai) {
             "A" => "Sangat Baik",
             "B" => "Baik",
-            "C" => "Cukup",
-            default => "Kurang"
+            null => "BELUM LULUS",
+            default => "BELUM LULUS",
         };
         $box->draw($keterangan);
 
@@ -500,15 +512,15 @@ class kelasController extends Controller
         imagesavealpha($ttd, true);
 
         // Resize (jika perlu)
-        $ttdWidth = 170;
-        $ttdHeight = 170;
+        $ttdWidth = 400;
+        $ttdHeight = 230;
         $resizedTTD = imagecreatetruecolor($ttdWidth, $ttdHeight);
         imagealphablending($resizedTTD, false);
         imagesavealpha($resizedTTD, true);
         imagecopyresampled($resizedTTD, $ttd, 0, 0, 0, 0, $ttdWidth, $ttdHeight, imagesx($ttd), imagesy($ttd));
 
         // Tempel tanda tangan ke posisi (sesuaikan X dan Y-nya)
-        imagecopy($template, $resizedTTD, 1005, 715, 0, 0, $ttdWidth, $ttdHeight);
+        imagecopy($template, $resizedTTD, 910, 715, 0, 0, $ttdWidth, $ttdHeight);
 
         // --------- Teks Nama Penandatangan ------------
         $box = new Box($template);

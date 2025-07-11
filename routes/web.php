@@ -78,6 +78,13 @@ Route::middleware('auth')->group(function () {
 
         // ========= Detail Kelas ========= //
         Route::get('/jurnal_kelas/{id}', [kelasController::class, 'jurnalkelas'])->name('jurnal_kelas');
+        Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
+        Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
+
+        Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
+        Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detailPertemuan'])->name('detail_pertemuan.json');
+        Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
+        Route::get('/siswa/all', [pembelajaranController::class, 'siswa_all'])->name('siswa_kelas.json');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -103,19 +110,16 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 
 // ========= Kelas ========= //
 // Route::get('/kelas/json/{id}', [kelasController::class, 'index'])->name('kelas.json');
-Route::patch('/kelas/selesai/{id}', [kelasController::class, 'kelasselesai'])->name('kelas.selesai');
 
-// ========= PDF Kelas ========= //
-
-Route::get('/sertifikat/download-zip/{id}', [kelasController::class, 'generateAndDownloadZip'])->name('sertifikat');
 
 // ========= Pembelajaran ========= //
-Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
-Route::get('/pembelajaran/{id}/json', [pembelajaranController::class, 'index'])->name('pembelajaran.json');
-Route::get('/siswa/sekolah/json', [pembelajaranController::class, 'siswa'])->name('siswa_kelas.json');
+
+
 Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
+
 Route::get('/datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
-Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detailPertemuan'])->name('detail_pertemuan.json');
+
+
 Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
 Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
 Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
