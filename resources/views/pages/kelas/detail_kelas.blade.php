@@ -56,7 +56,7 @@
                                         background-color: blue;
                                         background-blend-mode: overlay;
                                         ">{{ $data->program_belajar->nama_program }}</span>
-                                    <span 
+                                    <span
                                         style="
                                         background-color: red;
                                         color: white;
@@ -68,14 +68,16 @@
                                     </span>
 
                                     @php
-                                        $aktif = "Aktif";
-                                        $selesai = "Selesai";
+                                        $aktif = 'Aktif';
+                                        $selesai = 'Selesai';
                                     @endphp
                                     <span
                                         class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-success' : 'badge-secondary-dark' }}">{{ $data->status_kelas == 'aktif' ? $aktif : $selesai }}</span>
                                 </div>
 
-                                <p class="lead d-none d-sm-none d-md-block mt-3" style="width: 55%; text-align: justify; line-height: 1.5;">{{ $data->program_belajar->deskripsi }}</p>
+                                <p class="lead d-none d-sm-none d-md-block mt-3"
+                                    style="width: 55%; text-align: justify; line-height: 1.5;">
+                                    {{ $data->program_belajar->deskripsi }}</p>
                             </div>
                         </div>
                         <div class="card">
@@ -91,12 +93,14 @@
                                         <ul class="list-group list-group-unbordered">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-play-circle"></i> Pertemuan Kelas</b>
-                                                <div class="profile-desc-item pull-right ms-3">{{ $jp }} Pertemuan
+                                                <div class="profile-desc-item pull-right ms-3">{{ $jp }}
+                                                    Pertemuan
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-users"></i> Jumlah Siswa</b>
-                                                <div class="profile-desc-item pull-right ms-3">{{ $jumlahSiswa }} Siswa</div>
+                                                <div class="profile-desc-item pull-right ms-3">{{ $jumlahSiswa }} Siswa
+                                                </div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-user"></i> Penanggung Jawab Kelas </b>
@@ -144,11 +148,14 @@
                                                 <div class="profile-desc-item pull-right">
                                                     <ul class="list-star">
                                                         <li>Mekanik : <span style="font-weight:bold"
-                                                                class="text-info">+{{ $data->program_belajar->mekanik }}</span></li>
+                                                                class="text-info">+{{ $data->program_belajar->mekanik }}</span>
+                                                        </li>
                                                         <li>Elektronik : <span style="font-weight:bold"
-                                                                class="text-success">+{{ $data->program_belajar->elektronik }}</span></li>
+                                                                class="text-success">+{{ $data->program_belajar->elektronik }}</span>
+                                                        </li>
                                                         <li>Pemrograman : <span style="font-weight:bold"
-                                                                class="text-danger">+{{ $data->program_belajar->pemrograman }}</span></li>
+                                                                class="text-danger">+{{ $data->program_belajar->pemrograman }}</span>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </li>
@@ -170,7 +177,8 @@
                                     <x-button.button_add_modal message="Tambah Pertemuan Kelas" id="#pertemuan_kelas" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 8%;" class="text-center">Pertemuan Ke</th>
@@ -193,11 +201,16 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="add-items d-flex">
+                                <div class="add-items d-flex gap-3">
                                     <x-button.button_add_modal message="Tambah Siswa" id="#tambah_siswa" />
+                                    <button type="button" class="add btn btn-info mb-3" data-bs-target=""
+                                        id="info_pengguna"><i class="fas fa-info-circle"></i></i>
+                                        Info Ke Pengguna
+                                    </button>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="data_siswa">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="data_siswa">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
@@ -261,8 +274,8 @@
                     <form id="sekolah_form" method="POST">
                         @csrf
                         <div class="table-responsive">
-                            <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="siswa_kelas"
-                                data-page-length="100">
+                            <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                id="siswa_kelas" data-page-length="100">
                                 <thead>
                                     <tr>
                                         <th style="width: 5%;" class="text-center">Pilih</th>
@@ -314,7 +327,7 @@
                                 <span id="materi"></span>
                             </div>
                         </li>
-                         <li class="list-group-item">
+                        <li class="list-group-item">
                             <b><i class="fas fa-chalkboard-teacher"></i> Catatan Pengajar </b>
                             <div class="profile-desc-item pull-right">
                                 <span id="cttn_pengajar"></span>
@@ -561,7 +574,6 @@
                 ],
             });
 
-
             // Event klik untuk baris
             $('#siswa_kelas tbody').on('click', 'tr', function(e) {
                 // Abaikan klik pada checkbox agar tidak memicu dua kali
@@ -660,7 +672,8 @@
                         tagihan: $(this).data('harga') || {{ $data->harga }},
                         pembayaran: $(this).data('pembayaran') || 0,
                         no_invoice: no_invoice,
-                        jatuh_tempo: $(this).data('jatuh_tempo') || {{ $data->jatuh_tempo }},
+                        jatuh_tempo: $(this).data('jatuh_tempo') ||
+                            {{ $data->jatuh_tempo }},
                         no_sertiv: $(this).data('no_sertiv') || '',
                         status_sertiv: $(this).data('status_sertiv') || 'Belum Terbit',
                         nilai: $(this).data('nilai') || '',
@@ -781,52 +794,49 @@
                     }
                 });
             });
+
+            $('#info_pengguna').on('click', function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/juancok/{{ $data->id }}",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                    }
+                });
+
+                // Swal.fire({
+                //     title: 'Konfirmasi',
+                //     text: 'Apakah Anda yakin akan mengirim informasi akun ke semua siswa yang ada di kelas?',
+                //     icon: 'question',
+                //     showCancelButton: true,
+                //     confirmButtonText: 'Ya, Kirim',
+                //     cancelButtonText: 'Batal',
+                //     confirmButtonColor: '#3085d6',
+                //     cancelButtonColor: '#d33'
+                // }).then((result) => {
+                //     if (result.value == true) {
+                //         $.ajax({
+                //             type: "GET",
+                //             url: "/info/akun/" + id,
+                //             dataType: "json",
+                //             success: function(response) {
+                //                 console.log(response.data);
+                //                 Swal.fire('Terkirim!', 'Informasi berhasil dikirim.',
+                //                     'success');
+                //             },
+                //             error: function(xhr) {
+                //                 console.error(xhr.responseText);
+                //                 Swal.fire('Gagal!',
+                //                     'Terjadi kesalahan saat mengirim data.', 'error'
+                //                 );
+                //             }
+                //         });
+                //     }
+                // });
+            });
+
+
         });
-
-        // Edit data Pertemuan 
-        // $(document).ready(function() {
-        //     let selectedId = null;
-
-        //     // Ketika tombol Edit ditekan
-        //     $(document).on('click', '#editBtn', function() {
-        //         selectedId = $(this).data('id');
-        //         // console.log('ID yang dipilih:', selectedId);
-        //     });
-
-        //     // Ketika tombol Kirim ditekan
-        //     $('#Editsubmit').on('click', function() {
-        //         const pertemuanKe = $('input[name="pertemuan"]').val();
-
-        //         $.ajax({
-        //             url: "{{ route('pembelajaran.update', ['id' => '__selectedId__']) }}"
-        //                 .replace('__selectedId__', selectedId),
-        //             type: 'POST',
-        //             data: {
-        //                 _method: 'PATCH',
-        //                 _token: $('meta[name="csrf-token"]').attr('content'),
-        //                 pertemuan: pertemuanKe,
-        //             },
-        //             success: function(response) {
-        //                 $('#editPertemuanModal').modal('hide');
-        //                 $('#edit_pertemuan_form').trigger('reset');
-        //                 location.reload();
-
-        //                 Swal.fire({
-        //                     title: "Data berhasil diupdate!",
-        //                     icon: "success",
-        //                     timer: 2000,
-        //                     showConfirmButton: false
-        //                 });
-        //             },
-        //             error: function(xhr) {
-        //                 // alert(xhr.responseText);
-        //                 const errors = xhr.responseJSON.errors;
-        //                 if (errors.pertemuan) {
-        //                     $('#pertemuanError').text(errors.pertemuan[0]);
-        //                 }
-        //             },
-        //         });
-        //     });
-        // });
     </script>
 @endsection

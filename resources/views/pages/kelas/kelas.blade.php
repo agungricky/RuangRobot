@@ -184,7 +184,7 @@
                     {
                         data: 'kode_kelas',
                         render: function(data, type, row) {
-                            return `<div class="text-tabel fw-bold text-start text-justify">${data}</div>`;
+                            return `<div class="text-tabel fw-bold text-center text-justify">${data}</div>`;
                         }
                     },
                     {

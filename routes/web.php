@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/detail_pertemuan/json/{id}', [pembelajaranController::class, 'detailPertemuan'])->name('detail_pertemuan.json');
         Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
         Route::get('/siswa/all', [pembelajaranController::class, 'siswa_all'])->name('siswa_kelas.json');
+        Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -115,8 +116,7 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 // ========= Pembelajaran ========= //
 
 
-Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
-
+// Route::get('/juancok/{id}', [pembelajaranController::class, 'joh'])->name('info.akun');
 Route::get('/datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
 
 
