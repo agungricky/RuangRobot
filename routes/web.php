@@ -144,6 +144,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
         Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
         Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
+        Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
+        Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
+        Route::get('/penagiha/personal/{id}/{kelas_id}', [pembayaranController::class, 'penagihan_personal'])->name('penagihan_personal');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -161,8 +164,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
-Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
+
 
 
 // ====================================================================================== //

@@ -124,7 +124,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="data_siswa">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="data_siswa">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
@@ -291,11 +292,18 @@
                             if (row.sisa_pembayaran <= 0) {
                                 return '<button class="btn btn-success btn-sm readonly"><i class="fa-solid fa-check"></i> Lunas </button>';
                             } else {
-                                return '<button class="btn btn-warning btn-sm" ' +
+                                return '<div class="d-flex gap-3 justify-content-center">' +
+                                    '<button class="btn btn-warning btn-sm" ' +
                                     'data-id="' + row.id + '" ' +
                                     'data-kelas-id="' + <?= $data->id ?> + '" ' +
                                     'data-bs-toggle="modal" data-bs-target="#tambahpembayaran">' +
-                                    '<i class="fa fa-plus"></i> Bayar</button>';
+                                    '<i class="fa fa-plus"></i></button>' +
+
+                                    '<button class="btn btn-danger btn-sm" ' +
+                                    'data-id="' + row.id + '" ' +
+                                    'data-kelas-id="<?= $data->id ?>">' +
+                                    '<i class="fa fa-exclamation-circle"></i></button>' +
+                                    '</div>';
                             }
                         }
                     }
@@ -308,6 +316,20 @@
             $(document).on('click', '.btn-warning', function() {
                 selectedSiswaId = $(this).data('id');
                 selectedKelasId = $(this).data('kelas-id');
+            });
+
+            $(document).on('click', '.btn-danger', function() {
+                selectedSiswaId = $(this).data('id');
+                selectedKelasId = $(this).data('kelas-id');
+                
+                $.ajax({
+                    type: "GET",
+                    url: `/penagiha/personal/${selectedSiswaId}/${selectedKelasId}`,
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response.data);
+                    }
+                });
             });
 
             // Tambah Pembayaran

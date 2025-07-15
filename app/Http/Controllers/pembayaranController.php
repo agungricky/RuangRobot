@@ -9,6 +9,7 @@ use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use App\Models\siswa;
 use Illuminate\Support\Facades\Http;
 use PhpParser\Node\Stmt\If_;
 
@@ -27,6 +28,61 @@ class pembayaranController extends Controller
         }
 
         return view('pages.pembayaran.pembayaran');
+    }
+
+    public function penagihan_personal($id, $kelas_id)
+    {
+        $dataSiswa = pengguna::with('akun')->findOrFail($id);
+        $muridKelas = muridKelas::with('kelas')->where('kelas_id', $kelas_id)->first();
+        $murid = json_decode($muridKelas->murid, true);
+
+        $siswa = [];
+        foreach ($murid as $item) {
+            if ($item['id'] == $id) {
+                $siswa[] = $item;
+            }
+        }
+
+        // $total_kekurangan = $siswa[0]->tagihan - $siswa[0]->pembayaran;
+        $total_kekurangan = $siswa[0]['tagihan'] - $siswa[0]['pembayaran'];
+
+
+        Http::withHeaders([
+            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
+        ])->post('https://api.fonnte.com/send', [
+            'target' => $dataSiswa->no_telp,
+            'message' => "
+📢 Pemberitahuan Kekurangan Pembayaran Kelas
+
+Yth. *{$siswa[0]['nama']}*,  
+Menginformasikan kekurangan pembayaran:
+
+💳 *Rincian Pembayaran:*  
+🔹 *Nama:* {$siswa[0]['nama']}  
+🔹 *Kelas:* {$muridKelas->kelas->nama_kelas}  
+🔹 *Jumlah Dibayarkan:* Rp. " . number_format($siswa[0]['pembayaran'], 0, ',', '.') . "  
+🔹 *Total Tagihan:* Rp. " . number_format($siswa[0]['tagihan'], 0, ',', '.') . "  
+🔹 *Kekurangan:* Rp. " . number_format($total_kekurangan, 0, ',', '.') . "  
+
+Mohon segera melunasi pembayaran.
+
+📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di:  
+📞 +6285655770506  
+
+Pembayaran bisa transfer ke rekening berikut
+
+Mandiri
+a/n Julian Sahertian
+1710003410076  
+
+Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
+    ]);
+
+
+        return response()
+            ->json([
+                'data' => $siswa
+            ]);
     }
 
     /**
@@ -130,11 +186,8 @@ class pembayaranController extends Controller
             $tangal_lunas = now()->format('d-m-Y');
             $jatuh_tempo = "Status Pembayaran : *LUNAS* / $tangal_lunas";
         } else {
-            $jatuh_tempo = "Jatuh Tempo : " . $datasiswa['jatuh_tempo'];
-            $alert = "Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
-Bank: BCA (Bank Central Asia)
-Nomor Rekening: 9203123456
-Atas Nama: Julian Sahertian";
+            // $jatuh_tempo = "Jatuh Tempo : " . $datasiswa['jatuh_tempo'];
+            $jatuh_tempo = "";
         }
 
         $response = Http::withHeaders([
@@ -151,8 +204,7 @@ Pembelajaran : *$kelas->nama_kelas*
 Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
 Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
 Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
-
-" . ($alert ?? '') . "
+$jatuh_tempo
 
 Pesan ini adalah bukti pembayaran yang sah dari ruang robot apabila ada kendala bisa menghubungi 
 Admin 085655770506"
@@ -210,14 +262,7 @@ Mandiri
 a/n Julian Sahertian
 1710003410076  
 
-Terima kasih atas perhatian dan kerjasamanya. 🙏😊  
-            ",
-                'countryCode' => '62',
-                'filename' => 'Tagihanku',
-                'schedule' => 0,
-                'typing' => false,
-                'delay' => '0',
-                'followup' => 0,
+Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
             ]);
         }
 
