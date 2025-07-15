@@ -32,7 +32,7 @@
                                         <x-button.button_add_modal message="Tambah Siswa" id="#modal_pengguna" />
                                     @endif
                                 </div>
-                                {{-- <div class="table-responsive">
+                                <div class="table-responsive">
                                     <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
                                         id="example">
                                         <thead>
@@ -52,7 +52,7 @@
                                             </tr>
                                         </thead>
                                     </table>
-                                </div> --}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Modal -->
-    {{-- <div class="modal fade" id="modal_pengguna" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="modal_pengguna" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -95,6 +95,13 @@
                                 </div>
                                 <input type="hidden" name="role" value="{{ $id }}">
 
+                                @if ($id == 'Admin' || $id == 'Pengajar')
+                                    <div class="col-4">
+                                        <x-form.input_text name="email" label="email" placeholder="masukan email" />
+                                        <div id="error-email" class="text-danger"></div>
+                                    </div>
+                                @endif
+
                                 @if ($id == 'Siswa')
                                     <div class="col-4">
                                         <label for="autocomplete_sekolah">Sekolah</label>
@@ -105,30 +112,34 @@
                                     </div>
                                 @endif
 
-                                @if ($id == 'Admin' || $id == 'Pengajar')
-                                    <div class="col-4">
-                                        <input type="hidden" id="sekolah_id" name="sekolah_id" value="" />
-                                    </div>
-                                @endif
-
                                 <div class="col-8 mt-3">
                                     <x-form.input_text name="nama" label="Nama" placeholder="masukan nama" />
                                     <div id="error-nama" class="text-danger"></div>
                                 </div>
                                 <div class="col-4 mt-3">
-                                    <x-form.input_tanggal name="tgl_lahir" label="Tanggal Lahir" placeholder="Masukan Tanggal Lahir" />
+                                    <x-form.input_tanggal name="tgl_lahir" label="Tanggal Lahir"
+                                        placeholder="Masukan Tanggal Lahir" />
                                     <div id="error-nama" class="text-danger"></div>
                                 </div>
-                                <div class="col-12 mt-3">
-                                    <x-form.input_text name="email" label="email" placeholder="masukan email" />
-                                    <div id="error-email" class="text-danger"></div>
-                                </div>
-                                <div class="col-12 mt-3">
+
+                                @if ($id == 'Siswa')
+                                    <div class="col-8 mt-3">
+                                        <x-form.input_text name="email" label="email" placeholder="masukan email" />
+                                        <div id="error-email" class="text-danger"></div>
+                                    </div>
+                                    <div class="col-4 mt-3">
+                                        <x-form.input_text name="kelas" label="Kelas" placeholder="masukan Kelas di sekolah" />
+                                        <div id="error-kelas" class="text-danger"></div>
+                                    </div>
+                                @endif
+
+                                <div class="col-8 mt-3">
                                     <x-form.input_text name="alamat" label="Alamat" placeholder="masukan alamat" />
                                     <div id="error-alamat" class="text-danger"></div>
                                 </div>
-                                <div class="col-12 mt-3">
-                                    <x-form.input_text name="no_telp" label="No HP" placeholder="masukan nomor hp" />
+                                <div class="col-4 mt-3">
+                                    <x-form.input_text name="no_telp" id="no_telp" label="No HP"
+                                        placeholder="masukan nomor hp" />
                                     <div id="error-no_telp" class="text-danger"></div>
                                 </div>
 
@@ -146,7 +157,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <style>
         .ui-autocomplete {
@@ -161,142 +172,190 @@
     <script>
         $(document).ready(function() {
             // Menampilkan data pengguna menggunakan DataTable
-            // $('#example').DataTable({
-            //     ajax: {
-            //         type: "GET",
-            //         url: "{{ route('pengguna.json', ['id' => $id]) }}",
-            //         dataSrc: 'data',
-            //     },
-            //     columns: [{
-            //             data: null,
-            //             render: function(data, type, row, meta) {
-            //                 return `<div class="text-center">${meta.row + 1}</div>`;
-            //             }
-            //         },
-            //         {
-            //             data: 'nama',
-            //             render: function(data, type, row) {
-            //                 console.log(row);
-            //                 return `<div class="text-start text-tabel fw-bold"><a href="{{ url('/kelas/diikuti/${row.id}') }}">${data}</a></div>`;
-            //             }
-            //         },
-            //         @if ($id == 'Siswa')
-            //             {
-            //                 data: 'nama_sekolah',
-            //                 render: function(data, type, row) {
-            //                     return `<div class="text-start text-tabel">${data}</div>`;
-            //                 }
-            //             },
-            //         @endif
-            //         @if ($id == 'Pengajar' || $id == 'Admin')
-            //             {
-            //                 data: 'email',
-            //                 render: function(data, type, row) {
-            //                     return `<div class="text-start text-tabel">${data}</div>`;
-            //                 }
-            //             },
-            //         @endif {
-            //             data: 'alamat',
-            //             render: function(data, type, row) {
-            //                 return `<div class="text-start text-tabel">${data}</div>`;
-            //             }
-            //         },
-            //         {
-            //             data: 'no_telp',
-            //             render: function(data, type, row) {
-            //                 return `<div class="text-start text-tabel"><a href="https://wa.me/${data}" target="_blank">${data}</a></div>`;
-            //             }
-            //         },
-            //         {
-            //             data: 'username',
-            //             render: function(data, type, row) {
-            //                 return `<div class="text-tabel fw-bold">${data}</div>`;
-            //             }
-            //         },
-            //         {
-            //             data: null,
-            //             render: function(data, type, row) {
-            //                 let role = '{{ $id }}';
-            //                 return `
-            //                         <div class="d-flex justify-content-center gap-1">
-            //                                 <form action="{{ url('/pengguna/reset/${row.id}') }}" method="POST" class="d-inline">
-            //                                     @csrf
-            //                                     @extends('main.layout')
-            //                                     <button type="submit" class="btn btn-info btn-sm">Reset Password</button>
-            //                                 </form>
-            //                                 <a href="{{ url('/pengguna/edit/${row.id}/${role}') }}" class="btn btn-primary btn-sm">Edit</a>
-            //                                 <form action="{{ url('/pengguna/delete/${row.id}/${role}') }}" method="POST" class="d-inline">
-            //                                     @csrf
-            //                                     <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-            //                                 </form>
-            //                         </div>
-            //                     `;
-            //             }
-            //         }
-            //     ]
-            // });
+            $('#example').DataTable({
+                ajax: {
+                    type: "GET",
+                    url: "{{ route('pengguna.json', ['id' => $id]) }}",
+                    dataSrc: 'data',
+                },
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return `<div class="text-center">${meta.row + 1}</div>`;
+                        }
+                    },
+                    {
+                        data: 'nama',
+                        render: function(data, type, row) {
+                            return `<div class="text-start text-tabel fw-bold"><a href="{{ url('/kelas/diikuti/${row.id}') }}">${data}</a></div>`;
+                        }
+                    },
+                    @if ($id == 'Siswa')
+                        {
+                            data: 'nama_sekolah',
+                            render: function(data, type, row) {
+                                return `<div class="text-start text-tabel">${data}</div>`;
+                            }
+                        },
+                    @endif
+                    @if ($id == 'Pengajar' || $id == 'Admin')
+                        {
+                            data: 'email',
+                            render: function(data, type, row) {
+                                return `<div class="text-start text-tabel">${data}</div>`;
+                            }
+                        },
+                    @endif {
+                        data: 'alamat',
+                        render: function(data, type, row) {
+                            return `<div class="text-start text-tabel">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'no_telp',
+                        render: function(data, type, row) {
+                            return `<div class="text-start text-tabel"><a href="https://wa.me/${data}" target="_blank">${data}</a></div>`;
+                        }
+                    },
+                    {
+                        data: 'username',
+                        render: function(data, type, row) {
+                            return `<div class="text-tabel fw-bold">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let role = '{{ $id }}';
+                            return `
+                                    <div class="d-flex justify-content-center gap-1">
+                                            <form action="{{ url('/pengguna/reset/${row.id}') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-info btn-sm">Reset Password</button>
+                                            </form>
+                                            <a href="{{ url('/pengguna/edit/${row.id}/${role}') }}" class="btn btn-primary btn-sm">Edit</a>
+                                            <form action="{{ url('/pengguna/delete/${row.id}/${role}') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                            </form>
+                                    </div>
+                                `;
+                        }
+                    }
+                ]
+            });
 
             // Menambahkan Data
-            // $('#submit_pengguna').on('click', function() {
-            //     let form = $('#pengguna_form');
-            //     let formData = form.serialize();
+            $('#submit_pengguna').on('click', function() {
+                let form = $('#pengguna_form');
+                let formData = form.serialize();
 
-            //     // alert(formData);
+                console.log(formData);
 
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "{{ route('pengguna.store') }}",
-            //         data: formData,
-            //         success: function(response) {
-            //             form.trigger('reset'); // Reset form setelah berhasil
-            //             $('#modal_pengguna').modal('hide'); // Tutup modal
-            //             location.reload();
-            //         },
-            //         error: function(xhr) {
-            //             // alert(xhr.responseText);
-            //             let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('pengguna.store') }}",
+                    data: formData,
+                    success: function(response) {
+                        form.trigger('reset'); // Reset form setelah berhasil
+                        $('#modal_pengguna').modal('hide'); // Tutup modal
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        // alert(xhr.responseText);
+                        let errors = xhr.responseJSON.errors; // Ambil error dari response JSON
 
-            //             for (let key in errors) {
-            //                 if (errors.hasOwnProperty(key)) {
-            //                     let errorMessage = errors[key].join(', ');
-            //                     $('#error-' + key).text(errorMessage);
-            //                 }
-            //             }
-            //         }
-            //     });
-            // });
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                let errorMessage = errors[key].join(', ');
+                                $('#error-' + key).text(errorMessage);
+                            }
+                        }
+                    }
+                });
+            });
 
             // Auto Complate Sekolah
-            // $.ajax({
-            //     url: "{{ route('sekolah_form.json') }}",
-            //     method: "GET",
-            //     success: function(response) {
-            //         var programs = response.map(function(item) {
-            //             return {
-            //                 label: item
-            //                     .nama_sekolah,
-            //                 value: item.nama_sekolah,
-            //                 id: item.id
-            //             };
-            //         });
+            $.ajax({
+                url: "{{ route('sekolah_form.json') }}",
+                method: "GET",
+                success: function(response) {
+                    var programs = response.map(function(item) {
+                        return {
+                            label: item
+                                .nama_sekolah,
+                            value: item.nama_sekolah,
+                            id: item.id
+                        };
+                    });
 
-            //         // Terapkan autocomplete
-            //         $('#sekolah').autocomplete({
-            //             source: programs,
-            //             minLength: 1,
-            //             autoFocus: true,
-            //             select: function(event, ui) {
-            //                 $('#sekolah_id').val(ui.item.id);
-            //                 $(this).val(ui.item
-            //                     .label);
-            //                 return false;
-            //             }
-            //         });
-            //     },
-            //     error: function(xhr) {
-            //         console.error("Error:", xhr.responseText);
-            //     }
-            // });
+                    // Terapkan autocomplete
+                    $('#sekolah').autocomplete({
+                        source: programs,
+                        minLength: 1,
+                        autoFocus: true,
+                        select: function(event, ui) {
+                            $('#sekolah_id').val(ui.item.id);
+                            $(this).val(ui.item
+                                .label);
+                            return false;
+                        }
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                }
+            });
+        });
+
+        // Validasi No_telp
+        $(document).ready(function() {
+            const prefix = "+62";
+
+            // Set default prefix saat load
+            const input = $('#no_telp');
+            if (!input.val().startsWith(prefix)) {
+                input.val(prefix);
+            }
+
+            // Cegah hapus atau edit prefix
+            input.on('keydown', function(e) {
+                const cursorPos = this.selectionStart;
+
+                // Cegah hapus atau ketik di area prefix
+                if (cursorPos < prefix.length) {
+                    e.preventDefault();
+                    this.setSelectionRange(prefix.length, prefix.length); // geser kursor ke belakang prefix
+                }
+
+                // Cegah ketik angka 0 tepat setelah +62
+                if (cursorPos === prefix.length && e.key === "0") {
+                    e.preventDefault();
+                }
+            });
+
+            // Cegah hapus prefix pakai mouse
+            input.on('input', function() {
+                if (!this.value.startsWith(prefix)) {
+                    const current = this.value.replace(/^(\+62|0)*/, ''); // hapus +62 atau 0 di depan
+                    this.value = prefix + current;
+                }
+            });
+
+            // Cegah paste yang menghapus prefix
+            input.on('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.originalEvent || e).clipboardData.getData('text');
+                const clean = paste.replace(/^(\+62|0)+/, '');
+                this.value = prefix + clean;
+            });
+
+            // Saat klik, pindahkan kursor setelah prefix
+            input.on('click', function() {
+                if (this.selectionStart < prefix.length) {
+                    this.setSelectionRange(prefix.length, prefix.length);
+                }
+            });
         });
     </script>
 @endsection

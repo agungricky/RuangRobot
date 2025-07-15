@@ -15,6 +15,7 @@ class pengguna extends Model
         'no_telp',
         'sekolah_id',
         'kelas',
+        'tgl_lahir',
         'mekanik',
         'elektronik',
         'pemrograman'
@@ -40,5 +41,17 @@ class pengguna extends Model
     public function sekolah()
     {
         return $this->belongsTo(sekolah::class, 'sekolah_id', 'id');
+    }
+
+    public function gaji_utama(){
+        return $this->hasMany(gajiUtama::class, 'pengajar', 'id');
+    }
+
+    public function gaji_transport(){
+        return $this->hasMany(gajiTransport::class, 'pengajar', 'id');
+    }
+
+    public function gaji_custom(){
+        return $this->hasMany(gajiCustom::class, 'pengajar', 'id');
     }
 }

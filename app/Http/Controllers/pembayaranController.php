@@ -19,10 +19,7 @@ class pembayaranController extends Controller
      */
     public function index(Request $request)
     {
-        $data = kelas::join('kategori_kelas', 'kategori_kelas.id', '=', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.created_at', 'kategori_kelas.kategori_kelas')
-            ->orderByDesc('created_at')
-            ->get();
+        $data = kelas::with('kategori')->orderByDesc('created_at')->get();
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
@@ -45,10 +42,7 @@ class pembayaranController extends Controller
      */
     public function show(string $id, Request $request)
     {
-        $data = kelas::join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.*', 'kategori_kelas.kategori_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman')
-            ->where('kelas.id', $id)->first();
+        $data = kelas::with('program_belajar', 'kategori', 'pengajar')->findOrFail($id);
 
         // Menghitung Jumlah Siswa
         $jm = kelas::where('kelas.id', $id)
@@ -148,36 +142,20 @@ Atas Nama: Julian Sahertian";
         ])->post('https://api.fonnte.com/send', [
             'target' => $data->no_telp,
             'message' => "
-*💡 #INFORMASI PEMBAYARAN DITERIMA 📚*
+💡 #INFORMASI PEMBAYARAN DITERIMA# 📚
 
 Halo 👋 $data->nama,
-Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran masuk. 
-Berikut kami sampaikan rinciannya :
+Terimakasih sudah melakukan pembayaran :
 
 Pembelajaran : *$kelas->nama_kelas*
 Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
 Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
 Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
-$jatuh_tempo
 
 " . ($alert ?? '') . "
 
-Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
-📞 https://wa.me/+6285655770506
-
-                            
-Kami siap membantu Anda! 😊
-Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
-                            
-Salam hangat,
-*Ruang Robot*,
-Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
-            'countryCode' => '62',
-            'filename' => 'Tagihanku',
-            'schedule' => 0,
-            'typing' => false,
-            'delay' => '0',
-            'followup' => 0,
+Pesan ini adalah bukti pembayaran yang sah dari ruang robot apabila ada kendala bisa menghubungi 
+Admin 085655770506"
         ]);
 
         // Simpan response untuk debug jika diperlukan
@@ -209,28 +187,30 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
             ])->post('https://api.fonnte.com/send', [
                 'target' => $value['no_telp'],
                 'message' => "
-📢 *Pemberitahuan Kekurangan Pembayaran Kelas*
+📢 Pemberitahuan Kekurangan Pembayaran Kelas
 
 Yth. *{$value['nama']}*,  
-Terima kasih telah belajar bersama Ruang Robot. Kami ingin menginformasikan mengenai kekurangan pembayaran yang belum dibayarkan. Berikut adalah rinciannya:
+Menginformasikan kekurangan pembayaran:
 
 💳 *Rincian Pembayaran:*  
-🔹 *Nama Siswa:* {$value['nama']}  
+🔹 *Nama:* {$value['nama']}  
 🔹 *Kelas:* {$value['namaKelas']}  
 🔹 *Jumlah Dibayarkan:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "  
 🔹 *Total Tagihan:* Rp. " . number_format($value['tagihan'], 0, ',', '.') . "  
 🔹 *Sisa Pembayaran:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
 
-Mohon segera melunasi sebelum tanggal jatuh tempo pada {$value['jatuh_tempo']} demi kelancaran pembelajaran.
+Mohon segera melunasi pembayaran.
 
 📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di:  
 📞 https://wa.me/+6285655770506  
 
-Terima kasih atas perhatian dan kerjasamanya. 🙏😊  
+Pembayaran bisa transfer ke rekening berikut
 
-Salam hormat,  
-*Ruang Robot*  
-Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234  
+Mandiri
+a/n Julian Sahertian
+1710003410076  
+
+Terima kasih atas perhatian dan kerjasamanya. 🙏😊  
             ",
                 'countryCode' => '62',
                 'filename' => 'Tagihanku',

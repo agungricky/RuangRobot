@@ -6,6 +6,7 @@ use App\Http\Controllers\gajiController;
 use App\Http\Controllers\gajiPengajarController;
 use App\Http\Controllers\IndexPendaftaranController;
 use App\Http\Controllers\kategoriController;
+use App\Http\Controllers\KategoriPekerjaanController;
 use App\Http\Controllers\kelasController;
 use App\Http\Controllers\kelaspengajarController;
 use App\Http\Controllers\pembayaranController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\sekolahController;
 use App\Http\Controllers\siswaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
+use App\Models\kategori_pekerjaan;
 
 Route::view('/', 'index')->name('index');
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
@@ -58,6 +60,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/kategori_kelas/edit/{id}', [kategoriController::class, 'edit_kategorikelas'])->name('kategori_kelas.edit');
         Route::patch('/kategori_kelas/update/{id}', [kategoriController::class, 'update_kategorikelas'])->name('kategori_kelas.update');
         Route::delete('/kategori_kelas/delete/{id}', [kategoriController::class, 'destroy_kategoriKelas'])->name('kategori_kelas.delete');
+
+        // ========= Kategori Pekerjaan ========= //
+        Route::resource('/kategori_pekerjaan', KategoriPekerjaanController::class)->names('kategori_pekerjaan');
 
         // ========= Sekolah ========= //
         Route::get('/sekolah', [sekolahController::class, 'index'])->name('sekolah');
@@ -104,6 +109,41 @@ Route::middleware('auth')->group(function () {
         // ========= Generate Sertiv Custom ========= //
         Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
         Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+
+        // ========= Pengguna ========= //
+        Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
+        Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
+        Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
+        Route::get('/permintaan_mendaftar/{id}/json', [penggunaController::class, 'permintaan_mendaftar'])->name('permintaan_join.json');
+        Route::get('/kelas/diikuti/{id}', [penggunaController::class, 'kelas_diikuti'])->name('kelas.diikuti');
+        Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
+        Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
+        Route::get('/pengguna/edit/{id}/{role}', [penggunaController::class, 'edit'])->name('pengguna.edit');
+        Route::patch('/pengguna/update/{id}/{role}', [penggunaController::class, 'update'])->name('pengguna.update');
+        Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class, 'destroy'])->name('pengguna.delete');
+        Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
+
+
+        // ========= Gaji ========= //
+        Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
+        Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
+        Route::get('detail/gaji/{id}', [gajiController::class, 'show'])->name('gaji_detail');
+        Route::patch('/gaji_utama/verifikasi/{id}', [gajiController::class, 'gaji_utama'])->name('gaji.verifikasi');
+        Route::patch('/gaji_transport/verifikasi/{id}', [gajiController::class, 'gaji_transport'])->name('transport.verifikasi');
+        Route::patch('/gaji_custom/verifikasi/{id}', [gajiController::class, 'gaji_custom'])->name('custom.verifikasi');
+        Route::patch('/gaji_all/verifikasi/{id}', [gajiController::class, 'verif_all'])->name('verifikasi.all');
+        Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->name('gaji.terbayar');
+
+        // ========= Histori Gaji ========= //
+        Route::get('/histori/gaji', [gajiController::class, 'historigaji'])->name('histori_gaji');
+        Route::get('/detail/histori/{pengajar_id}/{tanggal_id}', [gajiController::class, 'detailhistori'])->name('detail_histori');
+
+
+        // ========= Pembayaran ========= //
+        Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
+        Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
+        Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
+        Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -119,66 +159,10 @@ Route::middleware('auth')->group(function () {
 
 
 
-// ========= Kelas ========= //
-// Route::get('/kelas/json/{id}', [kelasController::class, 'index'])->name('kelas.json');
 
 
-// ========= Pembelajaran ========= //
-
-
-
-
-
-
-
-// ========= Pengguna ========= //
-Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
-Route::patch('/pengguna/reset/{id}', [penggunaController::class, 'reset_password'])->name('pengguna.reset');
-Route::get('/data_pengguna/{id}/json', [penggunaController::class, 'pengguna'])->name('pengguna.json');
-Route::get('/permintaan_mendaftar/{id}/json', [penggunaController::class, 'permintaan_mendaftar'])->name('permintaan_join.json');
-Route::get('/kelas/diikuti/{id}', [penggunaController::class, 'kelas_diikuti'])->name('kelas.diikuti');
-Route::post('/pengguna/store', [penggunaController::class, 'store'])->name('pengguna.store');
-Route::get('/sekolah_form/json', [penggunaController::class, 'sekolah'])->name('sekolah_form.json');
-
-// Route::get('/sekolah/json', [penggunaController::class, 'sekolah'])->name('sekolah.json');
-Route::get('/pengguna/edit/{id}/{role}', [penggunaController::class, 'edit'])->name('pengguna.edit');
-Route::patch('/pengguna/update/{id}/{role}', [penggunaController::class, 'update'])->name('pengguna.update');
-Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class, 'destroy'])->name('pengguna.delete');
-
-Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
-// Route::get('/data_pengajar/json', [penggunaController::class, 'datapengajar'])->name('data_pengajar.json');
-
-// Route::get('/data_siswa', [penggunaController::class, 'datasiswa'])->name('siswa');
-// Route::get('/data_siswa/json', [penggunaController::class, 'datasiswa'])->name('siswa.json');
-
-
-// ========= Gaji ========= //
-Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
-Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
-Route::get('detail/gaji/{id}', [gajiController::class, 'show'])->name('gaji_detail');
-Route::patch('/gaji_utama/verifikasi/{id}', [gajiController::class, 'gaji_utama'])->name('gaji.verifikasi');
-Route::patch('/gaji_transport/verifikasi/{id}', [gajiController::class, 'gaji_transport'])->name('transport.verifikasi');
-Route::patch('/gaji_custom/verifikasi/{id}', [gajiController::class, 'gaji_custom'])->name('custom.verifikasi');
-Route::patch('/gaji_all/verifikasi/{id}', [gajiController::class, 'verif_all'])->name('verifikasi.all');
-Route::patch('/gaji/terbayar/{id}', [gajiController::class, 'gaji_terbayar'])->name('gaji.terbayar');
-
-// ========= Histori Gaji ========= //
-Route::get('/histori/gaji', [gajiController::class, 'historigaji'])->name('histori_gaji');
-Route::get('/detail/histori/{pengajar_id}/{tanggal_id}', [gajiController::class, 'detailhistori'])->name('detail_histori');
-
-
-// ========= Pembayaran ========= //
-Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
-Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
-Route::get('/pembayaran/detail/{id}', [pembayaranController::class, 'show'])->name('pembayaran.detail');
-Route::get('/pembayaran/murid/json/{id}', [pembayaranController::class, 'show'])->name('pembayaran_murid.json');
 Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
 Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
-
-
-//route edit
-// Route::get('/tipe_kelas/edit/{id}', [kategoriController::class, 'edit'])->name('edit');
-// Route::get('kuy/json/{id}', [pembelajaranController::class, 'kuy'])->name('kuy.json');
 
 
 // ====================================================================================== //

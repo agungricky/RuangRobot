@@ -52,11 +52,11 @@ class penggunaController extends Controller
         return response()->json($data, 200);
     }
 
-    public function sekolah()
-    {
-        $data = sekolah::all();
-        return response()->json($data);
-    }
+    // public function sekolah()
+    // {
+    //     $data = sekolah::all();
+    //     return response()->json($data);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -89,10 +89,11 @@ class penggunaController extends Controller
             'password' => 'required',
             'role' => 'required',
             'nama' => 'required',
+            'tgl_lahir' => 'required',
             'email' => 'required|email',
             'alamat' => 'required',
             'no_telp' => 'required|regex:/^\+62[0-9]+$/',
-            // 'sekolah_id' => 'nullable|exists:sekolah,id',
+            'sekolah_id' => 'nullable|exists:sekolah,id',
         ], $message);
 
         // Mulai transaksi
@@ -108,6 +109,8 @@ class penggunaController extends Controller
             pengguna::create([
                 'id' => $akun->id,
                 'nama' => $request->nama,
+                'tgl_lahir' => $request->tgl_lahir,
+                'kelas' => $request->kelas,
                 'email' => $request->email,
                 'alamat' => $request->alamat,
                 'no_telp' => $request->no_telp,

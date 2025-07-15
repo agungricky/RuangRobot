@@ -13,4 +13,12 @@ class gajiUtama extends Model
     {
         return $this->belongsTo(history_gaji::class, 'history_gaji_id');
     }
+
+    public function pengguna(){
+        return $this->belongsTo(pengguna::class, 'pengajar', 'id');
+    }
+
+    public function pembelajaran(){
+        return $this->belongsTo(pembelajaran::class, 'pembelajaran_id', 'id');
+    }
 }

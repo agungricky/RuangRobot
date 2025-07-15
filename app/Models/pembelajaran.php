@@ -28,4 +28,12 @@ class pembelajaran extends Model
     public function pengajar(){
         return $this->belongsTo(pengguna::class, 'pengajar' , 'id');
     }
+
+    public function gaji_utama(){
+        return $this->hasMany(gajiUtama::class, 'pembelajaran_id', 'id');
+    }
+
+    public function gaji_transport(){
+        return $this->hasMany(gajiTransport::class, 'pembelajaran_id', 'id');
+    }
 }

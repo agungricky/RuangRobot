@@ -78,27 +78,22 @@ class gajiController extends Controller
     public function show(string $id)
     {
         $data = pengguna::where('id', $id)->first();
-        $gaji = gajiUtama::where('gajis.pengajar', $id)
+        $gaji = gajiUtama::with('pengguna', 'pembelajaran.kelas')
+            ->where('gajis.pengajar', $id)
             ->where('gajis.status', '!=', 'dibayar')
-            ->join('profile', 'profile.id', 'gajis.pengajar')
-            ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'pembelajaran.tanggal', 'kelas.nama_kelas')
             ->get();
 
-        $transport = gajiTransport::where('transport.pengajar', $id)
+        $transport = gajiTransport::with('pengguna', 'pembelajaran.kelas')
+            ->where('transport.pengajar', $id)
             ->where('transport.status', '!=', 'dibayar')
-            ->join('profile', 'profile.id', 'transport.pengajar')
-            ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'pembelajaran.tanggal', 'kelas.nama_kelas')
             ->get();
 
-        $custom = gajiCustom::where('gaji_custom.pengajar', $id)
+        $custom = gajiCustom::with('pengguna')
+            ->where('gaji_custom.pengajar', $id)
             ->where('gaji_custom.status', '!=', 'dibayar')
-            ->join('profile', 'profile.id', 'gaji_custom.pengajar')
-            ->select('gaji_custom.*', 'profile.nama')
             ->get();
+
+        // dd($custom->toArray());
 
         // ================================================== //
         // ================== Gaji Diterima ================= //
@@ -143,7 +138,6 @@ class gajiController extends Controller
             'gaji_custom' => $custom_ditolak,
             'total' => $gaji_ditolak + $transport_ditolak + $custom_ditolak
         ];
-        // dd($gaji_pengajar);
         return view('pages.gaji.detail_gaji', compact('data', 'gaji', 'transport', 'custom', 'gaji_pengajar', 'gaji_ditolak'));
     }
 
@@ -241,14 +235,14 @@ class gajiController extends Controller
     public function verif_all($id)
     {
         $gaji = gajiUtama::where('status', 'pending')
-        ->where('pengajar', $id)
-        ->get();
+            ->where('pengajar', $id)
+            ->get();
         $transport = gajiTransport::where('status', 'pending')
-        ->where('pengajar', $id)
-        ->get();
+            ->where('pengajar', $id)
+            ->get();
         $custom = gajiCustom::where('status', 'pending')
-        ->where('pengajar', $id)
-        ->get();
+            ->where('pengajar', $id)
+            ->get();
 
         foreach ($gaji as $item) {
             $item->update(['status' => 'diverifikasi']);
@@ -285,48 +279,39 @@ class gajiController extends Controller
 
     public function detailhistori(String $pengajar_id, $tanggal_id)
     {
-        $gaji = gajiUtama::join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
-            ->join('profile', 'profile.id', 'gajis.pengajar')
-            ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->where('gajis.pengajar', $pengajar_id)
-            ->where('gajis.history_gaji_id', $tanggal_id)
-            ->select('gajis.pengajar', 'gajis.nominal', 'pembelajaran.pertemuan', 'gajis.status_pengajar', 'history_gaji.tanggal_terbayar', 'profile.nama', 'kelas.nama_kelas')
+        $gaji = gajiUtama::with('history_gaji', 'pengguna', 'pembelajaran.kelas')
+            ->where('pengajar', $pengajar_id)
+            ->where('history_gaji_id', $tanggal_id)
             ->get();
 
-        $transport = gajiTransport::join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
-            ->join('profile', 'profile.id', 'transport.pengajar')
-            ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->where('transport.pengajar', $pengajar_id)
-            ->where('transport.history_gaji_id', $tanggal_id)
-            ->select('transport.pengajar', 'transport.nominal', 'pembelajaran.pertemuan', 'transport.status_pengajar', 'history_gaji.tanggal_terbayar', 'profile.nama', 'kelas.nama_kelas')
+        $transport = gajiTransport::with('history_gaji', 'pengguna', 'pembelajaran.kelas')
+            ->where('pengajar', $pengajar_id)
+            ->where('history_gaji_id', $tanggal_id)
             ->get();
 
-        $custom = gajiCustom::join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
-            ->join('profile', 'profile.id', 'gaji_custom.pengajar')
-            ->select('history_gaji.tanggal_terbayar', 'gaji_custom.keterangan', 'gaji_custom.nominal', 'gaji_custom.tanggal', 'profile.nama')
+        $custom = gajiCustom::with('history_gaji', 'pengguna')
+            ->where('pengajar', $pengajar_id)
             ->get();
 
         // ================================================== //
         // ================== Gaji Diterima ================= //
         // ================================================== //
-        $total_gaji = gajiUtama::where('pengajar', $pengajar_id)
+        $total_gaji = gajiUtama::with('history_gaji')
+            ->where('pengajar', $pengajar_id)
             ->where('gajis.history_gaji_id', $tanggal_id)
             ->where('gajis.status', 'dibayar')
-            ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
             ->sum('nominal');
 
-        $total_gajitransport = gajiTransport::where('pengajar',  $pengajar_id)
+        $total_gajitransport = gajiTransport::with('history_gaji')
+            ->where('pengajar',  $pengajar_id)
             ->where('transport.history_gaji_id', $tanggal_id)
             ->where('transport.status', 'dibayar')
-            ->join('history_gaji', 'history_gaji.id', 'transport.history_gaji_id')
             ->sum('nominal');
 
-        $total_gajicustom = gajiCustom::where('pengajar', $pengajar_id)
+        $total_gajicustom = gajiCustom::with('history_gaji')
+            ->where('pengajar', $pengajar_id)
             ->where('gaji_custom.history_gaji_id', $tanggal_id)
             ->where('gaji_custom.status', 'dibayar')
-            ->join('history_gaji', 'history_gaji.id', 'gaji_custom.history_gaji_id')
             ->sum('nominal');
 
         $gaji_pengajar = [
@@ -339,11 +324,11 @@ class gajiController extends Controller
         // ================================================== //
         // ================== Gaji Ditolak ================= //
         // ================================================== //
-        $total_gaji_ditolak = gajiUtama::where('pengajar', $pengajar_id)
+        $total_gaji_ditolak = gajiUtama::with('history_gaji')
+            ->where('pengajar', $pengajar_id)
             ->where('gajis.history_gaji_id', $tanggal_id)
             ->where('gajis.status', 'ditolak')
             ->orWhere('gajis.status', 'pending')
-            ->join('history_gaji', 'history_gaji.id', 'gajis.history_gaji_id')
             ->sum('nominal');
 
         $total_gajitransport_ditolak = gajiTransport::where('pengajar',  $pengajar_id)
@@ -367,7 +352,6 @@ class gajiController extends Controller
             'total' => $total_gaji_ditolak + $total_gajitransport_ditolak + $total_gajicustom_ditolak
         ];
 
-        // dd($total_gajicustom);
         return view('pages.gaji.detail_histori', compact('gaji', 'transport', 'custom', 'gaji_pengajar', 'gaji_ditolak'));
     }
 }

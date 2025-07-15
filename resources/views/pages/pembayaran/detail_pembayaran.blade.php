@@ -9,20 +9,59 @@
         <section class="section">
             <x-title_halaman title="Pembayaran Kelas" />
 
+            @php
+                $hex = $data->kategori->color_bg;
+                $r = hexdec(substr($hex, 1, 2));
+                $g = hexdec(substr($hex, 3, 2));
+                $b = hexdec(substr($hex, 5, 2));
+                $bb = hexdec(substr($hex, 9, 5));
+                $rgba = "rgba($r, $g, $b, 1)";
+                $rgbb = "rgba($r, $g, $bb, 0.4)";
+            @endphp
+
             <div class="section-body">
                 {{-- Informasi Kelas --}}
                 <div class="row">
                     <div class="col-md-12">
+
                         <div class="hero text-white hero-bg-image"
-                            style="background-image: url({{ asset('img_videogaming.jpg') }}); padding:35px;">
-                            <div class="hero-inner">
+                            style="background-image: url({{ asset('img_videogaming1.png') }});
+                                    background-color: {{ $rgba }};
+                                    /* background-blend-mode: overlay; */
+                                    padding:35px";>
+                            <div class="hero-inner d-flex flex-column gap-1">
                                 <h5>{{ $data->nama_kelas }}</h5>
-                                <span class="badge badge-danger">{{ $data->kategori_kelas }}</span>
-                                <span
-                                    class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-warning' : 'badge-success' }}">{{ $data->status_kelas }}</span>
-                                <p class="lead">{{ $data->nama_program }}</p>
+                                <div class="d-flex gap-2">
+                                    <span class="ml-2 badge"
+                                        style="
+                                        background-color: blue;
+                                        background-blend-mode: overlay;
+                                        ">{{ $data->program_belajar->nama_program }}</span>
+                                    <span
+                                        style="
+                                        background-color: red;
+                                        color: white;
+                                        padding: 1px 15px;
+                                        border-radius: 999px;
+                                        display: inline-block;
+                                    ">
+                                        {{ $data->kategori->kategori_kelas }}
+                                    </span>
+
+                                    @php
+                                        $aktif = 'Aktif';
+                                        $selesai = 'Selesai';
+                                    @endphp
+                                    <span
+                                        class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-success' : 'badge-secondary-dark' }}">{{ $data->status_kelas == 'aktif' ? $aktif : $selesai }}</span>
+                                </div>
+
+                                <p class="lead d-none d-sm-none d-md-block mt-3"
+                                    style="width: 55%; text-align: justify; line-height: 1.5;">
+                                    {!! $data->program_belajar->deskripsi !!}</p>
                             </div>
                         </div>
+
                         <div class="card">
                             <div class="card-body">
 
@@ -40,7 +79,7 @@
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-user"></i> Penanggung Jawab Kelas </b>
-                                                <div class="profile-desc-item pull-right">{{ $data->penanggung_jawab }}
+                                                <div class="profile-desc-item pull-right">{{ $data->pengajar->nama }}
                                                 </div>
                                             </li>
                                         </ul>
@@ -190,7 +229,7 @@
                     },
                     {
                         data: 'nama',
-                        className: 'text-start', 
+                        className: 'text-start',
                         render: function(data, type, row) {
                             return `
                                 <a href="#" class="text-primary fw-bold" 

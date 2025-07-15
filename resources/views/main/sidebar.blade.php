@@ -35,16 +35,16 @@
                 <!-- Dropdown Menu -->
                 <li>
                     <a href="#kategori_menu"
-                        class="nav-link d-flex align-items-center {{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? '' : 'collapsed' }}"
+                        class="nav-link d-flex align-items-center {{ request()->routeIs('tipe_kelas', 'kategori_kelas', 'kategori_pekerjaan') ? '' : 'collapsed' }}"
                         data-bs-toggle="collapse"
-                        aria-expanded="{{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('tipe_kelas', 'kategori_kelas', 'kategori_pekerjaan') ? 'true' : 'false' }}"
                         aria-controls="kategori_menu">
                         <i class="fa-solid fa-list me-2"></i>
                         <span class="flex-grow-1 ps-3">Kategori</span>
                         <i class="fa-solid fa-chevron-down small"></i>
                     </a>
 
-                    <div class="collapse ps-4 {{ request()->routeIs('tipe_kelas', 'kategori_kelas') ? 'show' : '' }}"
+                    <div class="collapse ps-4 {{ request()->routeIs('tipe_kelas', 'kategori_kelas', 'kategori_pekerjaan*') ? 'show' : '' }}"
                         id="kategori_menu">
                         <ul class="list-unstyled">
                             <li>
@@ -59,6 +59,13 @@
                                     <i class="fa-solid fa-minus me-2"></i> Kategori Kelas
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('kategori_pekerjaan.index') }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('kategori_pekerjaan.index') ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-minus me-2"></i> Kategori Pekerjaan
+                                </a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>
@@ -136,23 +143,38 @@
 
                 <!-- menu header -->
                 <li class="menu-header">Keuangan</li>
+                @php
+                    $gajiAktif = request()->routeIs('gaji', 'histori_gaji');
+                @endphp
+
                 <li>
-                    <a href="#gaji-riwayat" class="nav-link" data-bs-toggle="collapse">
-                        <i class="fa-solid fa-money-bill-wave"></i> <span>Gaji & Riwayat</span>
+                    <a href="#gaji-riwayat"
+                        class="nav-link d-flex align-items-center {{ $gajiAktif ? '' : 'collapsed' }}"
+                        data-bs-toggle="collapse" aria-expanded="{{ $gajiAktif ? 'true' : 'false' }}"
+                        aria-controls="gaji-riwayat">
+                        <i class="fa-solid fa-money-bill-wave me-2"></i>
+                        <span class="flex-grow-1 ps-3">Gaji & Riwayat</span>
+                        <i class="fa-solid fa-chevron-down small"></i>
                     </a>
-                    <div class="collapse ps-4" id="gaji-riwayat">
+
+                    <div class="collapse ps-4 {{ $gajiAktif ? 'show' : '' }}" id="gaji-riwayat">
                         <ul class="list-unstyled">
                             <li>
-                                <a href="{{ route('gaji') }}" class="nav-link">
-                                    <i class="fa-solid fa-wallet"></i> Gaji</a>
+                                <a href="{{ route('gaji') }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('gaji') ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-wallet me-2"></i> Gaji
+                                </a>
                             </li>
                             <li>
-                                <a href="{{ route('histori_gaji') }}" class="nav-link">
-                                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Gaji</a>
+                                <a href="{{ route('histori_gaji') }}"
+                                    class="nav-link d-flex align-items-center {{ request()->routeIs('histori_gaji') ? 'active fw-bold text-primary' : '' }}">
+                                    <i class="fa-solid fa-clock-rotate-left me-2"></i> Riwayat Gaji
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
 
                 <!-- menu header -->
                 <li class="menu-header">Pembayaran</li>
