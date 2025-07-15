@@ -21,7 +21,7 @@ class pendaftaranController extends Controller
      */
     public function index(Request $request)
     {
-        $data = indexPendaftaran::with('kategori')->get();
+        $data = indexPendaftaran::with('kategori')->orderBy('id', 'desc')->get();
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
@@ -33,6 +33,14 @@ class pendaftaranController extends Controller
     public function search_siswa($id)
     {
         $data = akun::with('pengguna')->where('id', $id)->first();
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function search_kelas()
+    {
+        $data = kelas::all();
         return response()->json([
             'data' => $data
         ]);
@@ -111,14 +119,26 @@ class pendaftaranController extends Controller
         //
     }
 
-    public function acc_pendaftaran(Request $request, $idKelas)
+    public function acc_pendaftaran(Request $request)
     {
-        $request->validate([
-            'username' => 'required',
+        $validated = $request->validate([
+            'username'      => 'required|string|max:100|unique:akun,username,' . $request->id,
+            'password'      => 'required|string|min:6',
+            'role'          => 'required|in:Siswa',
+            'sekolah_id'    => 'required|exists:sekolah,id',
+            'nama'          => 'required|string|max:150',
+            'kelas'         => 'required|string|max:50',
+            'email'         => 'required|email|max:150',
+            'alamat'        => 'required|string|max:255',
+            'no_telp'       => 'required|string|max:20',
+            'mekanik'       => 'required|in:0,1,2,3',
+            'elektronik'    => 'required|in:0,1,2,3',
+            'pemrograman'   => 'required|in:0,1,2,3',
+            'kelas_id'      => 'required|exists:kelas,id',
         ]);
 
         $sekolah = sekolah::where('id', $request->sekolah_id)->first();
-        $kelas = kelas::where('id', $idKelas)->first();
+        $kelas = kelas::where('id', $validated['kelas_id'])->first();
 
         // ================= Pembuatan Akun ================= //
         $akun = akun::create([
@@ -161,12 +181,12 @@ class pendaftaranController extends Controller
 
 
         // ================= Masukkan siswa ke kelas ================= //
-        $datamurid_kelas = muridKelas::where('kelas_id', $idKelas)->first();
+        $datamurid_kelas = muridKelas::where('kelas_id', $kelas->id)->first();
 
         if ($datamurid_kelas == null) {
             $datamurid_kelas = muridKelas::create([
                 'murid' => json_encode([]),
-                'kelas_id' => $idKelas,
+                'kelas_id' => $kelas->id,
             ]);
         }
 
@@ -195,7 +215,7 @@ class pendaftaranController extends Controller
         // ================= Pembuatan Invoice ================= //
         invoice::create([
             'profile_id' => $profile->id,
-            'kelas_id' => $idKelas,
+            'kelas_id' => $kelas->id,
         ]);
 
         // ================= Menghapus Pendaftaran ================= //

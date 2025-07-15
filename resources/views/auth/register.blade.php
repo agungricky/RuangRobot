@@ -136,7 +136,8 @@
             <!-- Kanan -->
             <div class="col-lg-8 p-2 p-md-4 pt-md-5">
                 @if ($indexPendaftaran->status_pendaftaran == 'open')
-                    <h3 class="fw-semibold mb-4 text-center text-secondary d-none d-md-block">{{$indexPendaftaran->title}}</h3>
+                    <h3 class="fw-semibold mb-4 text-center text-secondary d-none d-md-block">
+                        {{ $indexPendaftaran->title }}</h3>
 
                     <form action="{{ route('register.post') }}" id="pengguna_form" method="POST" class="mx-2">
                         @csrf
@@ -150,6 +151,17 @@
                                 @if ($errors->has('nama'))
                                     <span class="error text-danger mb-2">
                                         {{ $errors->first('nama') }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
+                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir"
+                                    placeholder="Masukkan Tanggal Lahir" value="{{ old('tgl_lahir') }}">
+                                @if ($errors->has('tgl_lahir'))
+                                    <span class="error text-danger mb-2">
+                                        {{ $errors->first('tgl_lahir') }}
                                     </span>
                                 @endif
                             </div>
@@ -177,39 +189,29 @@
                                 @endif
                             </div>
 
-                            <div class="col-12 col-md-6">
-                                <label for="sekolah_id" class="form-label">Pilih Sekolah</label>
-                                <select class="form-control select2" id="sekolah_id" name="sekolah_id"
-                                    data-placeholder="-- Pilih Sekolah --">
-                                </select>
-                                @if ($errors->has('sekolah_id'))
-                                    <span class="error text-danger mb-2">
-                                        {{ $errors->first('sekolah_id') }}
-                                    </span>
-                                @endif
-                            </div>
-
-                            @if ($ktg != 'Ekskul' && $ktg != 'Eskul' && $ktg != 'Eskull')
-                                <div class="col-12">
-                                    <label for="alamat" class="form-label">Alamat</label>
-                                    <input type="text" class="form-control" id="alamat" name="alamat"
-                                        placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
-                                    @if ($errors->has('alamat'))
+                            {{-- @if ($ktg != 'Ekskul' && $ktg != 'Eskul' && $ktg != 'Eskull')
+                                <div class="col-12 col-md-12">
+                                    <label for="sekolah_id" class="form-label">Pilih Sekolah</label>
+                                    <select class="form-control select2" id="sekolah_id" name="sekolah_id"
+                                        data-placeholder="-- Pilih Sekolah --">
+                                    </select>
+                                    @if ($errors->has('sekolah_id'))
                                         <span class="error text-danger mb-2">
-                                            {{ $errors->first('alamat') }}
+                                            {{ $errors->first('sekolah_id') }}
                                         </span>
                                     @endif
                                 </div>
-                            @endif
+                            @endif --}}
 
-                            @if ($ktg == 'Ekskul' || $ktg == 'Eskul' || $ktg == 'Eskull')
+                            {{-- @if ($ktg == 'Ekskul' || $ktg == 'Eskul' || $ktg == 'Eskull') --}}
                                 <div class="col-12 col-md-6">
-                                    <label for="alamat" class="form-label">Alamat</label>
-                                    <input type="text" class="form-control" id="alamat" name="alamat"
-                                        placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
-                                    @if ($errors->has('alamat'))
+                                    <label for="sekolah_id" class="form-label">Pilih Sekolah</label>
+                                    <select class="form-control select2" id="sekolah_id" name="sekolah_id"
+                                        data-placeholder="-- Pilih Sekolah --">
+                                    </select>
+                                    @if ($errors->has('sekolah_id'))
                                         <span class="error text-danger mb-2">
-                                            {{ $errors->first('alamat') }}
+                                            {{ $errors->first('sekolah_id') }}
                                         </span>
                                     @endif
                                 </div>
@@ -217,14 +219,25 @@
                                 <div class="col-12 col-md-6">
                                     <label for="nama" class="form-label">Kelas</label>
                                     <input type="text" class="form-control" id="kelas" name="kelas"
-                                        placeholder="Masukkan Kelas" value="{{ old('kelas') }}">
+                                        placeholder="Masukkan Kelas : 7C / 8A " value="{{ old('kelas') }}">
                                     @if ($errors->has('kelas'))
                                         <span class="error text-danger mb-2">
                                             {{ $errors->first('kelas') }}
                                         </span>
                                     @endif
                                 </div>
-                            @endif
+                            {{-- @endif --}}
+
+                            <div class="col-12">
+                                <label for="alamat" class="form-label">Alamat</label>
+                                <input type="text" class="form-control" id="alamat" name="alamat"
+                                    placeholder="Masukkan alamat tinggal" value="{{ old('alamat') }}">
+                                @if ($errors->has('alamat'))
+                                    <span class="error text-danger mb-2">
+                                        {{ $errors->first('alamat') }}
+                                    </span>
+                                @endif
+                            </div>
 
                             <input type="hidden" name="kategori" value="{{ $ktg }}">
 

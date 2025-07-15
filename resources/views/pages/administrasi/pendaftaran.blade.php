@@ -27,7 +27,6 @@
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>
                                                 <th style="width: 50%;">Judul Form</th>
-                                                <th style="width: 10%;" class="text-start">Kelas</th>
                                                 <th style="width: 15%;" class="text-center">Kategori</th>
                                                 <th style="width: 10%;">Wa</th>
                                                 <th style="width: 10%;">Form</th>
@@ -69,18 +68,19 @@
                         }
                     },
                     {
-                        data: 'kelas_id',
-                        render: function(data, type, row) {
-                            return `
-                            <div class="text-center fw-bold text-tabel">
-                                <a href="{{ url('/kelas/detail/${data}') }}"><i class="fas fa-up-right-from-square"></i></a>
-                            </div>`;
-                        }
-                    },
-                    {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center">${data.kategori.kategori_kelas}</div>`;
+                            return `
+                            <div class="d-flex justify-content-center">
+                                <div class="badge text-white" style="
+                                    background-color: ${data.kategori.color_bg};
+                                    border-radius: 999px;
+                                    padding: 6px 12px;
+                                    font-size: 12px;
+                                ">
+                                    ${data.kategori.kategori_kelas}
+                                </div>
+                            </div>`
                         }
                     },
                     {
@@ -119,7 +119,6 @@
                             `;
                         }
                     },
-
                     {
                         data: 'status_pendaftaran',
                         render: function(data, type, row) {

@@ -77,7 +77,7 @@
 
                                 <p class="lead d-none d-sm-none d-md-block mt-3"
                                     style="width: 55%; text-align: justify; line-height: 1.5;">
-                                    {{ $data->program_belajar->deskripsi }}</p>
+                                    {!! $data->program_belajar->deskripsi !!}</p>
                             </div>
                         </div>
                         <div class="card">
@@ -475,7 +475,7 @@
                     {
                         data: 'sekolah',
                         render: function(data, type, row) {
-                            return `<div class="text-body-secondary text-start">${data}</div>`;
+                            return `<div class="text-body-secondary text-center">${data}</div>`;
                         }
                     },
                     {
@@ -493,7 +493,14 @@
                                         </div>
                                     `;
                             } else {
-                                return `<div class="text-center">Belum ada pembelajaran</div>`;
+                                return `
+                                 <div class="text-center">
+                                            <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;">0%</span>
+                                        </div>
+                                `;
                             }
                         }
                     },
@@ -505,7 +512,7 @@
                                         <div class="text-center bg-info text-light py-1" 
                                            style="border-radius: 8px; font-size: 12px;">Belum di Nilai
                                          </div>`;
-                            } else if (data === 'Gagal') {
+                            } else if ((data === 'Gagal') || (data === null)) {
                                 return `
                                         <div class="text-center bg-danger text-white py-1" 
                                             style="border-radius: 8px; font-size: 14px;">${data}
@@ -796,45 +803,46 @@
             });
 
             $('#info_pengguna').on('click', function() {
-                $.ajax({
-                    type: "GET",
-                    url: "/juancok/{{ $data->id }}",
-                    dataType: "json",
-                    success: function (response) {
-                        console.log(response);
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Apakah Anda yakin akan mengirim informasi akun ke semua siswa yang ada di kelas?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Kirim',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33'
+                }).then((result) => {
+                    if (result.value == true) {
+                        let btn = $('#info_pengguna');
+                        let originalText = btn.html();
+
+                        // Ganti tombol jadi loading
+                        btn.prop('disabled', true).html(
+                            '<i class="fas fa-spinner fa-spin"></i> Mengirim...');
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/infoKePengguna/{{ $data->id }}",
+                            dataType: "json",
+                            success: function(response) {
+                                Swal.fire('Terkirim!', 'Informasi berhasil dikirim.',
+                                    'success');
+                            },
+                            error: function(xhr) {
+                                Swal.fire('Gagal!',
+                                    'Terjadi kesalahan saat mengirim data.', 'error'
+                                    );
+                            },
+                            complete: function() {
+                                // Kembalikan tombol ke semula
+                                btn.prop('disabled', false).html(originalText);
+                            }
+                        });
                     }
                 });
-
-                // Swal.fire({
-                //     title: 'Konfirmasi',
-                //     text: 'Apakah Anda yakin akan mengirim informasi akun ke semua siswa yang ada di kelas?',
-                //     icon: 'question',
-                //     showCancelButton: true,
-                //     confirmButtonText: 'Ya, Kirim',
-                //     cancelButtonText: 'Batal',
-                //     confirmButtonColor: '#3085d6',
-                //     cancelButtonColor: '#d33'
-                // }).then((result) => {
-                //     if (result.value == true) {
-                //         $.ajax({
-                //             type: "GET",
-                //             url: "/info/akun/" + id,
-                //             dataType: "json",
-                //             success: function(response) {
-                //                 console.log(response.data);
-                //                 Swal.fire('Terkirim!', 'Informasi berhasil dikirim.',
-                //                     'success');
-                //             },
-                //             error: function(xhr) {
-                //                 console.error(xhr.responseText);
-                //                 Swal.fire('Gagal!',
-                //                     'Terjadi kesalahan saat mengirim data.', 'error'
-                //                 );
-                //             }
-                //         });
-                //     }
-                // });
             });
+
 
 
         });

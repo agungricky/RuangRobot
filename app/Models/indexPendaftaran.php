@@ -11,7 +11,6 @@ class indexPendaftaran extends Model
     protected $fillable = [
         'id',
         'title',
-        'kelas_id',
         'kategori_id',
         'code',
         'link_form',
@@ -31,7 +30,4 @@ class indexPendaftaran extends Model
         return $this->hasMany(pendaftaran::class, 'code_id', 'code');
     }
 
-    public function kelas(){
-        return $this->belongsTo(kelas::class, 'kelas_id', 'id');
-    }
 }

@@ -31,7 +31,7 @@ class akunAdminSeeder extends Seeder
                 'elektronik' => 0,
                 'pemrograman' => 0,
                 'sekolah_id' => null,
-                'status_verifikasi' => 'yes'
+                'kelas' => null
         ]);
     }
 }

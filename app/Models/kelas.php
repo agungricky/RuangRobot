@@ -23,12 +23,7 @@ class kelas extends Model
         'created_at',
         'updated_at'
     ];
-
-    public function indexPendaftaran()
-    {
-        return $this->hasMany(indexPendaftaran::class, 'kelas_id', 'id');
-    }
-
+    
     public function kategori(){
         return $this->belongsTo(Kategori::class, 'kategori_kelas_id', 'id');
     }

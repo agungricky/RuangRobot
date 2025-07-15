@@ -60,7 +60,16 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return `<div class="text-center">${data.kategori.kategori_kelas}</div>`;
+                            return `<div class="d-flex justify-content-center">
+                                <div class="badge text-white" style="
+                                    background-color: ${data.kategori.color_bg};
+                                    border-radius: 999px;
+                                    padding: 6px 12px;
+                                    font-size: 12px;
+                                ">
+                                    ${data.kategori.kategori_kelas}
+                                </div>
+                            </div>`;
                         }
                     },
                     {
@@ -73,7 +82,7 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
-                           <div class="d-flex gap-1">
+                           <div class="d-flex justify-content-center gap-1">
                                 <a href="{{url('/validasi/${data.id}')}}" class="btn btn-success btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>

@@ -106,7 +106,7 @@
                     {
                         data: 'guru',
                         render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-tabel">${data}</>`;
+                            return `<div class="text-center fw-bold text-tabel">${data}</>`;
                         }
                     },
                     {

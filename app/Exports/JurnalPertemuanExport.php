@@ -46,7 +46,7 @@ class JurnalPertemuanExport implements FromArray, WithEvents, WithTitle
         foreach ($this->kelas->pembelajaran as $i => $pertemuan) {
             $data[] = [
                 $i + 1,                         // Kolom A
-                \Carbon\Carbon::parse($pertemuan['tanggal'])->translatedFormat('l, d F Y'), // Kolom B
+                $pertemuan['tanggal'] ? \Carbon\Carbon::parse($pertemuan['tanggal'])->translatedFormat('l, d F Y') : '', // Kolom B
                 $this->kelas->durasi_belajar,                               // Kolom C
                 $pertemuan['materi'],                            // Kolom D
                 '',                                              // Kolom E (Tanda tangan)

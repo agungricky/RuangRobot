@@ -78,10 +78,51 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
         }
     }
 
-    public function joh($id){
-        // $murid_kelas = muridKelas::where('kelas_id', $id)->first();
-        $murid_kelas = "Ricky Agung S";
-        response()->json(['data' => $murid_kelas]);
+    public function info_kepengguna($id)
+    {
+        $murid_kelas = muridKelas::where('kelas_id', $id)->first();
+
+        $data_siswa = $murid_kelas->murid;
+        $data_siswa = json_decode($data_siswa, true);
+
+        foreach ($data_siswa as $item) {
+            $data = pengguna::with('akun')->find($item['id']);
+            $username = $data->akun ? $data->akun->username : '-';
+
+            $response = Http::withHeaders([
+                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $data->no_telp,
+                'message' => "
+Halo 👋 $data->nama,
+Selamat sudah bergabung dengan Robot!
+    
+Anda sudah terdaftar dan bisa mengakses sistem ruangrobot.id dengan akun sebagai berikut:
+
+▶ username : $username
+▶ password : ruangrobot
+
+Jika ada pertanyaaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+📞 https://wa.me/+6285655770506
+    
+Kami siap membantu Anda! 😊
+Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+    
+Salam hangat,
+Ruang Robot,
+Perum Mojoroto Indah T-24, Kota Kediri
+https://maps.app.goo.gl/A7DbNKCXWmBGcTtm6",
+            ]);
+
+            // Simpan response untuk debug jika diperlukan
+            $responses[] = $response->body();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diambil.',
+            'data' => $data_siswa
+        ]);
     }
 
     /**
@@ -258,70 +299,70 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
                 'kelas_id' => $id, // ID kelas dari URL
             ]);
 
-//             $data = pengguna::where('profile.id', $siswa['id'])
-//                 ->join('akun', 'akun.id', 'profile.id')
-//                 ->first();
+            //             $data = pengguna::where('profile.id', $siswa['id'])
+            //                 ->join('akun', 'akun.id', 'profile.id')
+            //                 ->first();
 
-//             $pembelajaran = kelas::where('kelas.id', $id)->first();
+            //             $pembelajaran = kelas::where('kelas.id', $id)->first();
 
-//             $muridkelas = muridKelas::where('kelas_id', $id)->first();
-//             $murid = json_decode($muridkelas->murid, true);
-//             $datasiswa = null;
-//             foreach ($murid as $key => $value) {
-//                 if ($value['id'] == $siswa['id']) {
-//                     $datasiswa = $value;
-//                     break;
-//                 }
-//             }
+            //             $muridkelas = muridKelas::where('kelas_id', $id)->first();
+            //             $murid = json_decode($muridkelas->murid, true);
+            //             $datasiswa = null;
+            //             foreach ($murid as $key => $value) {
+            //                 if ($value['id'] == $siswa['id']) {
+            //                     $datasiswa = $value;
+            //                     break;
+            //                 }
+            //             }
 
-//             Carbon::setLocale('id'); // Pastikan bahasa Indonesia digunakan
-//             $tanggalJatuhTempo = Carbon::parse($pembelajaran->jatuh_tempo)->translatedFormat('l, d-m-Y');
+            //             Carbon::setLocale('id'); // Pastikan bahasa Indonesia digunakan
+            //             $tanggalJatuhTempo = Carbon::parse($pembelajaran->jatuh_tempo)->translatedFormat('l, d-m-Y');
 
-//             $response = Http::withHeaders([
-//                 'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
-//             ])->post('https://api.fonnte.com/send', [
-//                 'target' => $data->no_telp,
-//                 'message' => "
-// *💡 #Invoice Tagihan Pembayaran 📚*
-    
-// Halo 👋 $data->nama,
-// Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
-    
-// Pembelajaran : *$pembelajaran->nama_kelas*
-// Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
-// Tanggal Jatuh Tempo: $tanggalJatuhTempo
-// Nomor Tagihan: " . $datasiswa['no_invoice'] . "
-// Total Terbayar: Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
-    
-// Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
-// Bank: BCA (Bank Central Asia)
-// Nomor Rekening: 9203123456
-// Atas Nama: Julian Sahertian
-                                
-// Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
-// 📞 https://wa.me/+6285655770506
-    
-// Untuk pemantauan pembelajaran dapat dilihat di:
-// 🌐 ruangrobot.id
-// ▶ username : $data->username
-// ▶ password : ruangrobot
-                                
-// Kami siap membantu Anda! 😊
-// Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
-                                
-// Salam hangat,
-// *Ruang Robot*,
-// Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
-//                 'countryCode' => '62',
-//                 'filename' => 'Tagihanku',
-//                 'schedule' => 0,
-//                 'typing' => false,
-//                 'delay' => '0',
-//                 'followup' => 0,
-//             ]);
+            //             $response = Http::withHeaders([
+            //                 'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            //             ])->post('https://api.fonnte.com/send', [
+            //                 'target' => $data->no_telp,
+            //                 'message' => "
+            // *💡 #Invoice Tagihan Pembayaran 📚*
 
-//             // Simpan response untuk debug jika diperlukan
-//             $responses[] = $response->body();
+            // Halo 👋 $data->nama,
+            // Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
+
+            // Pembelajaran : *$pembelajaran->nama_kelas*
+            // Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
+            // Tanggal Jatuh Tempo: $tanggalJatuhTempo
+            // Nomor Tagihan: " . $datasiswa['no_invoice'] . "
+            // Total Terbayar: Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+
+            // Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
+            // Bank: BCA (Bank Central Asia)
+            // Nomor Rekening: 9203123456
+            // Atas Nama: Julian Sahertian
+
+            // Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+            // 📞 https://wa.me/+6285655770506
+
+            // Untuk pemantauan pembelajaran dapat dilihat di:
+            // 🌐 ruangrobot.id
+            // ▶ username : $data->username
+            // ▶ password : ruangrobot
+
+            // Kami siap membantu Anda! 😊
+            // Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+
+            // Salam hangat,
+            // *Ruang Robot*,
+            // Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
+            //                 'countryCode' => '62',
+            //                 'filename' => 'Tagihanku',
+            //                 'schedule' => 0,
+            //                 'typing' => false,
+            //                 'delay' => '0',
+            //                 'followup' => 0,
+            //             ]);
+
+            //             // Simpan response untuk debug jika diperlukan
+            //             $responses[] = $response->body();
         }
 
         // Kembalikan response untuk semua siswa

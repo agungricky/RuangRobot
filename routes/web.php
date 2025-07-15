@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
 
         // ========= Validasi Pendaftaran ========= //
         Route::resource('/validasi', pendaftaranController::class)->names('validasi');
-        Route::post('/validasi/acc/{idKelas}', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
+        Route::get('/search-kelas', [pendaftaranController::class, 'search_kelas'])->name('search_kelas');
+        Route::post('/validasi/acc', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
         Route::get('/siswa/{id}/json', [pendaftaranController::class, 'search_siswa'])->name('search_siswa');
         Route::post('/validasi/masukkls/{idKelas}', [pendaftaranController::class, 'masuk_kelasAcc'])->name('validasi.Masuk_kelasAcc');
 
@@ -66,6 +67,14 @@ Route::middleware('auth')->group(function () {
         Route::patch('/sekolah/update/{id}', [sekolahController::class, 'update'])->name('sekolah.update');
         Route::delete('/sekolah/delete/{id}', [sekolahController::class, 'destroy'])->name('sekolah.delete');
 
+        // ========= Program Belajar ========= //
+        Route::get('/program_belajar', [programbelajarController::class, 'index'])->name('program_belajar');
+        Route::get('/program_belajar/json', [programbelajarController::class, 'index'])->name('program_belajar.json');
+        Route::post('/program_belajar/store', [programbelajarController::class, 'store'])->name('program_belajar.store');
+        Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit'])->name('program_belajar.edit');
+        Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
+        Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
+
         // ========= Kelas ========= //
         Route::get('/kelas/{id}', [kelasController::class, 'index'])->name('kelas');
         Route::get('/form_programbelajar/json', [kelasController::class, 'program_belajar'])->name('form_programbelajar.json');
@@ -86,6 +95,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/pembelajaran/store', [pembelajaranController::class, 'store'])->name('pembelajaran.store');
         Route::get('/siswa/all', [pembelajaranController::class, 'siswa_all'])->name('siswa_kelas.json');
         Route::post('/siswa/kelas/update/{id}', [pembelajaranController::class, 'addsiswa'])->name('add_siswa.update');
+        Route::get('/infoKePengguna/{id}', [pembelajaranController::class, 'info_kepengguna'])->name('info.akun');
+        Route::get('/datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
+        Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
+        Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
+        Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
+
+        // ========= Generate Sertiv Custom ========= //
+        Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
+        Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
@@ -96,17 +114,9 @@ Route::middleware('auth')->group(function () {
 
 
 
-// ========= Program Belajar ========= //
-Route::get('/program_belajar', [programbelajarController::class, 'index'])->name('program_belajar');
-Route::get('/program_belajar/json', [programbelajarController::class, 'index'])->name('program_belajar.json');
-Route::post('/program_belajar/store', [programbelajarController::class, 'store'])->name('program_belajar.store');
-Route::get('/program_belajar/edit/{id}', [programbelajarController::class, 'edit'])->name('program_belajar.edit');
-Route::patch('/program_belajar/update/{id}', [programbelajarController::class, 'update'])->name('program_belajar.update');
-Route::delete('/program_belajar/delete/{id}', [programbelajarController::class, 'destroy'])->name('program_belajar.delete');
 
-// ========= Generate Sertiv Custom ========= //
-Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
-Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+
+
 
 
 // ========= Kelas ========= //
@@ -116,13 +126,9 @@ Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])
 // ========= Pembelajaran ========= //
 
 
-// Route::get('/juancok/{id}', [pembelajaranController::class, 'joh'])->name('info.akun');
-Route::get('/datasiswa/kelas/json/{id}', [pembelajaranController::class, 'datasiswa'])->name('datasiswa_kelas.json');
 
 
-Route::patch('/pertemuan/update/{id}', [pembelajaranController::class, 'update'])->name('pembelajaran.update');
-Route::delete('/pertemuan/delete/{id}', [pembelajaranController::class, 'destroy'])->name('pertemuan.delete');
-Route::post('/murid/hapus', [pembelajaranController::class, 'hapus'])->name('murid.hapus');
+
 
 
 // ========= Pengguna ========= //

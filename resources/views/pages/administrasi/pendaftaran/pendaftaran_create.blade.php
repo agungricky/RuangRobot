@@ -26,27 +26,16 @@
                                                 <label for="status_pendaftaran">Kategori</label>
                                                 <select name="kategori_id" class="form-control" required>
                                                     @foreach ($kategori as $item)
-                                                        <option value="{{$item->id}}">{{$item->kategori_kelas}}</option>
+                                                        <option value="{{ $item->id }}">{{ $item->kategori_kelas }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 <div id="error-status_pendaftaran" class="text-danger"></div>
                                             </div>
 
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <x-form.input_text name="link_group" label="Link Grup WA" placeholder="" />
                                                 <div id="error-link_group" class="text-danger"></div>
-                                            </div>
-
-                                            <div class="col-4">
-                                                <label for="kelas_id">Kelas</label>
-                                                <select id="kelas_id" name="kelas_id" class="form-control select2"
-                                                    data-placeholder="-- Pilih Kelas --">
-                                                    <option value="">-- Pilih Kelas --</option>
-                                                    @foreach ($kelas as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <div id="error-kelas_id" class="text-danger"></div>
                                             </div>
 
                                             <div class="col-md-4">

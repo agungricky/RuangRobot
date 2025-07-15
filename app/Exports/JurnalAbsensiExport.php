@@ -52,7 +52,9 @@ class JurnalAbsensiExport implements FromArray, WithEvents, WithTitle
         // Baris 9: tanggal
         $tanggalBaris = ['', '', ''];
         foreach ($this->pembelajaran as $p) {
-            $tanggalBaris[] = \Carbon\Carbon::parse($p['tanggal'])->translatedFormat('d M Y');
+            $tanggalBaris[] = !empty($p['tanggal'])
+                ? \Carbon\Carbon::parse($p['tanggal'])->translatedFormat('d M Y')
+                : '';
         }
         $data[] = $tanggalBaris;
 

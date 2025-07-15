@@ -22,6 +22,7 @@ use GDText\Color;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
+use Illuminate\Support\Str;
 
 class kelasController extends Controller
 {
@@ -96,7 +97,7 @@ class kelasController extends Controller
 
         $kelas = kelas::create([
             'nama_kelas' => $request->nama_kelas,
-            'kode_kelas' => $request->kode_kelas,
+            'kode_kelas' => $request->kode_kelas . '-' . Str::upper(Str::random(5)),
             'harga' => $request->harga_kelas,
             'durasi_belajar' => $durasi_belajar,
             'program_belajar_id' => $request->nama_program,

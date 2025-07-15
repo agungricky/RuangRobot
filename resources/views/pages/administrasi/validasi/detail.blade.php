@@ -90,8 +90,7 @@
                     <div id="section_validasi" class="">
                         <h1 class="fs-4">Form data siswa</h1>
                         <hr>
-                        <form action="{{ route('validasi.acc', ['idKelas' => $indexPendaftaran->kelas_id]) }}"
-                            id="validasi_pendaftaran" method="POST">
+                        <form action="{{ route('validasi.acc') }}" id="validasi_pendaftaran" method="POST">
                             @csrf
                             <div class="field">
                                 <div class="row">
@@ -161,8 +160,46 @@
                                     <input type="hidden" name="pemrograman" value="0">
                                 </div>
                             </div>
+
+                            <div class="search_kelas mt-5">
+                                <h1 class="fs-4">Cari Kelas</h1>
+                                <hr>
+                                <div class="field">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="">Kelas</label>
+                                            <input type="text" class="kelas_input form-control"
+                                                placeholder="Ketik kode kelas..." autocomplete="off" required>
+                                            <input type="hidden" class="kelas_id">
+                                            <div class="kelas_list border bg-white shadow-sm rounded"
+                                                style="display: none; position: absolute; z-index: 1000;"></div>
+                                            <div class="error-kelas_input text-danger"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </form>
                     </div>
+
+                    <div class="search_kelas d-none" id="search_kelas">
+                        <h1 class="fs-4">Cari Kelas</h1>
+                        <hr>
+                        <div class="field">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="">Kelas</label>
+                                    <input type="text" class="kelas_input form-control"
+                                        placeholder="Ketik kode kelas..." autocomplete="off" required>
+                                    <input type="hidden" class="kelas_id">
+                                    <div class="kelas_list border bg-white shadow-sm rounded"
+                                        style="display: none; position: absolute; z-index: 1000;"></div>
+                                    <div class="error-kelas_input text-danger"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer my-2">
                     <button type="submit" form="validasi_pendaftaran" id="btn-buat-akun"
@@ -265,48 +302,104 @@
                     }
                 ]
             });
-        });
 
-        // Form Disable Buat Akun
-        let idPendaftaran_siswa = null;
-        let kelas_pendaftar = null;
-        $(document).on('click', '.btn-verifikasi', function() {
-            // Untuk mengisi Variabel global
-            idPendaftaran_siswa = $(this).data('id');
-            kelas_pendaftar = $(this).data('kelas');
+            // Fungsi membuat pilihan kelas
+            let allKelas = [];
+            $(document).ready(function() {
+                $.ajax({
+                    url: '/search-kelas',
+                    type: 'GET',
+                    success: function(res) {
+                        allKelas = res.data;
+                    }
+                });
 
-            // Untuk mengisi Form
-            let id = $(this).data('id');
-            let nama = $(this).data('nama');
-            let email = $(this).data('email');
-            let alamat = $(this).data('alamat');
-            let no_telp = $(this).data('no_telp');
-            let sekolahNama = $(this).data('sekolah_nama');
-            let sekolahId = $(this).data('sekolah_id');
-            let kelas = $(this).data('kelas');
+                $(document).on('keyup', '.kelas_input', function() {
+                    let $container = $(this).closest('.search_kelas');
+                    let keyword = $(this).val().toLowerCase();
+                    let $kelasList = $container.find('.kelas_list');
 
-            $('#id').val(id);
-            $('#nama').val(nama);
-            $('#email').val(email);
-            $('#alamat').val(alamat);
-            $('#no_telp').val(no_telp);
-            $('#sekolah').val(sekolahNama);
-            $('#sekolah_id').val(sekolahId);
-            $('#kelas_siswa').val(kelas);
+                    if (keyword.length === 0) {
+                        $kelasList.hide();
+                        return;
+                    }
 
-            // Menampilakn Tabel data duplikat
-            $.ajax({
-                type: "GET",
-                url: "/pengguna/Siswa",
-                dataType: "json",
-                success: function(response) {
-                    let hasil = response.data.find(item => item.nama.toLowerCase() === nama
-                        .toLowerCase());
+                    let filtered = allKelas.filter(item =>
+                        item.kode_kelas.toLowerCase().includes(keyword) ||
+                        item.nama_kelas.toLowerCase().includes(keyword)
+                    );
 
-                    let no = 1;
+                    if (filtered.length > 0) {
+                        let list = filtered.map(item => `
+                            <div class="item-kelas" data-id="${item.id}" style="padding:5px; cursor:pointer;">
+                                ${item.kode_kelas} - ${item.nama_kelas}
+                            </div>
+                        `).join('');
 
-                    if (hasil) {
-                        let html = `
+                        $kelasList.html(list).show();
+                    } else {
+                        $kelasList.html('<div style="padding:5px;">Tidak ditemukan</div>').show();
+                    }
+                });
+
+                $(document).on('click', '.item-kelas', function() {
+                    let nama = $(this).text().trim();
+                    let id = $(this).data('id');
+                    let $container = $(this).closest('.search_kelas');
+
+                    $container.find('.kelas_input').val(nama);
+                    $container.find('.kelas_id').val(id);
+                    $container.find('.kelas_list').hide();
+                });
+
+                // Sembunyikan jika klik di luar
+                $(document).click(function(e) {
+                    if (!$(e.target).closest('.kelas_input, .kelas_list').length) {
+                        $('.kelas_list').hide();
+                    }
+                });
+            });
+
+            // Form Disable Buat Akun
+            let idPendaftaran_siswa = null;
+            let kelas_pendaftar = null;
+            $(document).on('click', '.btn-verifikasi', function() {
+                // Untuk mengisi Variabel global
+                idPendaftaran_siswa = $(this).data('id');
+                kelas_pendaftar = $(this).data('kelas');
+
+                // Untuk mengisi Form
+                let id = $(this).data('id');
+                let nama = $(this).data('nama');
+                let email = $(this).data('email');
+                let alamat = $(this).data('alamat');
+                let no_telp = $(this).data('no_telp');
+                let sekolahNama = $(this).data('sekolah_nama');
+                let sekolahId = $(this).data('sekolah_id');
+                let kelas = $(this).data('kelas');
+
+                $('#id').val(id);
+                $('#nama').val(nama);
+                $('#email').val(email);
+                $('#alamat').val(alamat);
+                $('#no_telp').val(no_telp);
+                $('#sekolah').val(sekolahNama);
+                $('#sekolah_id').val(sekolahId);
+                $('#kelas_siswa').val(kelas);
+
+                // Menampilakn Tabel data duplikat
+                $.ajax({
+                    type: "GET",
+                    url: "/pengguna/Siswa",
+                    dataType: "json",
+                    success: function(response) {
+                        let hasil = response.data.find(item => item.nama.toLowerCase() === nama
+                            .toLowerCase());
+
+                        let no = 1;
+
+                        if (hasil) {
+                            let html = `
                             <tr>
                                 <td>${no}</td>
                                 <td>${hasil.nama}</td>
@@ -319,83 +412,91 @@
                             </tr>
                         `;
 
-                        $('#tabel-hasil tbody').html(html);
-                    } else {
-                        $('#tabel-hasil tbody').html('<tr><td colspan="6">Tidak ditemukan</td></tr>');
+                            $('#tabel-hasil tbody').html(html);
+                        } else {
+                            $('#tabel-hasil tbody').html(
+                                '<tr><td colspan="6">Tidak ditemukan</td></tr>');
+                        }
                     }
-                }
+                });
+
+                // Logika Mengelola Button
+                $(document).on('change', 'input[name="pilih[]"]', function() {
+                    let jumlahTercentang = $('input[name="pilih[]"]:checked').length;
+
+                    $('#btn-masukkan-kelas').prop('disabled', jumlahTercentang !== 1);
+                    $('#btn-buat-akun').prop('disabled', jumlahTercentang >= 1);
+
+                    if (jumlahTercentang > 0) {
+                        $('#section_validasi').addClass('d-none');
+                        $('#search_kelas').removeClass('d-none');
+
+                    } else {
+                        $('#section_validasi').removeClass('d-none');
+                        $('#search_kelas').addClass('d-none');
+
+                    }
+                });
             });
 
-            // Logika Mengelola Button
-            $(document).on('change', 'input[name="pilih[]"]', function() {
-                let jumlahTercentang = $('input[name="pilih[]"]:checked').length;
+            // Logika data pengguna yang di centang checkbox
+            $('#btn-masukkan-kelas').on('click', function() {
+                // Ambil semua checkbox yang dicentang, karna banyak di tambahkan s (ids)
+                let ids = [];
+                $('.pilih-data:checked').each(function() {
+                    ids.push($(this).val());
+                });
 
-                $('#btn-masukkan-kelas').prop('disabled', jumlahTercentang !== 1);
-                $('#btn-buat-akun').prop('disabled', jumlahTercentang >= 1);
+                let idTerpilih = parseInt(ids[0]);
+                $.ajax({
+                    type: "GET",
+                    url: `/siswa/${idTerpilih}/json`,
+                    dataType: "json",
+                    success: function(response) {
+                        // Ambil CSRF token dan set ke semua request Ajax
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
 
-                if (jumlahTercentang > 0) {
-                    $('#section_validasi').addClass('d-none');
-                } else {
-                    $('#section_validasi').removeClass('d-none');
-                }
-            });
-        });
+                        // Id Form untuk mencari kelas
+                        let idForm_index = allKelas[0].id;
 
-        // Logika data pengguna yang di centang checkbox
-        $('#btn-masukkan-kelas').on('click', function() {
-            // Ambil semua checkbox yang dicentang, karna banyak di tambahkan s (ids)
-            let ids = [];
-            $('.pilih-data:checked').each(function() {
-                ids.push($(this).val());
-            });
+                        let dataForm = {
+                            id: response.data.id,
+                            nama: response.data.pengguna.nama,
+                            sekolah_id: response.data.pengguna.sekolah_id,
+                            idPendaftaran: idPendaftaran_siswa,
+                            kelas_pendaftar: kelas_pendaftar,
+                        };
 
-            let idTerpilih = parseInt(ids[0]);
-            $.ajax({
-                type: "GET",
-                url: `/siswa/${idTerpilih}/json`,
-                dataType: "json",
-                success: function(response) {
-                    // Ambil CSRF token dan set ke semua request Ajax
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-
-                    // Id Form untuk mencari kelas
-                    let idForm_index = {{ $indexPendaftaran->kelas_id }};
-
-                    let dataForm = {
-                        id: response.data.id,
-                        nama: response.data.pengguna.nama,
-                        sekolah_id: response.data.pengguna.sekolah_id,
-                        idPendaftaran: idPendaftaran_siswa,
-                        kelas_pendaftar: kelas_pendaftar,
-                    };
-
-                    $.ajax({
-                        type: "POST",
-                        url: `/validasi/masukkls/${idForm_index}`,
-                        data: dataForm,
-                        dataType: "json",
-                        success: function(response) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: response.message ?? 'Data berhasil diproses.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                location.reload();
-                            });
-                        },
-                        error: function(xhr) {
-                            console.log('Gagal:', xhr.responseText);
-                        }
-                    });
+                        $.ajax({
+                            type: "POST",
+                            url: `/validasi/masukkls/${idForm_index}`,
+                            data: dataForm,
+                            dataType: "json",
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: response.message ?? 'Data berhasil diproses.',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function(xhr) {
+                                console.log(dataForm);
+                                console.log('Gagal:', xhr.responseText);
+                            }
+                        });
 
 
-                }
+                    }
+                });
+
             });
 
         });

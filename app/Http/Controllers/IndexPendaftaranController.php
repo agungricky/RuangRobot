@@ -42,7 +42,6 @@ class IndexPendaftaranController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required',
-            'kelas_id' => 'required',
             'kategori_id' => 'required',
             'link_group' => 'nullable',
             'tanggal_p_awal' => 'nullable',
