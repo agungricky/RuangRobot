@@ -14,6 +14,7 @@ use App\Http\Controllers\pembelajaranController;
 use App\Http\Controllers\pendaftaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
+use App\Http\Controllers\RiwayatPembayaranController;
 use App\Http\Controllers\sekolahController;
 use App\Http\Controllers\siswaController;
 use Illuminate\Support\Facades\Route;
@@ -138,7 +139,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/histori/gaji', [gajiController::class, 'historigaji'])->name('histori_gaji');
         Route::get('/detail/histori/{pengajar_id}/{tanggal_id}', [gajiController::class, 'detailhistori'])->name('detail_histori');
 
-
         // ========= Pembayaran ========= //
         Route::get('/pembayaran', [pembayaranController::class, 'index'])->name('pembayaran');
         Route::get('/pembayaran/json', [pembayaranController::class, 'index'])->name('pembayaran.json');
@@ -147,6 +147,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
         Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
         Route::get('/penagiha/personal/{id}/{kelas_id}', [pembayaranController::class, 'penagihan_personal'])->name('penagihan_personal');
+
+        // ========= Riwayat Pembayaran ========= //
+        Route::resource('/riwayat_pembayaran/{siswa_id}/{kelas_id}', RiwayatPembayaranController::class)->names('riwayat_pembayaran');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});

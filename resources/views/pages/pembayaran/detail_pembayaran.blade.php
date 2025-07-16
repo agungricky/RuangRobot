@@ -147,7 +147,7 @@
         </section>
     </div>
 
-    <!-- Modal edit pertemuan -->
+    <!-- Modal Tambah Pembayaran -->
     <div class="modal fade" id="tambahpembayaran" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -159,15 +159,41 @@
                 <div class="modal-body">
                     <form id="edit_pertemuan_form">
                         @csrf
-                        <x-form.input_number label="Tambah Pembayaran" name="tambah_pembayaran"
-                            placeholder="Bayar Berapa?" />
-                        <div id="tambah_pembayaranError" class="text-danger"></div>
+                        <div class="d-flex flex-column gap-3">
+                            <input type="hidden" name="kelas_id" id="kelas_id">
+                            <input type="hidden" name="siswa_id" id="siswa_id">
+
+                            <div class="">
+                                <x-form.input_number label="Nominal" name="nominal" placeholder="Masukan Nomial?" />
+                                <div id="tambah_pembayaranError" class="text-danger"></div>
+                            </div>
+
+                            <div class="">
+                                <x-form.input_text label="Keterangan" name="jenis_pembayaran"
+                                    placeholder="Masukan Keterangan" />
+                            </div>
+
+                            <div class="">
+                                <x-form.input_tanggal label="Tanggal Pembayaran" name="tanggal"
+                                    placeholder="Masukan Tanggal Pembayaran" />
+                            </div>
+
+                            <div class="">
+                                <label for="metode_pembayaran">Metode Pembayaran</label>
+                                <select class="form-control" name="metode_pembayaran" id="metode_pembayaran">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i
+                            class="fa-solid fa-xmark"></i>
                         Batal</button>
-                    <button type="button" id="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i>
+                    <button type="button" id="submit" class="btn btn-success"><i
+                            class="fa-solid fa-floppy-disk"></i>
                         Kirim</button>
                 </div>
             </div>
@@ -183,9 +209,12 @@
                         <h5 class="modal-title text-dark fw-bold mb-1" id="modalLabel"># Detail Pembayaran</h5>
 
                         <div class="border rounded px-3 py-2 bg-light">
-                            <div class="d-flex justify-content-between small text-muted gap-5">
-                                <span><strong>Nama Siswa:</strong> Budi Santoso</span>
-                                <span><strong>Kelas:</strong> VII-A</span>
+                            <div class="d-flex justify-content-between small text-muted gap-3">
+                                <span><strong>Nama Siswa:</strong> <span id="namas"></span> </span>
+                                <span>|</span>
+                                <span><strong>Sekolah:</strong> <span id="sekolahs"></span> </span>
+                                <span>|</span>
+                                <span><strong>Kekurangan:</strong> <span id="kekurangan"></span></span>
                             </div>
                         </div>
                     </div>
@@ -200,7 +229,8 @@
                                 <th style="width: 1%;">No</th>
                                 <th class="col-1">Jenis Pembayaran</th>
                                 <th class="col-1">Nominal</th>
-                                <th class="col-3">Tanggal</th>
+                                <th class="col-1">Tanggal</th>
+                                <th class="col-1">Metode Pembayaran</th>
                             </tr>
                         </thead>
                         <tbody id="modalTableBody">
@@ -210,8 +240,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script>
         $(document).ready(function() {
@@ -236,7 +264,11 @@
                                 <a href="#" class="text-primary fw-bold" 
                                    data-bs-toggle="modal" 
                                    data-bs-target="#modalDetail" 
-                                   data-id="${row.id}">
+                                   data-id="${row.id}"
+                                   data-nama="${row.nama}"
+                                   data-sekolah="${row.sekolah}"
+                                   data-kekurangan="${row.sisa_pembayaran}"
+                                   data-kelassiswa={{ $data->id }}>
                                     ${data}
                                 </a>`;
                         }
@@ -316,18 +348,37 @@
             $(document).on('click', '.btn-warning', function() {
                 selectedSiswaId = $(this).data('id');
                 selectedKelasId = $(this).data('kelas-id');
+
+                $('#kelas_id').val(selectedKelasId);
+                $('#siswa_id').val(selectedSiswaId);
             });
 
             $(document).on('click', '.btn-danger', function() {
                 selectedSiswaId = $(this).data('id');
                 selectedKelasId = $(this).data('kelas-id');
-                
-                $.ajax({
-                    type: "GET",
-                    url: `/penagiha/personal/${selectedSiswaId}/${selectedKelasId}`,
-                    dataType: "json",
-                    success: function (response) {
-                        console.log(response.data);
+
+                Swal.fire({
+                    title: 'Yakin ingin mengirim Penagihan?',
+                    text: "Penagihan akan dikirim melalui Whatsapp!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Kirim!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value == true) {
+                        $.ajax({
+                            type: "GET",
+                            url: `/penagiha/personal/${selectedSiswaId}/${selectedKelasId}`,
+                            dataType: "json",
+                            success: function(response) {
+                                Swal.fire(
+                                    'Terkirim!',
+                                    'Pesan berhasil dikirim.',
+                                    'success'
+                                );
+                            }
+                        });
                     }
                 });
             });
@@ -457,142 +508,56 @@
             $('#modalDetail').on('show.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const id = button.data('id');
+                const kelas = button.data('kelassiswa');
+                const nama = button.data('nama');
+                const sekolah = button.data('sekolah');
+                const Kekurangan = button.data('kekurangan');
 
-                const data = [{
-                        col1: '1',
-                        col2: 'Uang Pendaftaran',
-                        col3: 'Rp. 100.000',
-                        col4: '2023-01-01'
-                    },
-                    {
-                        col1: '2',
-                        col2: 'Seragam',
-                        col3: 'Rp. 50.000',
-                        col4: '2023-01-05'
-                    },
-                    {
-                        col1: '3',
-                        col2: 'Buku Paket',
-                        col3: 'Rp. 75.000',
-                        col4: '2023-01-10'
-                    },
-                    {
-                        col1: '4',
-                        col2: 'Kegiatan Sekolah',
-                        col3: 'Rp. 60.000',
-                        col4: '2023-01-12'
-                    },
-                    {
-                        col1: '5',
-                        col2: 'SPP Januari',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-01-15'
-                    },
-                    {
-                        col1: '6',
-                        col2: 'SPP Februari',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-02-01'
-                    },
-                    {
-                        col1: '7',
-                        col2: 'SPP Maret',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-03-01'
-                    },
-                    {
-                        col1: '8',
-                        col2: 'Ujian Tengah Semester',
-                        col3: 'Rp. 80.000',
-                        col4: '2023-03-10'
-                    },
-                    {
-                        col1: '9',
-                        col2: 'Praktikum',
-                        col3: 'Rp. 70.000',
-                        col4: '2023-03-15'
-                    },
-                    {
-                        col1: '10',
-                        col2: 'SPP April',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-04-01'
-                    },
-                    {
-                        col1: '11',
-                        col2: 'Uang Gedung',
-                        col3: 'Rp. 300.000',
-                        col4: '2023-04-10'
-                    },
-                    {
-                        col1: '12',
-                        col2: 'SPP Mei',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-05-01'
-                    },
-                    {
-                        col1: '13',
-                        col2: 'Kegiatan Akhir Semester',
-                        col3: 'Rp. 100.000',
-                        col4: '2023-05-20'
-                    },
-                    {
-                        col1: '14',
-                        col2: 'SPP Juni',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-06-01'
-                    },
-                    {
-                        col1: '15',
-                        col2: 'Perpustakaan',
-                        col3: 'Rp. 40.000',
-                        col4: '2023-06-10'
-                    },
-                    {
-                        col1: '16',
-                        col2: 'SPP Juli',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-07-01'
-                    },
-                    {
-                        col1: '17',
-                        col2: 'LKS Semester 1',
-                        col3: 'Rp. 90.000',
-                        col4: '2023-07-10'
-                    },
-                    {
-                        col1: '18',
-                        col2: 'SPP Agustus',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-08-01'
-                    },
-                    {
-                        col1: '19',
-                        col2: 'Kegiatan Pramuka',
-                        col3: 'Rp. 55.000',
-                        col4: '2023-08-15'
-                    },
-                    {
-                        col1: '20',
-                        col2: 'SPP September',
-                        col3: 'Rp. 150.000',
-                        col4: '2023-09-01'
+                function formatRupiah(angka) {
+                    return 'Rp' + ' ' + new Intl.NumberFormat('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(angka);
+                }
+
+                function formatHariTanggal(tgl) {
+                    const date = new Date(tgl);
+                    return date.toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+
+                $('#namas').text(nama);
+                $('#sekolahs').text(sekolah);
+                $('#kekurangan').text(formatRupiah(Kekurangan));
+
+                $.ajax({
+                    type: "GET",
+                    url: `/riwayat_pembayaran/${id}/${kelas}`,
+                    dataType: "json",
+                    success: function(response) {
+                        const data = response.data;
+
+                        let rows = '';
+                        data.forEach((d, index) => {
+                            rows += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${d.jenis_pembayaran}</td>
+                                    <td>${formatRupiah(d.nominal)}</td>
+                                    <td>${formatHariTanggal(d.tanggal)}</td>
+                                    <td>${d.metode_pembayaran}</td>
+                                </tr>`;
+                        });
+
+
+                        $('#modalTableBody').html(rows);
                     }
-                ];
-
-
-                let rows = '';
-                data.forEach(d => {
-                    rows += `
-            <tr>
-                <td>${d.col1}</td>
-                <td>${d.col2}</td>
-                <td>${d.col3}</td>
-                <td>${d.col4}</td>
-            </tr>`;
                 });
 
-                $('#modalTableBody').html(rows);
             });
 
 

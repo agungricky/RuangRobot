@@ -11,6 +11,7 @@ class pendaftaran extends Model
     protected $fillable = [
         'code_id',
         'nama',
+        'tgl_lahir',
         'email',
         'no_telp',
         'sekolah_id',

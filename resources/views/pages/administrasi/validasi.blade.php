@@ -21,6 +21,7 @@
                                                 <th style="width: 10%;" class="text-center">No.</th>
                                                 <th style="width: 50%;">Judul Form</th>
                                                 <th style="width: 15%;" class="text-center">Kategori</th>
+                                                <th style="width: 15%;" class="text-center">Pendaftar</th>
                                                 <th style="width: 15%;" class="text-center">Status</th>
                                                 <th style="width: 10%;" class="text-center">Action</th>
                                             </tr>
@@ -73,6 +74,28 @@
                         }
                     },
                     {
+                        data: 'pendaftaran_count',
+                        render: function(data, type, row) {
+                            return `
+                            <div class="text-center">
+                                <span style="
+                                    display: inline-block;
+                                    width: 30px;
+                                    height: 30px;
+                                    line-height: 30px;
+                                    border-radius: 50%;
+                                    background: linear-gradient(to bottom, yellow 50%, white 50%);
+                                    color: black;
+                                    font-weight: bold;
+                                    text-align: center;
+                                    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+                                ">
+                                    ${data}
+                                </span>
+                            </div>`;
+                        }
+                    },
+                    {
                         data: 'status_pendaftaran',
                         render: function(data, type, row) {
                             return `<div class="text-center fw-bold text-tabel">${data}</>`;
@@ -83,7 +106,7 @@
                         render: function(data, type, row) {
                             return `
                            <div class="d-flex justify-content-center gap-1">
-                                <a href="{{url('/validasi/${data.id}')}}" class="btn btn-success btn-sm">
+                                <a href="{{ url('/validasi/${data.id}') }}" class="btn btn-success btn-sm">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
                             </div>

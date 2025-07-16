@@ -9,6 +9,7 @@ use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pendaftaran;
 use App\Models\pengguna;
+use App\Models\riwayatPembayaran;
 use App\Models\sekolah;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class pendaftaranController extends Controller
      */
     public function index(Request $request)
     {
-        $data = indexPendaftaran::with('kategori')->orderBy('id', 'desc')->get();
+        $data = indexPendaftaran::with('kategori')->withCount('pendaftaran')->orderBy('id', 'desc')->get();
+        // dd($data->toArray());
         if ($request->ajax()) {
             return response()->json([
                 'data' => $data
@@ -62,6 +64,7 @@ class pendaftaranController extends Controller
         $validated = $request->validate([
             'code_id' => 'required|string|max:100',
             'nama' => 'required|string|max:100',
+            'tgl_lahir' => 'required|date',
             'email' => 'required|email|max:100',
             'no_telp' => 'required|string|max:15',
             'sekolah_id' => 'nullable|string|max:100',
@@ -127,6 +130,7 @@ class pendaftaranController extends Controller
             'role'          => 'required|in:Siswa',
             'sekolah_id'    => 'required|exists:sekolah,id',
             'nama'          => 'required|string|max:150',
+            'tgl_lahir'     => 'required|date',
             'kelas'         => 'required|string|max:50',
             'email'         => 'required|email|max:150',
             'alamat'        => 'required|string|max:255',
@@ -165,7 +169,7 @@ class pendaftaranController extends Controller
             [
                 "id" => $akun->id,
                 "nama" => $profile->nama,
-                "nilai" => "Belum Dinilai",
+                "nilai" => null,
                 "sekolah" => $sekolah->nama_sekolah,
                 "kelas" => $profile->kelas,
                 "tagihan" => $kelas->harga,
@@ -216,6 +220,16 @@ class pendaftaranController extends Controller
         invoice::create([
             'profile_id' => $profile->id,
             'kelas_id' => $kelas->id,
+        ]);
+
+        // ================= Riwayat Pembayaran ================= //
+        riwayatPembayaran::create([
+            'nama' => $profile->id,
+            'kelas_id' => $kelas->id,
+            'nominal' => 150000,
+            'tanggal' => now(),
+            'jenis_pembayaran' => 'Biaya Pendaftaran',
+            'metode_pembayaran' => 'Transfer',
         ]);
 
         // ================= Menghapus Pendaftaran ================= //

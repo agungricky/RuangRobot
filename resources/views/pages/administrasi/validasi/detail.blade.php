@@ -95,6 +95,8 @@
                             <div class="field">
                                 <div class="row">
                                     <input type="hidden" name="id" id="id">
+                                    <input type="hidden" name="tgl_lahir" id="tgl_lahir">
+                                    <input type="hidden" name="kelas_id" id="kelas_id">
 
                                     <div class="col-4">
                                         <label for="username">Username</label>
@@ -289,6 +291,7 @@
                                         data-sekolah_nama="${row.sekolah?.nama_sekolah ?? '-'}"
                                         data-sekolah_id="${row.sekolah_id}"
                                         data-kelas="${row.kelas}"
+                                        data-tgl_lahir="${row.tgl_lahir}"
                                     >
                                         <i class="fa-solid fa-clock"></i>
                                     </button>
@@ -350,6 +353,8 @@
                     $container.find('.kelas_input').val(nama);
                     $container.find('.kelas_id').val(id);
                     $container.find('.kelas_list').hide();
+
+                    $('#kelas_id').val(id);
                 });
 
                 // Sembunyikan jika klik di luar
@@ -377,6 +382,7 @@
                 let sekolahNama = $(this).data('sekolah_nama');
                 let sekolahId = $(this).data('sekolah_id');
                 let kelas = $(this).data('kelas');
+                let tgl_lahir = $(this).data('tgl_lahir');
 
                 $('#id').val(id);
                 $('#nama').val(nama);
@@ -386,6 +392,7 @@
                 $('#sekolah').val(sekolahNama);
                 $('#sekolah_id').val(sekolahId);
                 $('#kelas_siswa').val(kelas);
+                $('#tgl_lahir').val(tgl_lahir);
 
                 // Menampilakn Tabel data duplikat
                 $.ajax({

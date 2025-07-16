@@ -9,6 +9,7 @@ use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use App\Models\riwayatPembayaran;
 use App\Models\siswa;
 use Illuminate\Support\Facades\Http;
 use PhpParser\Node\Stmt\If_;
@@ -146,6 +147,15 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
      */
     public function update(Request $request, $kelas_id, $siswa_id)
     {
+        $request->validate([
+            'nominal' => 'required|numeric',
+            'jenis_pembayaran' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'metode_pembayaran' => 'required|string|in:Transfer,Cash',
+            'kelas_id' => 'required|numeric',
+            'siswa_id' => 'required|numeric',
+        ]);
+
         $kelas = muridKelas::where('kelas_id', $kelas_id)->first();
 
         if (!$kelas) {
@@ -156,7 +166,7 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
 
         foreach ($murid_decode as &$murid) {
             if ($murid['id'] == $siswa_id) {
-                $murid['pembayaran'] += $request->tambah_pembayaran;
+                $murid['pembayaran'] += $request->nominal;
                 break;
             }
         }
@@ -213,7 +223,16 @@ Admin 085655770506"
         // Simpan response untuk debug jika diperlukan
         $responses[] = $response->body();
 
-        return response()->json(['success' => 'Pembayaran berhasil diperbarui']);
+        riwayatPembayaran::create([
+            'kelas_id' => $kelas_id,
+            'nama' => $siswa_id,
+            'nominal' => $request->nominal,
+            'jenis_pembayaran' => $request->jenis_pembayaran,
+            'tanggal' => $request->tanggal,
+            'metode_pembayaran' => $request->metode_pembayaran,
+        ]);
+
+        return response()->json(['success' => 'Pembayaran berhasil diperbarui', 'data' => $request->all()]);
     }
 
 

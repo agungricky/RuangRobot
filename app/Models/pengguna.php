@@ -54,4 +54,8 @@ class pengguna extends Model
     public function gaji_custom(){
         return $this->hasMany(gajiCustom::class, 'pengajar', 'id');
     }
+
+    public function riwayat_pembayaran(){
+        return $this->hasMany(riwayatPembayaran::class, 'nama', 'id');
+    }
 }
