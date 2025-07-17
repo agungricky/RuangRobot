@@ -45,6 +45,11 @@ Route::middleware('auth')->group(function () {
 
         // ========= Dashboard Admin ========= //
         Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
+        Route::get('/pembayaran_terbaru', [dashboardPenggunaController::class, 'pembayaran_terbaru'])->name('pembayaran_terbaru');
+        Route::get('/periode/sedang_berlangsung', [dashboardPenggunaController::class, 'sedang_berlangsung'])->name('sedang_berlangsung');     
+        Route::post('/tambah_pembayaran/store', [dashboardPenggunaController::class, 'tambah_pembayaran'])->name('tambah_pembayaran');  
+        Route::post('/periode/selesai', [dashboardPenggunaController::class, 'selesai_periode'])->name('selesai_periode');
+        Route::get('/riwayat_periode/{id}', [dashboardPenggunaController::class, 'riwayat_periode'])->name('riwayat_periode');  
 
         // ========= Tipe Kelas ========= //
         Route::get('/tipe_kelas', [kategoriController::class, 'index_tipekelas'])->name('tipe_kelas');
@@ -149,7 +154,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/penagiha/personal/{id}/{kelas_id}', [pembayaranController::class, 'penagihan_personal'])->name('penagihan_personal');
 
         // ========= Riwayat Pembayaran ========= //
-        Route::resource('/riwayat_pembayaran/{siswa_id}/{kelas_id}', RiwayatPembayaranController::class)->names('riwayat_pembayaran');
+        Route::get('/riwayat_pembayaran/{siswa_id}/{kelas_id}', [RiwayatPembayaranController::class, 'index'])->name('riwayat_pembayaran');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {});
