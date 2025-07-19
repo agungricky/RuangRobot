@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\indexPendaftaran;
 use App\Models\Kategori;
 use App\Models\kelas;
+use App\Models\pendaftaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -52,7 +53,7 @@ class IndexPendaftaranController extends Controller
         $kategori = Kategori::find($request->kategori_id);
         $kategori = $kategori->kategori_kelas;
 
-        $code = strtoupper(Str::random(5));
+        $code = strtoupper(Str::random(10));
         $validated['link_form'] = 'register' . '/' . $kategori . '/' . $code;
         $validated['code'] = $code;
 
@@ -71,24 +72,39 @@ class IndexPendaftaranController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(indexPendaftaran $indexPendaftaran)
+    public function edit(String $pendaftaran)
     {
-        //
+        $indexPendaftaran = indexPendaftaran::findOrfail($pendaftaran);
+        return view('pages.administrasi.pendaftaran.pendaftaran_edit', compact('indexPendaftaran'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, indexPendaftaran $indexPendaftaran)
+    public function update(Request $request, indexPendaftaran $pendaftaran)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required',
+            'kategori_id' => 'required',
+            'link_group' => 'nullable',
+            'tanggal_p_awal' => 'nullable',
+            'tanggal_p_akhir' => 'nullable',
+            'status_pendaftaran' => 'required',
+        ]);
+
+        $kategori = Kategori::findOrfail($validated['kategori_id']);
+        $validated['link_form'] = 'register' . '/' . $kategori->kategori_kelas . '/' . $pendaftaran->code;
+
+        indexPendaftaran::where('id', $pendaftaran->id)->update($validated);
+        return redirect()->route('pendaftaran.index')->with('success', 'Data Berhasil di perbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(indexPendaftaran $indexPendaftaran)
+    public function destroy($id)
     {
-        //
+        indexPendaftaran::where('id', $id)->delete();
+        return redirect()->back()->with('success', 'Index Pendaftaran Berhasil di Hapus');
     }
 }

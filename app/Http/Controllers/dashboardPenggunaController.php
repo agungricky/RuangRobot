@@ -119,8 +119,18 @@ class dashboardPenggunaController extends Controller
         $data = keuangan::where('indexkeuangan_id', null)->get();
 
         // Hitung jumlah pemasukan dan pengeluaran
-        $jumlahPemasukan = keuangan::whereNull('indexkeuangan_id')->where('tipe', 'Pemasukan')->count();
-        $jumlahPengeluaran = keuangan::whereNull('indexkeuangan_id')->where('tipe', 'Pengeluaran')->count();
+        $pemasukan = keuangan::whereNull('indexkeuangan_id')->where('tipe', 'Pemasukan')->get();
+
+        $jumlahPemasukan = 0;
+        foreach ($pemasukan as $value) {
+            $jumlahPemasukan += $value->nominal;
+        }
+
+        $pengeluaran = keuangan::whereNull('indexkeuangan_id')->where('tipe', 'Pengeluaran')->get();
+        $jumlahPengeluaran = 0;
+        foreach ($pengeluaran as $value) {
+            $jumlahPengeluaran += $value->nominal;
+        }
 
         // Cari periode yang sedang berlangsung
         $indexKeuangan_aktif = Indexkeuangan::where('status', 'aktif')->first();

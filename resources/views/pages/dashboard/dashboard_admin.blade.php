@@ -192,6 +192,22 @@
     </style>
 
     <script>
+        function formatTanggalUTC(tanggal) {
+            const date = new Date(tanggal);
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = date.getUTCMonth(); // 0 = Januari
+            const year = date.getUTCFullYear();
+
+            const namaBulan = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+
+            return `${day} ${namaBulan[month]} ${year}`;
+        }
+    </script>
+
+    <script>
         $(document).ready(function() {
             let data = @json($indexKeuangan); // Ambil semua data dari controller
             let perPage = 12;
@@ -209,15 +225,17 @@
                     $('#keuangan-list').append(`
                     <div class="clearfix search-result">
                     <span class="fs-6">
-                        <a href="/riwayat_periode/${item.id}">Periode ${formatTanggal(item.created_at)} s/d ${formatTanggal(item.updated_at)}</a>
+                      <a href="/riwayat_periode/${item.id}">
+                        Periode ${formatTanggalUTC(item.created_at)} s/d ${formatTanggalUTC(item.updated_at)}
+                      </a>
                     </span><br>
                     ${item.kesimpulan === 'Pemasukan' ? `
-                                            <small class="text-success">${item.kesimpulan}</small>
-                                            <p>Pada periode ini Ruang Robot lebih banyak Pemasukan</p>
-                                        ` : `
-                                            <small class="text-danger">${item.kesimpulan}</small>
-                                            <p>Pada periode ini Ruang Robot lebih banyak Pengeluaran</p>
-                                        `}
+                                                        <small class="text-success">${item.kesimpulan}</small>
+                                                        <p>Pada periode ini Ruang Robot lebih banyak Pemasukan</p>
+                                                    ` : `
+                                                        <small class="text-danger">${item.kesimpulan}</small>
+                                                        <p>Pada periode ini Ruang Robot lebih banyak Pengeluaran</p>
+                                                    `}
                         </div>
                         <hr>
                     `);

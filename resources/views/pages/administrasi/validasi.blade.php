@@ -3,6 +3,9 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
+    @if (session('error'))
+        <x-sweetalert.failed />
+    @endif
 
     <!-- Main Content -->
     <div class="main-content">

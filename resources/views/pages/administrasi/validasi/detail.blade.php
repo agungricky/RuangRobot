@@ -296,9 +296,13 @@
                                         <i class="fa-solid fa-clock"></i>
                                     </button>
                                 
-                                    <a href="#" class="btn btn-danger btn-sm px-2">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
+                                    <form action="/validasi/destroy/${row.id}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm px-2">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             `;
                         }
@@ -463,7 +467,8 @@
                         // Ambil CSRF token dan set ke semua request Ajax
                         $.ajaxSetup({
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
                             }
                         });
 
@@ -486,7 +491,8 @@
                             success: function(response) {
                                 Swal.fire({
                                     title: 'Berhasil!',
-                                    text: response.message ?? 'Data berhasil diproses.',
+                                    text: response.message ??
+                                        'Data berhasil diproses.',
                                     icon: 'success',
                                     timer: 2000,
                                     showConfirmButton: false

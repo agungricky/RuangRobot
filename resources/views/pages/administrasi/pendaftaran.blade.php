@@ -130,17 +130,16 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex gap-1">
-                                <a href="{{ url('/sekolah/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                <a href="/pendaftaran/${row.id}/edit" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ url('/sekolah/delete/${row.id}') }}" method="POST" class="d-inline">
-                                    <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
+                                <form action="/pendaftaran/${row.id}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm px-2">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
                             </div>
                         `;
                         }

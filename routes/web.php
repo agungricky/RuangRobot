@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/validasi', pendaftaranController::class)->names('validasi');
         Route::get('/search-kelas', [pendaftaranController::class, 'search_kelas'])->name('search_kelas');
         Route::post('/validasi/acc', [pendaftaranController::class, 'acc_pendaftaran'])->name('validasi.acc');
+        Route::delete('/validasi/destroy/{id}', [pendaftaranController::class, 'destroy'])->name('validasi.destroy');
         Route::get('/siswa/{id}/json', [pendaftaranController::class, 'search_siswa'])->name('search_siswa');
         Route::post('/validasi/masukkls/{idKelas}', [pendaftaranController::class, 'masuk_kelasAcc'])->name('validasi.Masuk_kelasAcc');
 
