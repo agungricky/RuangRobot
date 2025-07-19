@@ -230,17 +230,17 @@ class pendaftaranController extends Controller
                 'kelas_id' => $kelas->id,
             ]);
 
-            // ================= Riwayat Pembayaran ================= //
-            riwayatPembayaran::create([
-                'nama' => $profile->id,
-                'kelas_id' => $kelas->id,
-                'nominal' => 150000,
-                'tanggal' => now(),
-                'jenis_pembayaran' => 'Biaya Pendaftaran',
-                'metode_pembayaran' => 'Transfer',
-            ]);
-
             if ($pendaftaran_siswa->kategori == 'Reguler') {
+                // ================= Riwayat Pembayaran ================= //
+                riwayatPembayaran::create([
+                    'nama' => $profile->id,
+                    'kelas_id' => $kelas->id,
+                    'nominal' => 150000,
+                    'tanggal' => now(),
+                    'jenis_pembayaran' => 'Biaya Pendaftaran',
+                    'metode_pembayaran' => 'Transfer',
+                ]);
+
                 $saldo_terakhir = keuangan::orderBy('id', 'desc')->first();
                 $saldo = 150000 + $saldo_terakhir->saldo_akhir;
                 // ================= Riwayat Keuangan ================= //

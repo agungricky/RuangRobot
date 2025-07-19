@@ -22,7 +22,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 15%;" class="text-center">Nama Kategori</th>
+                                                <th style="width: 15%;" class="text-center">Tipe Kelas</th>
                                                 <th style="width: 80%;" class="text-start">Opsi</th>
                                             </tr>
                                         </thead>

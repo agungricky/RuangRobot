@@ -65,15 +65,17 @@ class kategoriController extends Controller
         $messages = [
             'required' => 'Wajib di isi',
             'unique' => 'Data sudah ada, mohon periksa kembali.',
-            'max' => 'tidak boleh lebih dari 20 karakter'
+            'max' => 'tidak boleh lebih dari 20 karakter',
         ];
 
         $request->validate([
             'kategori' => 'required|unique:kategori_kelas,kategori_kelas,' . $id . ',id|max:20',
+            'color_bg' => 'required',
         ], $messages);
 
         Kategori::where('id', $id)->update([
-            'kategori_kelas' => $request->kategori
+            'kategori_kelas' => $request->kategori,
+            'color_bg' => $request->color_bg
         ]);
 
         return redirect('kategori_kelas')->with('success', 'Data Berhasil diperbarui');

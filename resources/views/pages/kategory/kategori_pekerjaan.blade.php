@@ -122,15 +122,17 @@
                         render: function(data, type, row) {
                             return `
                                 <div class="d-flex gap-1">
-                                    <a href="{{ url('/tipe_kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm">
+                                    <a href="kategori_pekerjaan/${row.id}/edit" class="btn btn-primary btn-sm">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form action="{{ url('/tipe_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
-                                        <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
+                                    <form method="POST" action="kategori_pekerjaan/${row.id}">
+                                        @csrf
+                                        @method('DELETE')
+                                       <button type="submit" class="btn btn-danger btn-sm"
+                                               title="Hapus Pegawai" onclick="return confirm('Anda  
+                                                  Yakin Data akan diHapus?')">
+                                                <i class="fa-solid fa-trash"></i>
+                                       </button>
                                     </form>
                                 </div>
                             `;

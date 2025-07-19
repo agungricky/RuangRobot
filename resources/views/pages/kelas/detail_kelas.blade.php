@@ -125,28 +125,28 @@
                                         <ul class="list-group">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-dollar-sign"></i> Harga Kelas </b>
-                                                <div class="profile-desc-item pull-right text-success ms-3">Rp.
+                                                <div class="profile-desc-item pull-right text-success fw-bold ms-3">Rp.
                                                     {{ number_format($data->harga, 0, ',', '.') }}
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom d-flex gap-3">
-                                                <div class="border-end border-1 pe-3">
+                                                <div class="border-end border-1 w-50">
                                                     <b><i class="fas fa-dollar-sign"></i> Gaji Pengajar </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($data->gaji_pengajar, 0, ',', '.') }} / Pertemuan
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div class="w-50">
                                                     <b><i class="fas fa-dollar-sign"></i> Gaji Transport </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($data->gaji_transport, 0, ',', '.') }} / Pertemuan
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-star"></i> Poin Yang Akan Didapatkan </b>
-                                                <div class="profile-desc-item pull-right">
-                                                    <ul class="list-star">
+                                                <div class="profile-desc-item">
+                                                    <ul class="list-star d-flex flex-row ustify-content-between gap-5">
                                                         <li>Mekanik : <span style="font-weight:bold"
                                                                 class="text-info">+{{ $data->program_belajar->mekanik }}</span>
                                                         </li>

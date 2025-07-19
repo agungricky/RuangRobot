@@ -231,11 +231,13 @@
                                     <div class="d-flex justify-content-center gap-1">
                                             <form action="{{ url('/pengguna/reset/${row.id}') }}" method="POST" class="d-inline">
                                                 @csrf
+                                                @method('PATCH')
                                                 <button type="submit" class="btn btn-info btn-sm">Reset Password</button>
                                             </form>
                                             <a href="{{ url('/pengguna/edit/${row.id}/${role}') }}" class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ url('/pengguna/delete/${row.id}/${role}') }}" method="POST" class="d-inline">
                                                 @csrf
+                                                @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                             </form>
                                     </div>
@@ -249,8 +251,6 @@
             $('#submit_pengguna').on('click', function() {
                 let form = $('#pengguna_form');
                 let formData = form.serialize();
-
-                console.log(formData);
 
                 $.ajax({
                     type: "POST",
@@ -282,8 +282,7 @@
                 success: function(response) {
                     var programs = response.map(function(item) {
                         return {
-                            label: item
-                                .nama_sekolah,
+                            label: item.nama_sekolah,
                             value: item.nama_sekolah,
                             id: item.id
                         };
@@ -296,8 +295,7 @@
                         autoFocus: true,
                         select: function(event, ui) {
                             $('#sekolah_id').val(ui.item.id);
-                            $(this).val(ui.item
-                                .label);
+                            $(this).val(ui.item.label);
                             return false;
                         }
                     });

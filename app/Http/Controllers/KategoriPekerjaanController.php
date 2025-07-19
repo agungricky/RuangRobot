@@ -57,7 +57,7 @@ class KategoriPekerjaanController extends Controller
      */
     public function edit(kategori_pekerjaan $kategori_pekerjaan)
     {
-        //
+        return view('pages.kategory.edit_kategori_pekerjaan', compact('kategori_pekerjaan'));
     }
 
     /**
@@ -65,7 +65,14 @@ class KategoriPekerjaanController extends Controller
      */
     public function update(Request $request, kategori_pekerjaan $kategori_pekerjaan)
     {
-        //
+        $validated = $request->validate([
+            'nama_pekerjaan' => 'required|string|max:255',
+            'keterangan'     => 'nullable|string|max:1000',
+            'gaji'           => 'required|numeric|min:0',
+        ]);
+
+        kategori_pekerjaan::where('id', $kategori_pekerjaan->id)->update($validated);
+        return redirect()->route('kategori_pekerjaan.index')->with('success', 'Berhasil Update data');
     }
 
     /**
@@ -73,6 +80,7 @@ class KategoriPekerjaanController extends Controller
      */
     public function destroy(kategori_pekerjaan $kategori_pekerjaan)
     {
-        //
+        kategori_pekerjaan::where('id', $kategori_pekerjaan->id)->delete();
+        return redirect()->back()->with('success', 'Data Berhasil di Hapus');
     }
 }

@@ -52,11 +52,11 @@ class penggunaController extends Controller
         return response()->json($data, 200);
     }
 
-    // public function sekolah()
-    // {
-    //     $data = sekolah::all();
-    //     return response()->json($data);
-    // }
+    public function sekolah()
+    {
+        $data = sekolah::all();
+        return response()->json($data);
+    }
 
     /**
      * Show the form for creating a new resource.
