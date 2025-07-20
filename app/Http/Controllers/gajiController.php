@@ -7,6 +7,7 @@ use App\Models\gajiCustom;
 use App\Models\gajiTransport;
 use App\Models\gajiUtama;
 use App\Models\historigaji;
+use App\Models\keuangan;
 use App\Models\pengguna;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -183,9 +184,51 @@ class gajiController extends Controller
     {
         $gaji = gajiUtama::where('pengajar', $id)
             ->where('status', 'diverifikasi')
+            ->get()->toArray();
+        
+        $transport = gajiTransport::where('pengajar', $id)
+            ->where('status', 'diverifikasi')->get()->toArray();
+
+        $custom = gajiCustom::where('pengajar', $id)
+            ->where('status', 'diverifikasi')->get()->toArray();
+
+        $gaji_total = 0;
+        foreach ($gaji as $value) {
+            $gaji_total += $value['nominal'];
+        }
+
+        $transport_total = 0;
+        foreach ($transport as $value) {
+            $transport_total += $value['nominal'];
+        }
+
+        $custom_total = 0;
+        foreach ($custom as $value) {
+            $custom_total += $value['nominal'];
+        }
+
+        $totalAll = $gaji_total + $transport_total + $custom_total;
+        $pengajar = pengguna::findOrfail($id);
+        $saldoAkhir = keuangan::orderBy('id', 'desc')->first();
+
+        keuangan::create([
+            'indexkeuangan_id' => null,
+            'tipe' => 'Pengeluaran',
+            'keterangan' => 'Pembayaran Gaji ' . $pengajar->nama,
+            'tanggal' => now(),
+            'nominal' => $totalAll,
+            'saldo_akhir' => $saldoAkhir->saldo_akhir - $totalAll,
+            'metode_pembayaran' => "Transfer"
+        ]);
+
+
+
+        // Menampilkan Semua Data
+        $gaji = gajiUtama::where('pengajar', $id)
+            ->where('status', 'diverifikasi')
             ->Orwhere('status', 'ditolak')
             ->get()->toArray();
-
+        
         $transport = gajiTransport::where('pengajar', $id)
             ->Orwhere('status', 'ditolak')
             ->where('status', 'diverifikasi')->get()->toArray();
@@ -193,6 +236,7 @@ class gajiController extends Controller
         $custom = gajiCustom::where('pengajar', $id)
             ->Orwhere('status', 'ditolak')
             ->where('status', 'diverifikasi')->get()->toArray();
+
 
         $histori = historigaji::whereDate('tanggal_terbayar', now()->toDateString())->first();
 

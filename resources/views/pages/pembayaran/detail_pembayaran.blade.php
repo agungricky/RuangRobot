@@ -88,20 +88,20 @@
                                         <ul class="list-group">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-dollar-sign"></i> Harga Kelas </b>
-                                                <div class="profile-desc-item pull-right text-success">Rp.
+                                                <div class="profile-desc-item pull-right text-success fw-bold">Rp.
                                                     {{ number_format($data->harga, 0, ',', '.') }}
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom d-flex gap-3">
                                                 <div class="border-end border-1 pe-3">
                                                     <b><i class="fas fa-dollar-sign"></i> Rencana Pendapatan Kelas </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($rencana_pendapatan, 0, ',', '.') }}
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <b><i class="fas fa-dollar-sign"></i> Total yang di dapat </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($totalPembayaran, 0, ',', '.') }}
                                                     </div>
                                                 </div>
