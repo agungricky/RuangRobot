@@ -13,27 +13,11 @@ class sekolahSeeder extends Seeder
      */
     public function run(): void
     {
-        sekolah::insert([
-            [
-                'nama_sekolah' => 'Sd Rahmat Kota Kediri',
-                'guru' => 'Bu Rini',
-                'no_hp' => '+6281234567890',
-            ],
-            [
-                'nama_sekolah' => 'Sd Al-huda2 Kota Kediri',
-                'guru' => 'Bu Ajeng',
-                'no_hp' => '+6281234902922',
-            ],
-            [
-                'nama_sekolah' => 'Sd Lab Kota Kediri',
-                'guru' => 'Pak Jayus',
-                'no_hp' => '+62812345929',
-            ],
-            [
-                'nama_sekolah' => 'Smp IT Bina Insani Kota Kediri',
-                'guru' => 'Bu Aida',
-                'no_hp' => '+6281234567820',
-            ]
+        sekolah::create([
+            'nama_sekolah' => 'Mts Negeri 2 Kediri',
+            'guru' => 'Ulum',
+            'no_hp' => '+62351-123456',
         ]);
+
     }
 }

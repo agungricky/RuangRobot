@@ -13,4 +13,16 @@ class historigaji extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function gajiUtama(){
+        return $this->hasMany(gajiUtama::class, 'history_gaji_id', 'id');
+    }
+
+    public function gajiTransport(){
+        return $this->hasMany(gajiTransport::class, 'history_gaji_id', 'id');
+    }
+
+    public function gajiCustom(){
+        return $this->hasMany(gajiCustom::class, 'history_gaji_id', 'id');
+    }
 }

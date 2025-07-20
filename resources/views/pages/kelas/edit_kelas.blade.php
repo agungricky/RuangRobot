@@ -16,15 +16,30 @@
                                     <div id="inputFieldsContainer">
                                         <div class="field">
                                             <div class="row">
-                                                <div class="col-12 mb-3">
+                                                <div class="col-8 mb-3">
                                                     <x-form_edit.edit_text name="nama_kelas" label="Nama Kelas"
                                                         :value="$data->nama_kelas" />
                                                     <x-validation_form.error name="nama_kelas" />
                                                 </div>
                                                 <div class="col-4 mb-3">
+                                                    <label for="kode_kelas">Kode Kelas</label>
+                                                    <input type="text" id="kode_kelas" name="kode_kelas"
+                                                        class="form-control" placeholder="Masukan kode kelas"
+                                                        value="{{ $data->kode_kelas }}" />
+                                                    <div id="error-kode_kelas" class="text-danger"></div>
+                                                </div>
+                                                <div class="col-4 mb-3">
                                                     <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
-                                                    <input type="text" id="penanggung_jawab" name="penanggung_jawab"
-                                                        class="form-control" value="{{ $data->penanggung_jawab }}" />
+                                                    <select id="penanggung_jawab" name="penanggung_jawab"
+                                                        class="form-control select2">
+                                                        <option value="">-- Pilih Pengajar --</option>
+                                                        @foreach ($pengajarList as $pengajar)
+                                                            <option value="{{ $pengajar->id }}"
+                                                                {{ $pengajar->id == $data->pengajar->id ? 'selected' : '' }}>
+                                                                {{ $pengajar->pengguna->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                     <x-validation_form.error name="penanggung_jawab" />
                                                 </div>
                                                 <div class="col-3 mb-3">
@@ -34,18 +49,25 @@
                                                 </div>
                                                 <div class="col-5 mb-3">
                                                     <label for="autocomplete_program_belajar">Program Belajar</label>
-                                                    <input type="text" id="programInput" name="program_belajar" class="form-control" value="{{ $data->nama_program }}" />
-                                                    <input type="hidden" id="programId" name="programId" value="{{ $data->program_id }}" />
+                                                    <select id="programId" name="programId" class="form-control select2">
+                                                        <option value="">-- Pilih Program Belajar --</option>
+                                                        @foreach ($programBelajar as $program)
+                                                            <option value="{{ $program->id }}"
+                                                                {{ $program->id == $data->program_belajar_id ? 'selected' : '' }}>
+                                                                {{ $program->nama_program }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                     <x-validation_form.error name="programId" />
-                                                    <x-validation_form.error name="program_belajar" />
                                                 </div>
                                                 <div class="col-6 mb-3">
                                                     <label for="">Jenis Kelas</label>
                                                     <select class="form-control" name="kategori_kelas">
                                                         @foreach ($kategori as $item)
                                                             <option value="{{ $item->id }}"
-                                                                {{ $data->kategori_kelas == $item->kategori_kelas ? 'selected' : '' }}>
-                                                                {{ $item->kategori_kelas }}</option>
+                                                                {{ $item->id == $data->kategori_kelas_id ? 'selected' : '' }}>
+                                                                {{ $item->kategori_kelas }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                     <x-validation_form.error name="kategori_kelas" />
@@ -78,10 +100,14 @@
                                                     <x-validation_form.error name="harga_kelas" />
                                                 </div>
                                                 <div class="col-6 mb-3">
-                                                    <x-form_edit.edit_number name="jatuh_tempo" label="Tanggal Jatuh tempo"
-                                                    :value="$data->jatuh_tempo" />
+                                                    <label for="jatuh_tempo">Tanggal Jatuh Tempo</label>
+                                                    <input type="date" name="jatuh_tempo" id="jatuh_tempo"
+                                                        class="form-control" value="{{ $data->jatuh_tempo }}">
                                                     <x-validation_form.error name="jatuh_tempo" />
                                                 </div>
+
+                                                <input type="hidden" name="kategoriKelas"
+                                                    value="{{ $data->kategori_kelas_id }}">
                                             </div>
                                         </div>
                                     </div>
@@ -97,97 +123,20 @@
         </section>
     </div>
 
+    <style>
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #d6e7ff;
+            padding: 7px 0px 0px 9px !important;
+            border-radius: 0.375rem;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
-            // Auto Complate program Belajar
-            $.ajax({
-                url: "{{ route('form_programbelajar.json') }}",
-                method: "GET",
-                success: function(response) {
-                    // Buat array objek dengan nama program dan ID
-                    var programs = response.data.map(function(item) {
-                        return {
-                            label: item.nama_program, // Yang ditampilkan di autocomplete
-                            value: item.nama_program, // Nilai input teks
-                            id: item.id // ID yang disimpan
-                        };
-                    });
-
-                    $('#programInput').autocomplete({
-                        source: programs,
-                        minLength: 1,
-                        autoFocus: true,
-                        select: function(event, ui) {
-                            // Ketika item dipilih, simpan ID-nya di input hidden
-                            $('#programId').val(ui.item.id);
-                        }
-                    });
-                },
-                error: function(xhr) {
-                    console.error("Error:", xhr.responseText);
-                }
-            });
-
-            // Auto Complate program Belajar
-            $.ajax({
-                url: "{{ route('form_programbelajar.json') }}",
-                method: "GET",
-                success: function(response) {
-                    // Buat array objek dengan nama program dan ID
-                    var programs = response.data.map(function(item) {
-                        return {
-                            label: item.nama_program, // Yang ditampilkan di autocomplete
-                            value: item.nama_program, // Nilai input teks
-                            id: item.id // ID yang disimpan
-                        };
-                    });
-
-                    // Menginisialisasi autocomplete
-                    $('#programInput').autocomplete({
-                        source: programs,
-                        minLength: 1,
-                        autoFocus: true,
-                        select: function(event, ui) {
-                            // Ketika item dipilih, simpan ID-nya di input hidden
-                            $('#programId').val(ui.item.id);
-                        }
-                    });
-
-                    // Jika ada nilai program yang sudah terisi, set ID-nya otomatis
-                    var initialProgram = programs.find(function(program) {
-                        return program.value === "{{ $data->nama_program }}";
-                    });
-
-                    if (initialProgram) {
-                        $('#programInput').val(initialProgram.value);
-                        $('#programId').val(initialProgram.id);
-                    }
-                },
-                error: function(xhr) {
-                    console.error("Error:", xhr.responseText);
-                }
-            });
-
-
-            // Auto Complate pengajar
-            $.ajax({
-                url: "{{ route('pengajar.json') }}",
-                method: "GET",
-                success: function(response) {
-                    // alert(response);
-                    var programs = response.data.map(function(item) {
-                        return item.nama;
-                    });
-
-                    $('#penanggung_jawab').autocomplete({
-                        source: programs,
-                        minLength: 1,
-                        autoFocus: true
-                    });
-                },
-                error: function(xhr) {
-                    console.error("Error:", xhr.responseText);
-                }
+            $('.select2').select2({
+                placeholder: "-- Pilih Pengajar --",
+                allowClear: true,
+                width: '100%'
             });
         });
     </script>

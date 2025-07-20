@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\akun;
 use App\Models\invoice;
+use App\Models\pendaftaran;
 use App\Models\pengguna;
+use App\Models\riwayatPembayaran;
 use App\Models\sekolah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +47,12 @@ class penggunaController extends Controller
         return view('pages.pengguna.pengguna', compact('data', 'id'));
     }
 
+    public function permintaan_mendaftar($id, Request $request)
+    {
+        $data = pendaftaran::where('kategori', 'Reguler')->get();
+        return response()->json($data, 200);
+    }
+
     public function sekolah()
     {
         $data = sekolah::all();
@@ -82,10 +90,11 @@ class penggunaController extends Controller
             'password' => 'required',
             'role' => 'required',
             'nama' => 'required',
+            'tgl_lahir' => 'required',
             'email' => 'required|email',
             'alamat' => 'required',
             'no_telp' => 'required|regex:/^\+62[0-9]+$/',
-            // 'sekolah_id' => 'nullable|exists:sekolah,id',
+            'sekolah_id' => 'nullable|exists:sekolah,id',
         ], $message);
 
         // Mulai transaksi
@@ -101,6 +110,8 @@ class penggunaController extends Controller
             pengguna::create([
                 'id' => $akun->id,
                 'nama' => $request->nama,
+                'tgl_lahir' => $request->tgl_lahir,
+                'kelas' => $request->kelas,
                 'email' => $request->email,
                 'alamat' => $request->alamat,
                 'no_telp' => $request->no_telp,
@@ -141,9 +152,9 @@ class penggunaController extends Controller
      */
     public function edit(string $id, $role)
     {
-        $data = pengguna::where('id', $id)->first();
-
-        return view('pages.pengguna.edit_pengguna', compact('data', 'role'));
+        $data = pengguna::with('akun', 'sekolah')->where('id', $id)->first();
+        $sekolah = sekolah::all();
+        return view('pages.pengguna.edit_pengguna', compact('data', 'role', 'sekolah'));
     }
 
     /**
@@ -151,14 +162,53 @@ class penggunaController extends Controller
      */
     public function update(Request $request, string $id, $role)
     {
-        pengguna::where('id', $id)->update([
+        $request->validate([
+            'username' => 'required|string|max:100|unique:akun,username,' . $request->id,
+            'password' => 'nullable|string|min:8',
+            'role'     => 'required|in:Admin,Pengajar,Siswa',
+            'nama'        => 'required|string|max:255',
+            'email'       => 'required|email|max:255',
+            'alamat'      => 'required|string|max:255',
+            'no_telp'     => 'required|string|max:20',
+            'sekolah_id'  => 'nullable|exists:sekolah,id',
+            'kelas'       => 'nullable|string|max:100',
+            'tgl_lahir'   => 'required|date',
+            'mekanik'     => 'nullable|integer|min:0',
+            'elektronik'  => 'nullable|integer|min:0',
+            'pemrograman' => 'nullable|integer|min:0',
+        ]);
+
+        $dataUpdate = [
+            'username' => $request->username,
+            'role' => $request->role
+        ];
+
+        if ($request->filled('password')) {
+            $dataUpdate['password'] = Hash::make($request->password);
+        }
+
+        akun::where('id', $id)->update($dataUpdate);
+
+
+        $updateProfile = [
+            'tgl_lahir' => $request->tgl_lahir,
             'nama' => $request->nama,
             'email' => $request->email,
             'alamat' => $request->alamat,
             'no_telp' => $request->no_telp,
-        ]);
+        ];
 
-        return redirect()->route('pengguna',['id' => $role ])->with('success','Data pengguan berhasil diUpdate');
+        if ($request->filled('sekolah_id')) {
+            $updateProfile['sekolah_id'] = $request->sekolah_id;
+        }
+
+        if ($request->filled('kelas')) {
+            $updateProfile['kelas'] = $request->kelas;
+        }
+
+        pengguna::where('id', $id)->update($updateProfile);
+
+        return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguan berhasil diUpdate');
     }
 
     /**
@@ -166,20 +216,22 @@ class penggunaController extends Controller
      */
     public function destroy(string $id, $role)
     {
-        pengguna::find($id)->delete();
-        akun::find($id)->delete();
-        return redirect()->route('pengguna', ['id' => $role])->with('success','Data pengguna berhasil dihapus');
-
+        invoice::where('profile_id', $id)->delete();
+        riwayatPembayaran::findOrfail($id)->delete();
+        pengguna::findOrfail($id)->delete();
+        akun::findOrfail($id)->delete();
+        return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguna berhasil dihapus');
     }
 
-    public function kelas_diikuti($id){
+    public function kelas_diikuti($id)
+    {
         $data = invoice::where('invoice.profile_id', $id)
-        ->join('kelas', 'invoice.kelas_id', 'kelas.id')
-        ->join('profile', 'invoice.profile_id', 'profile.id')
-        ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-        ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
-        ->orderBy('invoice.created_at', 'desc')
-        ->get();
+            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
+            ->join('profile', 'invoice.profile_id', 'profile.id')
+            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
+            ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
+            ->orderBy('invoice.created_at', 'desc')
+            ->get();
         return view('pages.pengguna.kelas_diikuti', compact('data'));
     }
 }

@@ -9,20 +9,59 @@
         <section class="section">
             <x-title_halaman title="Pembayaran Kelas" />
 
+            @php
+                $hex = $data->kategori->color_bg;
+                $r = hexdec(substr($hex, 1, 2));
+                $g = hexdec(substr($hex, 3, 2));
+                $b = hexdec(substr($hex, 5, 2));
+                $bb = hexdec(substr($hex, 9, 5));
+                $rgba = "rgba($r, $g, $b, 1)";
+                $rgbb = "rgba($r, $g, $bb, 0.4)";
+            @endphp
+
             <div class="section-body">
                 {{-- Informasi Kelas --}}
                 <div class="row">
                     <div class="col-md-12">
+
                         <div class="hero text-white hero-bg-image"
-                            style="background-image: url({{ asset('img_videogaming.jpg') }}); padding:35px;">
-                            <div class="hero-inner">
+                            style="background-image: url({{ asset('img_videogaming1.png') }});
+                                    background-color: {{ $rgba }};
+                                    /* background-blend-mode: overlay; */
+                                    padding:35px";>
+                            <div class="hero-inner d-flex flex-column gap-1">
                                 <h5>{{ $data->nama_kelas }}</h5>
-                                <span class="badge badge-danger">{{ $data->kategori_kelas }}</span>
-                                <span
-                                    class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-warning' : 'badge-success' }}">{{ $data->status_kelas }}</span>
-                                <p class="lead">{{ $data->nama_program }}</p>
+                                <div class="d-flex gap-2">
+                                    <span class="ml-2 badge"
+                                        style="
+                                        background-color: blue;
+                                        background-blend-mode: overlay;
+                                        ">{{ $data->program_belajar->nama_program }}</span>
+                                    <span
+                                        style="
+                                        background-color: red;
+                                        color: white;
+                                        padding: 1px 15px;
+                                        border-radius: 999px;
+                                        display: inline-block;
+                                    ">
+                                        {{ $data->kategori->kategori_kelas }}
+                                    </span>
+
+                                    @php
+                                        $aktif = 'Aktif';
+                                        $selesai = 'Selesai';
+                                    @endphp
+                                    <span
+                                        class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-success' : 'badge-secondary-dark' }}">{{ $data->status_kelas == 'aktif' ? $aktif : $selesai }}</span>
+                                </div>
+
+                                <p class="lead d-none d-sm-none d-md-block mt-3"
+                                    style="width: 55%; text-align: justify; line-height: 1.5;">
+                                    {!! $data->program_belajar->deskripsi !!}</p>
                             </div>
                         </div>
+
                         <div class="card">
                             <div class="card-body">
 
@@ -40,7 +79,7 @@
                                             </li>
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-user"></i> Penanggung Jawab Kelas </b>
-                                                <div class="profile-desc-item pull-right">{{ $data->penanggung_jawab }}
+                                                <div class="profile-desc-item pull-right">{{ $data->pengajar->nama }}
                                                 </div>
                                             </li>
                                         </ul>
@@ -49,20 +88,20 @@
                                         <ul class="list-group">
                                             <li class="list-group-item border-bottom">
                                                 <b><i class="fas fa-dollar-sign"></i> Harga Kelas </b>
-                                                <div class="profile-desc-item pull-right text-success">Rp.
+                                                <div class="profile-desc-item pull-right text-success fw-bold">Rp.
                                                     {{ number_format($data->harga, 0, ',', '.') }}
                                                 </div>
                                             </li>
                                             <li class="list-group-item border-bottom d-flex gap-3">
                                                 <div class="border-end border-1 pe-3">
                                                     <b><i class="fas fa-dollar-sign"></i> Rencana Pendapatan Kelas </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($rencana_pendapatan, 0, ',', '.') }}
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <b><i class="fas fa-dollar-sign"></i> Total yang di dapat </b>
-                                                    <div class="profile-desc-item pull-right">Rp.
+                                                    <div class="profile-desc-item pull-righ">Rp.
                                                         {{ number_format($totalPembayaran, 0, ',', '.') }}
                                                     </div>
                                                 </div>
@@ -85,7 +124,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="data_siswa">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="data_siswa">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
@@ -107,7 +147,7 @@
         </section>
     </div>
 
-    <!-- Modal edit pertemuan -->
+    <!-- Modal Tambah Pembayaran -->
     <div class="modal fade" id="tambahpembayaran" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -119,16 +159,83 @@
                 <div class="modal-body">
                     <form id="edit_pertemuan_form">
                         @csrf
-                        <x-form.input_number label="Tambah Pembayaran" name="tambah_pembayaran"
-                            placeholder="Bayar Berapa?" />
-                        <div id="tambah_pembayaranError" class="text-danger"></div>
+                        <div class="d-flex flex-column gap-3">
+                            <input type="hidden" name="kelas_id" id="kelas_id">
+                            <input type="hidden" name="siswa_id" id="siswa_id">
+
+                            <div class="">
+                                <x-form.input_number label="Nominal" name="nominal" placeholder="Masukan Nomial?" />
+                                <div id="tambah_pembayaranError" class="text-danger"></div>
+                            </div>
+
+                            <div class="">
+                                <x-form.input_text label="Keterangan" name="jenis_pembayaran"
+                                    placeholder="Masukan Keterangan" />
+                            </div>
+
+                            <div class="">
+                                <x-form.input_tanggal label="Tanggal Pembayaran" name="tanggal"
+                                    placeholder="Masukan Tanggal Pembayaran" />
+                            </div>
+
+                            <div class="">
+                                <label for="metode_pembayaran">Metode Pembayaran</label>
+                                <select class="form-control" name="metode_pembayaran" id="metode_pembayaran">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Transfer">Transfer</option>
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i
+                            class="fa-solid fa-xmark"></i>
                         Batal</button>
-                    <button type="button" id="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i>
+                    <button type="button" id="submit" class="btn btn-success"><i
+                            class="fa-solid fa-floppy-disk"></i>
                         Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Buku Pembayaran --}}
+    <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="">
+                        <h5 class="modal-title text-dark fw-bold mb-1" id="modalLabel"># Detail Pembayaran</h5>
+
+                        <div class="border rounded px-3 py-2 bg-light">
+                            <div class="d-flex justify-content-between small text-muted gap-3">
+                                <span><strong>Nama Siswa:</strong> <span id="namas"></span> </span>
+                                <span>|</span>
+                                <span><strong>Sekolah:</strong> <span id="sekolahs"></span> </span>
+                                <span>|</span>
+                                <span><strong>Kekurangan:</strong> <span id="kekurangan"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%;">No</th>
+                                <th class="col-1">Jenis Pembayaran</th>
+                                <th class="col-1">Nominal</th>
+                                <th class="col-1">Tanggal</th>
+                                <th class="col-1">Metode Pembayaran</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -151,8 +258,19 @@
                     },
                     {
                         data: 'nama',
+                        className: 'text-start',
                         render: function(data, type, row) {
-                            return `<div class="text-start fw-bold text-primary">${data}</div>`;
+                            return `
+                                <a href="#" class="text-primary fw-bold" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#modalDetail" 
+                                   data-id="${row.id}"
+                                   data-nama="${row.nama}"
+                                   data-sekolah="${row.sekolah}"
+                                   data-kekurangan="${row.sisa_pembayaran}"
+                                   data-kelassiswa={{ $data->id }}>
+                                    ${data}
+                                </a>`;
                         }
                     },
                     {
@@ -206,11 +324,18 @@
                             if (row.sisa_pembayaran <= 0) {
                                 return '<button class="btn btn-success btn-sm readonly"><i class="fa-solid fa-check"></i> Lunas </button>';
                             } else {
-                                return '<button class="btn btn-warning btn-sm" ' +
+                                return '<div class="d-flex gap-3 justify-content-center">' +
+                                    '<button class="btn btn-warning btn-sm" ' +
                                     'data-id="' + row.id + '" ' +
                                     'data-kelas-id="' + <?= $data->id ?> + '" ' +
                                     'data-bs-toggle="modal" data-bs-target="#tambahpembayaran">' +
-                                    '<i class="fa fa-plus"></i> Bayar</button>';
+                                    '<i class="fa fa-plus"></i></button>' +
+
+                                    '<button class="btn btn-danger btn-sm" ' +
+                                    'data-id="' + row.id + '" ' +
+                                    'data-kelas-id="<?= $data->id ?>">' +
+                                    '<i class="fa fa-exclamation-circle"></i></button>' +
+                                    '</div>';
                             }
                         }
                     }
@@ -223,6 +348,39 @@
             $(document).on('click', '.btn-warning', function() {
                 selectedSiswaId = $(this).data('id');
                 selectedKelasId = $(this).data('kelas-id');
+
+                $('#kelas_id').val(selectedKelasId);
+                $('#siswa_id').val(selectedSiswaId);
+            });
+
+            $(document).on('click', '.btn-danger', function() {
+                selectedSiswaId = $(this).data('id');
+                selectedKelasId = $(this).data('kelas-id');
+
+                Swal.fire({
+                    title: 'Yakin ingin mengirim Penagihan?',
+                    text: "Penagihan akan dikirim melalui Whatsapp!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Kirim!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value == true) {
+                        $.ajax({
+                            type: "GET",
+                            url: `/penagiha/personal/${selectedSiswaId}/${selectedKelasId}`,
+                            dataType: "json",
+                            success: function(response) {
+                                Swal.fire(
+                                    'Terkirim!',
+                                    'Pesan berhasil dikirim.',
+                                    'success'
+                                );
+                            }
+                        });
+                    }
+                });
             });
 
             // Tambah Pembayaran
@@ -346,6 +504,62 @@
                     }
                 });
             });
+
+            $('#modalDetail').on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const id = button.data('id');
+                const kelas = button.data('kelassiswa');
+                const nama = button.data('nama');
+                const sekolah = button.data('sekolah');
+                const Kekurangan = button.data('kekurangan');
+
+                function formatRupiah(angka) {
+                    return 'Rp' + ' ' + new Intl.NumberFormat('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(angka);
+                }
+
+                function formatHariTanggal(tgl) {
+                    const date = new Date(tgl);
+                    return date.toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+
+                $('#namas').text(nama);
+                $('#sekolahs').text(sekolah);
+                $('#kekurangan').text(formatRupiah(Kekurangan));
+
+                $.ajax({
+                    type: "GET",
+                    url: `/riwayat_pembayaran/${id}/${kelas}`,
+                    dataType: "json",
+                    success: function(response) {
+                        const data = response.data;
+
+                        let rows = '';
+                        data.forEach((d, index) => {
+                            rows += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${d.jenis_pembayaran}</td>
+                                    <td>${formatRupiah(d.nominal)}</td>
+                                    <td>${formatHariTanggal(d.tanggal)}</td>
+                                    <td>${d.metode_pembayaran}</td>
+                                </tr>`;
+                        });
+
+
+                        $('#modalTableBody').html(rows);
+                    }
+                });
+
+            });
+
 
         });
     </script>

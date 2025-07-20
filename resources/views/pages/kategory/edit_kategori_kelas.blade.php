@@ -14,8 +14,20 @@
                                     @csrf
                                     @method('PATCH')
                                     <div class="form-group">
-                                        <x-form_edit.edit_text name="kategori" label="Nama Kategori Kelas" :value="$data->kategori_kelas" />
-                                        <x-validation_form.error name="kategori"/>
+                                        <x-form_edit.edit_text name="kategori" label="Nama Kategori Kelas"
+                                            :value="$data->kategori_kelas" />
+                                        <x-validation_form.error name="kategori" />
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="color_bg" class="block text-sm font-semibold text-gray-700 mb-1">
+                                            Warna Background
+                                        </label>
+                                        <div class="flex items-center space-x-3">
+                                            <input type="color" name="color_bg" id="color_bg"
+                                                class="rounded-lg border border-gray-400 shadow"
+                                                value="{{ old('color_bg', $data->color_bg ) }}" style="width: 100%; height: 80px;">
+                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </form>

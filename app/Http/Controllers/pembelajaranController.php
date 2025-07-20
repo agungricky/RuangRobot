@@ -78,21 +78,67 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
         }
     }
 
+    public function info_kepengguna($id)
+    {
+        $murid_kelas = muridKelas::where('kelas_id', $id)->first();
+
+        $data_siswa = $murid_kelas->murid;
+        $data_siswa = json_decode($data_siswa, true);
+
+        foreach ($data_siswa as $item) {
+            $data = pengguna::with('akun')->find($item['id']);
+            $username = $data->akun ? $data->akun->username : '-';
+
+            $response = Http::withHeaders([
+                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $data->no_telp,
+                'message' => "
+Halo 👋 $data->nama,
+Selamat sudah bergabung dengan Robot!
+    
+Anda sudah terdaftar dan bisa mengakses sistem ruangrobot.id dengan akun sebagai berikut:
+
+▶ username : $username
+▶ password : ruangrobot
+
+Jika ada pertanyaaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+📞 https://wa.me/+6285655770506
+    
+Kami siap membantu Anda! 😊
+Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+    
+Salam hangat,
+Ruang Robot,
+Perum Mojoroto Indah T-24, Kota Kediri
+https://maps.app.goo.gl/A7DbNKCXWmBGcTtm6",
+            ]);
+
+            // Simpan response untuk debug jika diperlukan
+            $responses[] = $response->body();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diambil.',
+            'data' => $data_siswa
+        ]);
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index($id)
     {
-        $data = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('pembelajaran.*', 'kelas.durasi_belajar')
+        $data = pembelajaran::with('kelas', 'pengajar')
             ->where('kelas_id', $id)
-            ->orderBy('pertemuan', 'asc')
+            ->orderByRaw('tanggal IS NULL, tanggal ASC')
             ->get();
+
         return response()->json(['data' => $data]);
     }
 
-    public function siswa()
+    public function siswa_all()
     {
         $data = pengguna::join('akun', 'akun.id', 'profile.id')
             ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
@@ -128,24 +174,22 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
      */
     public function store(Request $request)
     {
-        $data = $request->jumlah_pertemuan;
-        $id_kelas = $request->id_kelas;
-        $kelas = pembelajaran::join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->where('kelas.id', $id_kelas)
-            ->count();
+        $request->validate([
+            'jumlah_pertemuan' => 'required',
+        ]);
 
-        $tambah_pertemuan = $kelas + $data;
+        for ($i = 0; $i < $request->jumlah_pertemuan; $i++) {
+            $kode_pertemuan = strtoupper(substr(bin2hex(random_bytes(5)), 0, 10));
 
-        for ($i = $kelas; $i < $tambah_pertemuan; $i++) {
             pembelajaran::create([
-                'pertemuan' => $i + 1,
-                'pengajar' => '',
+                'kode_pertemuan' => $kode_pertemuan,
+                'pengajar' => null,
                 'tanggal' => null,
                 'materi' => '',
                 'catatan_pengajar' => '',
                 'absensi' => json_encode(new \stdClass()),
                 'status_tersimpan' => 'sementara',
-                'kelas_id' => $id_kelas,
+                'kelas_id' => $request->id_kelas,
             ]);
         }
     }
@@ -155,7 +199,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
      */
     public function detailPertemuan(string $id)
     {
-        $data = pembelajaran::where('id', $id)->first();
+        $data = pembelajaran::with('pengajar')->where('id', $id)->first();
         return response()->json(['data' => $data]);
     }
 
@@ -255,70 +299,70 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
                 'kelas_id' => $id, // ID kelas dari URL
             ]);
 
-            $data = pengguna::where('profile.id', $siswa['id'])
-                ->join('akun', 'akun.id', 'profile.id')
-                ->first();
+            //             $data = pengguna::where('profile.id', $siswa['id'])
+            //                 ->join('akun', 'akun.id', 'profile.id')
+            //                 ->first();
 
-            $pembelajaran = kelas::where('kelas.id', $id)->first();
-            
-            $muridkelas = muridKelas::where('kelas_id', $id)->first();
-            $murid = json_decode($muridkelas->murid, true);
-            $datasiswa = null;
-            foreach ($murid as $key => $value) {
-                if ($value['id'] == $siswa['id']) {
-                    $datasiswa = $value;
-                    break;
-                }
-            }
+            //             $pembelajaran = kelas::where('kelas.id', $id)->first();
 
-            Carbon::setLocale('id'); // Pastikan bahasa Indonesia digunakan
-            $tanggalJatuhTempo = Carbon::parse($pembelajaran->jatuh_tempo)->translatedFormat('l, d-m-Y');
+            //             $muridkelas = muridKelas::where('kelas_id', $id)->first();
+            //             $murid = json_decode($muridkelas->murid, true);
+            //             $datasiswa = null;
+            //             foreach ($murid as $key => $value) {
+            //                 if ($value['id'] == $siswa['id']) {
+            //                     $datasiswa = $value;
+            //                     break;
+            //                 }
+            //             }
 
-            $response = Http::withHeaders([
-                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
-            ])->post('https://api.fonnte.com/send', [
-                'target' => $data->no_telp,
-                'message' => "
-*💡 #Invoice Tagihan Pembayaran 📚*
-    
-Halo 👋 $data->nama,
-Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
-    
-Pembelajaran : *$pembelajaran->nama_kelas*
-Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
-Tanggal Jatuh Tempo: $tanggalJatuhTempo
-Nomor Tagihan: " . $datasiswa['no_invoice'] . "
-Total Terbayar: Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
-    
-Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
-Bank: BCA (Bank Central Asia)
-Nomor Rekening: 9203123456
-Atas Nama: Julian Sahertian
-                                
-Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
-📞 https://wa.me/+6285655770506
-    
-Untuk pemantauan pembelajaran dapat dilihat di:
-🌐 ruangrobot.id
-▶ username : $data->username
-▶ password : ruangrobot
-                                
-Kami siap membantu Anda! 😊
-Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
-                                
-Salam hangat,
-*Ruang Robot*,
-Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
-                'countryCode' => '62',
-                'filename' => 'Tagihanku',
-                'schedule' => 0,
-                'typing' => false,
-                'delay' => '0',
-                'followup' => 0,
-            ]);
+            //             Carbon::setLocale('id'); // Pastikan bahasa Indonesia digunakan
+            //             $tanggalJatuhTempo = Carbon::parse($pembelajaran->jatuh_tempo)->translatedFormat('l, d-m-Y');
 
-            // Simpan response untuk debug jika diperlukan
-            $responses[] = $response->body();
+            //             $response = Http::withHeaders([
+            //                 'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            //             ])->post('https://api.fonnte.com/send', [
+            //                 'target' => $data->no_telp,
+            //                 'message' => "
+            // *💡 #Invoice Tagihan Pembayaran 📚*
+
+            // Halo 👋 $data->nama,
+            // Sehubungan dengan pembelajaran di Ruang Robot, kami ingin menginformasikan mengenai pembayaran yang harus dilakukan. Berikut kami sampaikan rincian tagihannya:
+
+            // Pembelajaran : *$pembelajaran->nama_kelas*
+            // Tagihan : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
+            // Tanggal Jatuh Tempo: $tanggalJatuhTempo
+            // Nomor Tagihan: " . $datasiswa['no_invoice'] . "
+            // Total Terbayar: Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+
+            // Untuk melakukan pembayaran, berikut adalah informasi rekening bank untuk pembayaran 💳:
+            // Bank: BCA (Bank Central Asia)
+            // Nomor Rekening: 9203123456
+            // Atas Nama: Julian Sahertian
+
+            // Jika ada pertanyaan atau Anda membutuhkan bantuan, jangan ragu untuk menghubungi kami di:
+            // 📞 https://wa.me/+6285655770506
+
+            // Untuk pemantauan pembelajaran dapat dilihat di:
+            // 🌐 ruangrobot.id
+            // ▶ username : $data->username
+            // ▶ password : ruangrobot
+
+            // Kami siap membantu Anda! 😊
+            // Terima kasih banyak atas perhatian dan kerjasamanya! 🙏💙
+
+            // Salam hangat,
+            // *Ruang Robot*,
+            // Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 60234",
+            //                 'countryCode' => '62',
+            //                 'filename' => 'Tagihanku',
+            //                 'schedule' => 0,
+            //                 'typing' => false,
+            //                 'delay' => '0',
+            //                 'followup' => 0,
+            //             ]);
+
+            //             // Simpan response untuk debug jika diperlukan
+            //             $responses[] = $response->body();
         }
 
         // Kembalikan response untuk semua siswa
@@ -355,8 +399,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
         }
 
         invoice::where('profile_id', $id)
-       ->where('kelas_id', $id_kelas) // AND condition
-       ->delete();
-
+            ->where('kelas_id', $id_kelas) // AND condition
+            ->delete();
     }
 }

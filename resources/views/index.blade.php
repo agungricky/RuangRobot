@@ -184,18 +184,10 @@
                                 </div>
                                 <!-- layer 3 -->
                                 <div class="layer-3 wow fadeInUp" data-wow-delay="0.7s">
-                                    <a href="{{ route('login')}}" class="ready-btn" method="POST">Login</a>
-                                    <a href="https://wa.me/6285655770506?text={{ urlencode('Halo Ruang Robot.
-                                    Saya Mau daftar.
-                                    
-                                    Nama Lengkap:
-                                    Nomor Telfon:
-                                    Sekolah:
-                                    Tanggal Lahir:
-                                    Alamat:
-                                    
-                                    Terimakasih.') }}"
-                                        class="ready-btn">Register</a>
+                                    <a href="{{ route('login') }}" class="ready-btn" method="POST">Login</a>
+                                    <a class="ready-btn" href="https://wa.me/6281234567890?text=Hai%20min%2C%20saya%20ingin%20mendaftar%20kelas%20reguler."
+                                        target="_blank">Register
+                                    </a>
                                 </div>
                             </div>
                         </div>

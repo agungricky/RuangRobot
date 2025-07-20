@@ -9,7 +9,7 @@ class pembelajaran extends Model
     protected $table = 'pembelajaran';
     protected $fillable = [
         'id',
-        'pertemuan',
+        'kode_pertemuan',
         'pengajar',
         'tanggal',
         'materi',
@@ -20,4 +20,20 @@ class pembelajaran extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function kelas(){
+        return $this->belongsTo(kelas::class, 'kelas_id' , 'id');
+    }
+
+    public function pengajar(){
+        return $this->belongsTo(pengguna::class, 'pengajar' , 'id');
+    }
+
+    public function gaji_utama(){
+        return $this->hasMany(gajiUtama::class, 'pembelajaran_id', 'id');
+    }
+
+    public function gaji_transport(){
+        return $this->hasMany(gajiTransport::class, 'pembelajaran_id', 'id');
+    }
 }

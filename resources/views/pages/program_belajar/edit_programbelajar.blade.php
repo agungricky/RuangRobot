@@ -28,20 +28,22 @@
                                                         'sulit' => 'Advanced (Lanjutan)',
                                                     ];
                                                 @endphp
-                                                <x-form_edit.edit_dropdown label="Level" name="level" :option="$option" :data="$data->level" />
+                                                <x-form_edit.edit_dropdown label="Level" name="level" :option="$option"
+                                                    :data="$data->level" />
                                             </div>
                                             <div class="col-3">
                                                 <label for="">Tipe Kelas</label>
                                                 <select class="form-control" name="tipe_kelas_id">
                                                     @foreach ($tipe_kelas as $value)
-                                                    <option value="{{ $value->id }}" {{$data->tipe_kelas == $value->tipe_kelas ? 'selected' : ''}}>{{ $value->tipe_kelas}}</option>
+                                                        <option value="{{ $value->id }}"
+                                                            {{ $data->tipe_kelas == $value->tipe_kelas ? 'selected' : '' }}>
+                                                            {{ $value->tipe_kelas }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-12 my-3">
-                                                <x-form_edit.edit_textArea name="deskripsi" label="Deskripsi"
-                                                    :value="$data->deskripsi" />
-                                                <x-validation_form.error name="deskripsi" />
+                                                <label for="deskripsi">Deskripsi</label>
+                                                <textarea id="deskripsi" name="deskripsi" class="form-control">{{ $data->deskripsi }}</textarea>
                                             </div>
                                             <div class="col-4">
                                                 <x-form_edit.edit_text name="mekanik" label="mekanik" :value="$data->mekanik" />
@@ -68,4 +70,19 @@
             </div>
         </section>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#deskripsi').summernote({
+                height: 100,
+                placeholder: 'Tulis deskripsi program di sini...',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['codeview']]
+                ]
+            });
+        });
+    </script>
 @endsection

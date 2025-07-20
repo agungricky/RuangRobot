@@ -37,26 +37,15 @@
                                             @foreach ($gaji as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ $item->tanggal }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}
+                                                    </td>
                                                     <td>{{ $item->status_pengajar }}</td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                {{-- <form
-                                                                    action="{{ route('gaji.verifikasi', ['id' => $item->id]) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" value="diverifikasi"
-                                                                        name="status">
-                                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                                        <i class="fas fa-check"></i> Verifikasi
-                                                                    </button>
-                                                                </form> --}}
-
                                                                 <form
                                                                     action="{{ route('gaji.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
@@ -64,7 +53,7 @@
                                                                     @method('PATCH')
                                                                     <input type="hidden" value="ditolak" name="status">
                                                                     <button type="submit" class="btn btn-danger btn-sm">
-                                                                        <i class="fas fa-times"></i> Tolak
+                                                                        <i class="fas fa-times"></i>
                                                                     </button>
                                                                 </form>
                                                             </div>
@@ -104,11 +93,11 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 25%;">Nama Pengajar</th>
-                                                <th style="width: 55%;">Kelas</th>
-                                                <th style="width: 25%;">Tanggal</th>
-                                                <th style="width: 15%;" class="text-center">Status Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
+                                                <th style="width: 30%;">Nama Pengajar</th>
+                                                <th style="width: 35%;">Kelas</th>
+                                                <th style="width: 10%;">Tanggal</th>
+                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
+                                                <th style="width: 10%;" class="text-start">Gaji Transport</th>
                                                 <th style="width: 60%;">Aksi</th>
                                             </tr>
                                         </thead>
@@ -119,26 +108,14 @@
                                             @foreach ($transport as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ $item->tanggal }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
                                                     <td>{{ $item->status_pengajar }}</td>
-                                                    <td>{{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                {{-- <form
-                                                                    action="{{ route('transport.verifikasi', ['id' => $item->id]) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" value="diverifikasi"
-                                                                        name="status">
-                                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                                        <i class="fas fa-check"></i> Verifikasi
-                                                                    </button>
-                                                                </form> --}}
-
                                                                 <form
                                                                     action="{{ route('transport.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
@@ -146,7 +123,7 @@
                                                                     @method('PATCH')
                                                                     <input type="hidden" value="ditolak" name="status">
                                                                     <button type="submit" class="btn btn-danger btn-sm">
-                                                                        <i class="fas fa-times"></i> Tolak
+                                                                        <i class="fas fa-times"></i>
                                                                     </button>
                                                                 </form>
                                                             </div>
@@ -201,25 +178,13 @@
                                             @foreach ($custom as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{{ $item->tanggal }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
                                                     <td>{{ $item->keterangan }}</td>
-                                                    <td>{{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     @if ($item->status == 'pending')
                                                         <td>
                                                             <div class="d-flex gap-1">
-                                                                {{-- <form
-                                                                    action="{{ route('custom.verifikasi', ['id' => $item->id]) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" value="diverifikasi"
-                                                                        name="status">
-                                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                                        <i class="fas fa-check"></i> Verifikasi
-                                                                    </button>
-                                                                </form> --}}
-
                                                                 <form
                                                                     action="{{ route('custom.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
@@ -276,6 +241,7 @@
                                         </button>
                                     </form>
                                 </div>
+
                                 <div class="table-responsive d-flex gap-4">
                                     <table class="table table-bordered border-dark mt-2 mb-3 w-50" id="example">
                                         <thead>

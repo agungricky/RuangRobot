@@ -3,6 +3,7 @@
     @if (session('success'))
     <x-sweetalert.success/>
     @endif
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -17,11 +18,11 @@
                                     <x-button.button_add_modal message="Tambah Tipe Kelas" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle" id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 15%;" class="text-center">Nama Kategori</th>
+                                                <th style="width: 15%;" class="text-center">Tipe Kelas</th>
                                                 <th style="width: 80%;" class="text-start">Opsi</th>
                                             </tr>
                                         </thead>
@@ -48,7 +49,7 @@
                     <form id="kategoriForm" method="POST">
                         @csrf
                         <div id="inputFieldsContainer" class="mb-0">
-                            <x-form.input_text label="Nama Kelas" name="tipe_kls"
+                            <x-form.input_text label="Tipe Kelas" name="tipe_kls"
                                 placeholder="Meker | Game Programing | dll ...." />
                             <div id="errorMessages" class="text-danger"></div>
                         </div>
@@ -91,13 +92,13 @@
                             return `
                                 <div class="d-flex gap-1">
                                     <a href="{{ url('/tipe_kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm">
-                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <form action="{{ url('/tipe_kelas/delete/${row.id}') }}" method="POST" class="d-inline">
                                         <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                            <i class="fa-solid fa-trash"></i> Hapus
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
                                 </div>

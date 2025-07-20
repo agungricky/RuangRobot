@@ -1,3 +1,14 @@
+/* Sidebar */
+#sidebar-wrapper {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#sidebar-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
 /* Tabel */
 .text-tabel {
     color: rgb(112, 112, 112);

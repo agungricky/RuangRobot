@@ -36,9 +36,9 @@
                                             @foreach ($gaji as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ date('d-m-Y', strtotime($item->tanggal_terbayar)) }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas}}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
                                                     <td>{{ $item->status_pengajar }}</td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
@@ -80,9 +80,9 @@
                                             @foreach ($transport as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ $item->tanggal }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
                                                     <td>{{ $item->status_pengajar }}</td>
                                                     <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
@@ -123,8 +123,8 @@
                                             @foreach ($custom as $item)
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{{ $item->tanggal }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
                                                     <td>{{ $item->keterangan }}</td>
                                                     <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
                                                 </tr>
@@ -144,16 +144,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                {{-- <div class="mb-2">
-                                    <form action="{{ route('gaji.terbayar', ['id'=> $data->id]) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="dibayar">
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-money-bill-wave"></i> Tandai Telah Dibayar
-                                        </button>
-                                    </form>
-                                </div> --}}
+
                                 <div class="table-responsive d-flex gap-4">
                                     <table class="table table-bordered border-dark mt-2 mb-3 w-50" id="example">
                                         <thead>

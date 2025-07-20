@@ -14,10 +14,12 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
+                                                <th></th>
                                                 <th style="width: 25%;" class="text-center">Nama Kelas</th>
                                                 <th style="width: 15%;" class="text-center">Jenis Kelas</th>
                                                 <th style="width: 15%;" class="text-center">Status Kelas</th>
@@ -51,16 +53,33 @@
                         }
                     },
                     {
-                        data: 'nama_kelas',
+                        data: 'kode_kelas',
+                        visible: false,
+                        searchable: true,
                         render: function(data, type, row) {
                             return `<div class="text-tabel fw-bold text-start text-justify">${data}</div>`;
                         }
                     },
                     {
-                        data: 'kategori_kelas',
+                        data: 'nama_kelas',
                         render: function(data, type, row) {
-                            return `<div class="text-center text-tabel fw-bold">${data}</div>`;
+                            console.log(row);
+
+                            return `<div class="text-tabel fw-bold text-start text-justify">${data}</div>`;
                         }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <div class="text-center level">
+                                    <span class="level" style="background-color: ${row.kategori.color_bg}; color: #fff; border-radius: 10px;">
+                                        ${row.kategori.kategori_kelas}
+                                    </span>
+                                </div>
+                            `;
+                        }
+
                     },
                     {
                         data: 'status_kelas',

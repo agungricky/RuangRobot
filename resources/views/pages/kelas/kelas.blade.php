@@ -3,6 +3,7 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -13,15 +14,17 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="add-items d-flex">
+                                <div class="add-items d-flex gap-3">
                                     <x-button.button_add_modal message="Tambah Kelas" id="#form_kelas" />
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center" id="example">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 text-center align-middle"
+                                        id="example">
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%;" class="text-center">No.</th>
                                                 <th style="width: 25%;" class="text-center">Nama Kelas</th>
+                                                <th style="width: 10%;" class="text-center">Kode Kelas</th>
                                                 <th style="width: 5%;" class="text-center">Jenis Kelas</th>
                                                 <th style="width: 10%;" class="text-center">Gaji Pengajar</th>
                                                 <th style="width: 10%;" class="text-center">Gaji Transport</th>
@@ -55,15 +58,22 @@
                         <div id="inputFieldsContainer">
                             <div class="field">
                                 <div class="row">
-                                    <div class="col-12 mb-3">
+                                    <div class="col-8 mb-3">
                                         <x-form.input_text name="nama_kelas" label="Nama Kelas"
                                             placeholder="Masukan Nama Kelas" />
                                         <div id="error-nama_kelas" class="text-danger"></div>
                                     </div>
+                                    <div class="col-4 mb-3">
+                                        <label for="kode_kelas">Kode Kelas</label>
+                                        <input type="text" id="kode_kelas" name="kode_kelas" class="form-control"
+                                            placeholder="Masukan kode kelas" />
+                                        <div id="error-kode_kelas" class="text-danger"></div>
+                                    </div>
                                     <div class="col-6 mb-3">
                                         <label for="penanggung_jawab">Penanggung Jawab Kelas</label>
-                                        <input type="text" id="penanggung_jawab" name="penanggung_jawab"
-                                            class="form-control" placeholder="Masukan Penanggung jawab Kelas" />
+                                        <input type="text" id="penanggung_jawab_autocomplete" class="form-control"
+                                            placeholder="Pilih Penanggung Jawab Kelas" />
+                                        <input type="hidden" id="penanggung_jawab" name="penanggung_jawab" />
                                         <div id="error-penanggung_jawab" class="text-danger"></div>
                                     </div>
                                     <div class="col-6 mb-3">
@@ -87,7 +97,7 @@
                                     <div class="col-12 mb-3">
                                         <label for="nama_program">Program Belajar</label>
                                         <input type="text" id="nama_program_autocomplete" class="form-control"
-                                            placeholder="Masukan Program Belajar" />
+                                            placeholder="Pilih Program Belajar" />
                                         <input type="hidden" id="nama_program" name="nama_program" />
                                         <div id="error-nama_program" class="text-danger"></div>
                                     </div>
@@ -139,6 +149,15 @@
             background-color: #fff;
             border: 1px solid #ccc;
         }
+
+        .bg-secondary-dark {
+            background-color: #888888 !important;
+            color: white;
+        }
+
+        .is-invalid {
+            border-color: red;
+        }
     </style>
 
     <script>
@@ -147,7 +166,7 @@
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
-                    url: "{{ route('kelas.json', ['id'=>$id]) }}",
+                    url: `/kelas/{{ $id }}`,
                     dataSrc: 'data',
                 },
                 columns: [{
@@ -163,9 +182,20 @@
                         }
                     },
                     {
-                        data: 'kategori_kelas',
+                        data: 'kode_kelas',
                         render: function(data, type, row) {
-                            return `<div class="text-center text-tabel fw-bold">${data}</div>`;
+                            return `<div class="text-tabel fw-bold text-center text-justify">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `<div class="text-center">
+                                    <span class="badge text-white px-3 py-2 rounded-pill fw-bold"
+                                          style="background-color: ${data.kategori.color_bg};">
+                                        ${data.kategori.kategori_kelas}
+                                    </span>
+                                </div>`;
                         }
                     },
                     {
@@ -198,9 +228,9 @@
                         data: 'status_kelas',
                         render: function(data, type, row) {
                             if (data == 'aktif') {
-                                color = 'primary';
-                            } else if (data == 'selesai') {
                                 color = 'success';
+                            } else if (data == 'selesai') {
+                                color = 'secondary-dark';
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }
@@ -219,15 +249,22 @@
                         data: null,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-flex gap-1">
-                                    <a href="{{ url('/kelas/detail/${row.id}') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i>Selengkapnya</a>
-                                    <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i>Edit</a>
+                            <div class="d-flex justify-content-center gap-3">
+                                    <a href="{{ url('/kelas/detail/${row.id}') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i></a>
+                                    <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
+                                    <button class="btn btn-danger btn-sm" disabled title="Dimatikan untuk mencegah pengahapusan siswa">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                    {{-- Button ini berfungsi namun karna jika diaktifkan akan banyak menghapus relasi data
                                     <form action="{{ url('/kelas/delete/${row.id}') }}" method="POST" class="d-inline">
                                         <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                         <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="kelas" value="{{ $id }}">
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
+                                    --}}
                                 </form>
                             </div>
                             `;
@@ -256,9 +293,9 @@
                     // Buat array objek dengan nama program dan ID
                     var programs = response.data.map(function(item) {
                         return {
-                            label: item.nama_program, // Yang ditampilkan di autocomplete
-                            value: item.nama_program, // Nilai input teks
-                            id: item.id // ID yang disimpan
+                            label: item.nama_program,
+                            value: item.nama_program,
+                            id: item.id
                         };
                     });
 
@@ -267,13 +304,19 @@
                         minLength: 1,
                         autoFocus: true,
                         select: function(event, ui) {
-                            // Set nilai input teks
+                            // Set nilai input teks dan ID
                             $('#nama_program_autocomplete').val(ui.item.label);
-
-                            // Set nilai input hidden
                             $('#nama_program').val(ui.item.id);
-
-                            return false; // Mencegah autocomplete menimpa nilai input teks
+                            $('#nama_program_autocomplete').removeClass(
+                                'is-invalid'); // Hilangkan merah
+                            return false;
+                        },
+                        change: function(event, ui) {
+                            // Jika tidak ada item yang dipilih (user ketik manual)
+                            if (!ui.item) {
+                                $('#nama_program_autocomplete').addClass('is-invalid');
+                                $('#nama_program').val(''); // Kosongkan ID hidden
+                            }
                         }
                     });
                 },
@@ -287,15 +330,30 @@
                 url: "{{ route('pengajar.json') }}",
                 method: "GET",
                 success: function(response) {
-                    // alert(response);
-                    var programs = response.data.map(function(item) {
-                        return item.nama;
+                    var penanggungList = response.data.map(function(item) {
+                        return {
+                            label: item.nama,
+                            value: item.nama,
+                            id: item.id
+                        };
                     });
 
-                    $('#penanggung_jawab').autocomplete({
-                        source: programs,
+                    $('#penanggung_jawab_autocomplete').autocomplete({
+                        source: penanggungList,
                         minLength: 1,
-                        autoFocus: true
+                        autoFocus: true,
+                        select: function(event, ui) {
+                            $('#penanggung_jawab_autocomplete').val(ui.item.label);
+                            $('#penanggung_jawab').val(ui.item.id);
+                            $('#penanggung_jawab_autocomplete').removeClass('is-invalid');
+                            return false;
+                        },
+                        change: function(event, ui) {
+                            if (!ui.item) {
+                                $('#penanggung_jawab_autocomplete').addClass('is-invalid');
+                                $('#penanggung_jawab').val('');
+                            }
+                        }
                     });
                 },
                 error: function(xhr) {
@@ -307,7 +365,7 @@
             $('#submit').on('click', function() {
                 let form = $('#data_form'); // Tangkap form
                 let formData = form.serialize(); // Ambil data dari form
-                // alert(formData);
+                console.log(formData);
 
                 $.ajax({
                     type: "POST",
