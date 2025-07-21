@@ -21,6 +21,16 @@
         </section>
     </div>
 
+    @php
+        $hex = $data->color_bg;
+        $r = hexdec(substr($hex, 1, 2));
+        $g = hexdec(substr($hex, 3, 2));
+        $b = hexdec(substr($hex, 5, 2));
+        $bb = hexdec(substr($hex, 9, 5));
+        $rgba = "rgba($r, $g, $b, 1)";
+        $rgbb = "rgba($r, $g, $bb, 0.4)";
+    @endphp
+
 
     <script>
         $(document).ready(function() {
@@ -34,8 +44,11 @@
                         let data = response.data || [];
 
                         if (searchTerm) {
-                            data = data.filter(item => item.nama_kelas.toLowerCase().includes(searchTerm
-                                .toLowerCase()));
+                            const lowerSearch = searchTerm.toLowerCase();
+                            data = data.filter(item =>
+                                item.nama_kelas.toLowerCase().includes(lowerSearch) ||
+                                item.kode_kelas.toLowerCase().includes(lowerSearch)
+                            );
                         }
 
                         if (data.length === 0) {
@@ -43,28 +56,24 @@
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
                         } else {
                             data.forEach(item => {
-                                // let randomColors = ['primary', 'success', 'danger',
-                                //     'warning',
-                                // ];
-                                // let randomColor = randomColors[Math.floor(Math.random() *
-                                //     randomColors.length)];
-
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/${item.id}') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
-                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px; height: 200px !important;">
+                                                style="background-image: url({{ asset('img_videogaming1.png') }});
+                                                        background-color: {{ $rgba }};
+                                                        padding:35px";>
                                                 <div class="hero-inner">
                                                     <h5 class="text-wrap w-100">
                                                         ${item.nama_kelas}
                                                     </h5>
-                                                    <span class="badge badge-success text-light">
-                                                        ${item.kategori_kelas}
+                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                        ${item.kategori.kategori_kelas}
                                                     </span>
-                                                    <span class="badge badge-secondary text-dark">
-                                                        ${item.tipe_kelas}
+                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                        ${item.program_belajar.tipe_kelas.tipe_kelas}
                                                     </span>
-                                                    <p class="lead">${item.nama_program || "Program tidak tersedia"}</p>
+                                                    <p class="lead">${item.program_belajar.nama_program || "Program tidak tersedia"}</p>
                                                 </div>
                                             </div>
                                         </a>

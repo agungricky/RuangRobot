@@ -187,7 +187,7 @@ https://maps.app.goo.gl/A7DbNKCXWmBGcTtm6",
                 'tanggal' => null,
                 'materi' => '',
                 'catatan_pengajar' => '',
-                'absensi' => json_encode(new \stdClass()),
+                'absensi' => json_encode([]),
                 'status_tersimpan' => 'sementara',
                 'kelas_id' => $request->id_kelas,
             ]);

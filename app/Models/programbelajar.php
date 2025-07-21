@@ -12,6 +12,10 @@ class programbelajar extends Model
     public function kelas(){
         return $this->hasMany(kelas::class, 'program_belajar_id', 'id')->orderBy('tanggal', 'asc');
     }
+
+    public function tipe_kelas(){
+        return $this->belongsTo(Tipekelas::class, 'tipe_kelas_id', 'id');
+    }
 }
 
 

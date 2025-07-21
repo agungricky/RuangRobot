@@ -41,6 +41,7 @@ class JurnalNilaiExport implements FromArray, WithEvents, WithTitle
             $keterangan = match ($nilai) {
                 'A' => 'Sangat baik dan aktif dalam mengikuti materi ' . $this->kelas->program_belajar->nama_program,
                 'B' => 'Baik dalam mengikuti materi ' . $this->kelas->program_belajar->nama_program,
+                'GAGAL' => 'Tidak Menyelesaikan Kelas',
                 default => 'Belum Menyelesaikan Kelas',
             };
 
