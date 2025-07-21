@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\gajiTransport;
 use App\Models\gajiUtama;
+use App\Models\Kategori;
 use App\Models\kelas;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
@@ -22,24 +23,22 @@ class kelaspengajarController extends Controller
      */
     public function kelas_aktif(Request $request, $id)
     {
-        $kelas_aktif = kelas::where('kelas.status_kelas', 'aktif')
+        $kelas_aktif = kelas::with('program_belajar.tipe_kelas', 'kategori')
+            ->where('kelas.status_kelas', 'aktif')
             ->where('kelas.kategori_kelas_id', $id)
-            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas', 'kategori_kelas.kategori_kelas')
             ->orderBy('kelas.id', 'desc')
             ->get();
 
-        // dd($kelas_aktif);
+        $data = Kategori::findOrfail($id);
 
+        // dd($kelas_aktif->toArray());
         if (request()->ajax()) {
             return response()->json([
                 'data' => $kelas_aktif,
             ]);
         }
 
-        return view('pages.kelas.pengajar.kelas_pengajar_aktif', compact('id'));
+        return view('pages.kelas.pengajar.kelas_pengajar_aktif', compact('id', 'data'));
     }
 
     public function kelas_selesai(Request $request)
@@ -75,6 +74,7 @@ class kelaspengajarController extends Controller
             ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
             ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
             ->first();
+        // dd($kelas->toArray());
 
         $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
 
@@ -305,14 +305,14 @@ class kelaspengajarController extends Controller
                 $mekanik = 0;
                 $pemrograman = 0;
                 if ($presensi == 'H') {
-                    $elektronik = $program_belajar->elektronik; 
-                    $mekanik = $program_belajar->mekanik; 
-                    $pemrograman = $program_belajar->pemrograman; 
+                    $elektronik = $program_belajar->elektronik;
+                    $mekanik = $program_belajar->mekanik;
+                    $pemrograman = $program_belajar->pemrograman;
                 } elseif ($presensi == 'I') {
-                    $elektronik = 0; 
-                    $mekanik = 0; 
-                    $pemrograman = 0; 
-                } 
+                    $elektronik = 0;
+                    $mekanik = 0;
+                    $pemrograman = 0;
+                }
 
                 // Tambahkan poin ke kategori yang sesuai
                 pengguna::where('id', $id)->increment('elektronik', $elektronik);

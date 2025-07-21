@@ -47,10 +47,10 @@ Route::middleware('auth')->group(function () {
         // ========= Dashboard Admin ========= //
         Route::get('/dashboard', [dashboardPenggunaController::class, 'index_Admin'])->name('dashboard');
         Route::get('/pembayaran_terbaru', [dashboardPenggunaController::class, 'pembayaran_terbaru'])->name('pembayaran_terbaru');
-        Route::get('/periode/sedang_berlangsung', [dashboardPenggunaController::class, 'sedang_berlangsung'])->name('sedang_berlangsung');     
-        Route::post('/tambah_pembayaran/store', [dashboardPenggunaController::class, 'tambah_pembayaran'])->name('tambah_pembayaran');  
+        Route::get('/periode/sedang_berlangsung', [dashboardPenggunaController::class, 'sedang_berlangsung'])->name('sedang_berlangsung');
+        Route::post('/tambah_pembayaran/store', [dashboardPenggunaController::class, 'tambah_pembayaran'])->name('tambah_pembayaran');
         Route::post('/periode/selesai', [dashboardPenggunaController::class, 'selesai_periode'])->name('selesai_periode');
-        Route::get('/riwayat_periode/{id}', [dashboardPenggunaController::class, 'riwayat_periode'])->name('riwayat_periode');  
+        Route::get('/riwayat_periode/{id}', [dashboardPenggunaController::class, 'riwayat_periode'])->name('riwayat_periode');
 
         // ========= Tipe Kelas ========= //
         Route::get('/tipe_kelas', [kategoriController::class, 'index_tipekelas'])->name('tipe_kelas');
@@ -158,7 +158,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat_pembayaran/{siswa_id}/{kelas_id}', [RiwayatPembayaranController::class, 'index'])->name('riwayat_pembayaran');
     });
 
-    Route::middleware('CheckRole:Pengajar')->group(function () {});
+    Route::middleware('CheckRole:Pengajar')->group(function () {
+        // ====================================================================================== //
+        // ================================ PENGAJAR ============================================ //
+        // ====================================================================================== //
+
+        // ========= Dashboard Pengajar ========= //
+        Route::get('/dashboard/pengajar', [dashboardPenggunaController::class, 'index_Pengajar'])->name('dashboard_pengajar');
+
+        // ========= Kelas Pengajar ========= //
+        Route::get('/kelas_pengajar/{id}/aktif', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
+        Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
+    });
 
     Route::middleware('CheckRole:Siswa')->group(function () {});
 });
@@ -176,17 +187,10 @@ Route::middleware('auth')->group(function () {
 
 
 
-// ====================================================================================== //
-// ================================ PENGAJAR ============================================ //
-// ====================================================================================== //
 
-// ========= Dashboard Pengajar ========= //
-Route::get('/dashboard/pengajar', [dashboardPenggunaController::class, 'index_Pengajar'])->name('dashboard_pengajar');
 
-// ========= Kelas Pengajar ========= //
-Route::get('/kelas_pengajar/{id}/aktif', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
 Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
-Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
+
 Route::get('/detail_kelas/selesai/{id}', [kelaspengajarController::class, 'show_selesai'])->name('pengajar.detail_kelas.selesai');
 Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
 Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
