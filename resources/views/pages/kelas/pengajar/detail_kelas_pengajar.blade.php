@@ -28,9 +28,9 @@
                                                         background-color: {{ $rgba }};
                                                         padding:35px";>
                             <div class="hero-inner">
-                                <h5 style="text-wrap w-100">
-                                    {{ ucwords($kelas->nama_kelas) }}
-                                </h5>
+                                <h6 class="text-wrap w-100">
+                                    {{ucwords($kelas->nama_kelas)}}
+                                </h6>
                                 <span class="badge text-light"
                                     style="width: 100px; background-color: blue;">{{ $kelas->kategori->kategori_kelas }}</span>
                                 <span class="badge text-light"
@@ -61,7 +61,6 @@
                                                     Kelas :
                                                 </h4>
                                                 <span class="ms-4">{{ $kelas->pengajar->nama }}</span>
-
                                             </div>
                                         </div>
                                         <div class="ticket-item d-flex align-items-center p-3 border-bottom">
@@ -226,7 +225,6 @@
                                                         {{ number_format($siswa->persentase, 0, ',', '.') }}%
                                                     </span>
                                                 </div>
-
                                             </div>
                                             <hr>
                                             @if ($siswa->nilai == null)

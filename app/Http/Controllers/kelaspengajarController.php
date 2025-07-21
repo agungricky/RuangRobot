@@ -42,20 +42,15 @@ class kelaspengajarController extends Controller
 
     public function kelas_selesai(Request $request)
     {
-        $kelas_selesai = kelas::where('kelas.status_kelas', 'selesai')
-            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('tipe_kelas', 'tipe_kelas.id', 'program_belajar.tipe_kelas_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'program_belajar.nama_program', 'tipe_kelas.tipe_kelas', 'kategori_kelas.kategori_kelas')
-            ->get();
+        $data = kelas::with('program_belajar.tipe_kelas', 'kategori')->where('kelas.status_kelas', 'selesai')->get();
 
         if (request()->ajax()) {
             return response()->json([
-                'data' => $kelas_selesai,
+                'data' => $data,
             ]);
         }
 
-        return view('pages.kelas.pengajar.kelas_pengajar_selesai');
+        return view('pages.kelas.pengajar.kelas_pengajar_selesai', compact('data'));
     }
 
     public function create()
@@ -77,8 +72,6 @@ class kelaspengajarController extends Controller
 
         $pembelajaran = pembelajaran::with('kelas')->where('pembelajaran.kelas_id', $id)->get();
         $kehadiran = [];
-        // $totalPertemuan = $pembelajaran->count();
-
         foreach ($pembelajaran as $pertemuan) {
             $absensi = json_decode($pertemuan->absensi, true);
 
@@ -130,27 +123,19 @@ class kelaspengajarController extends Controller
 
     public function show_selesai(string $id)
     {
-        $kelas = Kelas::where('kelas.id', $id)
-            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'kelas.gaji_pengajar', 'kelas.gaji_transport', 'kelas.penanggung_jawab', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
-            ->first();
-
+        $kelas = kelas::with('kategori', 'program_belajar.tipe_kelas', 'pengajar')->where('kelas.id', $id)->first();
         $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->where('pembelajaran.tanggal', '!=', null)->count();
 
-        $pembelajaran = pembelajaran::where('pembelajaran.kelas_id', $id)
+        $pembelajaran = pembelajaran::with('kelas')
+            ->where('pembelajaran.kelas_id', $id)
             ->where('pembelajaran.tanggal', '!=', null)
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('pembelajaran.*', 'kelas.durasi_belajar')
-            ->orderBy('pertemuan', 'asc')
             ->get();
 
+        // Mengambil Semua Siswa di Kelas
         $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
         $daftar_siswa = json_decode($daftar_siswa->murid);
 
         $kehadiran = [];
-        $totalPertemuan = $pembelajaran->count();
-
         foreach ($pembelajaran as $pertemuan) {
             $absensi = json_decode($pertemuan->absensi, true);
 
@@ -163,7 +148,7 @@ class kelaspengajarController extends Controller
                     $kehadiran[$id] = [
                         'nama' => $nama,
                         'hadir' => 0,
-                        'total' => $totalPertemuan,
+                        'total' => $jumlah_pertemuan,
                         'persentase' => 0
                     ];
                 }
@@ -175,16 +160,29 @@ class kelaspengajarController extends Controller
         }
 
         // Hitung persentase kehadiran
-        foreach ($kehadiran as &$siswa) {
-            $siswa['persentase'] = ($siswa['hadir'] / $siswa['total']) * 100;
+        $data_siswa = [];
+        foreach ($kehadiran as $id => $siswa) {
+            $siswa['persentase'] = (int) round(($siswa['hadir'] / $siswa['total']) * 100);
+            $data_siswa[$id] = $siswa;
         }
 
-        foreach ($daftar_siswa as &$siswa) {
-            $id = $siswa->id;
-            $siswa->persentase = isset($kehadiran[$id]) ? $kehadiran[$id]['persentase'] : 0;
+        $dataFix = [];
+        foreach ($daftar_siswa as $item) {
+            $id = $item->id;
+
+            $dataFix[$id] = (object) [
+                'id'         => $id,
+                'nama'       => $item->nama,
+                'nilai'       => $item->nilai,
+                'kelas'      => $item->kelas,
+                'sekolah'    => $item->sekolah,
+                'hadir'      => isset($data_siswa[$id]) ? $data_siswa[$id]['hadir'] : 0,
+                'total'      => isset($data_siswa[$id]) ? $data_siswa[$id]['total'] : 0,
+                'persentase' => isset($data_siswa[$id]) ? (int) $data_siswa[$id]['persentase'] : 0,
+            ];
         }
 
-        return view('pages.kelas.pengajar.detail_kelas_selesai', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa'));
+        return view('pages.kelas.pengajar.detail_kelas_selesai', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'dataFix'));
     }
 
     public function detail_absensi($id)

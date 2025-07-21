@@ -15,31 +15,49 @@ class gajiPengajarController extends Controller
      */
     public function index($id)
     {
-        $gaji = gajiUtama::where('gajis.pengajar', $id)
+        // $gaji = gajiUtama::where('gajis.pengajar', $id)
+        //     ->where('gajis.status', 'pending')
+        //     ->orwhere('gajis.status', 'diverifikasi')
+        //     ->join('akun', 'akun.id', 'gajis.pengajar')
+        //     ->join('profile', 'profile.id', 'akun.id')
+        //     ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
+        //     ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+        //     ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+        //     ->get();
+
+        $gaji = gajiUtama::with(['pengguna.akun', 'pembelajaran.kelas'])
+            ->where('gajis.pengajar', $id)
             ->where('gajis.status', 'pending')
             ->orwhere('gajis.status', 'diverifikasi')
-            ->join('akun', 'akun.id', 'gajis.pengajar')
-            ->join('profile', 'profile.id', 'akun.id')
-            ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
-        $transport = gajiTransport::where('transport.pengajar', $id)
+        // $transport = gajiTransport::where('transport.pengajar', $id)
+        //     ->where('transport.status', 'pending')
+        //     ->orwhere('transport.status', 'diverifikasi')
+        //     ->join('akun', 'akun.id', 'transport.pengajar')
+        //     ->join('profile', 'profile.id', 'akun.id')
+        //     ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
+        //     ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
+        //     ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+        //     ->get();
+
+        $transport = gajiTransport::with(['pengguna.akun', 'pembelajaran.kelas'])
+            ->where('transport.pengajar', $id)
             ->where('transport.status', 'pending')
             ->orwhere('transport.status', 'diverifikasi')
-            ->join('akun', 'akun.id', 'transport.pengajar')
-            ->join('profile', 'profile.id', 'akun.id')
-            ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
-        $custom = gajiCustom::where('gaji_custom.pengajar', $id)
+        // $custom = gajiCustom::where('gaji_custom.pengajar', $id)
+        //     ->where('gaji_custom.status', 'pending')
+        //     ->orWhere('gaji_custom.status', 'diverifikasi')
+        //     ->join('akun', 'akun.id', 'gaji_custom.pengajar')
+        //     ->join('profile', 'profile.id', 'akun.id')
+        //     ->get();
+
+        $custom = gajiCustom::with('profile.akun')
+            ->where('gaji_custom.pengajar', $id)
             ->where('gaji_custom.status', 'pending')
             ->orWhere('gaji_custom.status', 'diverifikasi')
-            ->join('akun', 'akun.id', 'gaji_custom.pengajar')
-            ->join('profile', 'profile.id', 'akun.id')
             ->get();
 
         $total_gaji = gajiUtama::where('pengajar', $id)
