@@ -169,6 +169,9 @@ Route::middleware('auth')->group(function () {
         // ========= Kelas Pengajar ========= //
         Route::get('/kelas_pengajar/{id}/aktif', [kelaspengajarController::class, 'kelas_aktif'])->name('kelas_aktif.pengajar');
         Route::get('/detail_kelas/{id}', [kelaspengajarController::class, 'show'])->name('pengajar.detail_kelas');
+        Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
+        Route::get('/search_pengajarbantu/{id}/json', [kelaspengajarController::class, 'pengajarbantu_searchRiwayat'])->name('pengajar_bantusearch.json');
+        Route::post('/absen/siswa/store/{id}', [kelaspengajarController::class, 'store'])->name('absen.store');
     });
 
     Route::middleware('CheckRole:Siswa')->group(function () {});
@@ -192,10 +195,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
 
 Route::get('/detail_kelas/selesai/{id}', [kelaspengajarController::class, 'show_selesai'])->name('pengajar.detail_kelas.selesai');
-Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
 Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
 Route::get('/absen/siswa/{id}', [kelaspengajarController::class, 'siswa_show'])->name('absen.siswa');
-Route::post('/absen/siswa/store/{id}', [kelaspengajarController::class, 'store'])->name('absen.store');
 Route::patch('/siswa/selesai/{id_kelas}/{id_siswa}', [kelaspengajarController::class, 'siswa_selesai'])->name('siswa.selesai');
 Route::post('/kelas/selesai/{id}', [kelaspengajarController::class, 'finish_kelas'])->name('kelas.selesai');
 
