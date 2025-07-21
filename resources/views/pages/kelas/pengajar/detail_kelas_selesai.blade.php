@@ -4,25 +4,33 @@
     <div class="main-content">
         <section class="section">
             <x-title_halaman title="Daftar Kelas Saya" />
-            <a href="{{ url('/kelas_pengajar/selesai') }}" class="btn btn-primary btn-lg mb-4">
-                <i class="fa fa-arrow-left"></i> Kembali</a>
 
             {{-- Informasi Pertemuan --}}
+            @php
+                $hex = $kelas->kategori->color_bg;
+                $r = hexdec(substr($hex, 1, 2));
+                $g = hexdec(substr($hex, 3, 2));
+                $b = hexdec(substr($hex, 5, 2));
+                $bb = hexdec(substr($hex, 9, 5));
+                $rgba = "rgba($r, $g, $b, 1)";
+                $rgbb = "rgba($r, $g, $bb, 0.4)";
+            @endphp
             <div class="row">
                 <div class="col">
                     <div class="hero text-white hero-bg-image"
-                        style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding:35px;">
+                        style="background-image: url({{ asset('img_videogaming1.png') }});
+                                                        background-color: {{ $rgba }};
+                                                        padding:35px">
                         <div class="hero-inner">
-                            @php
-                                $bg = ['success', 'primary', 'warning', 'danger'];
-                                $randomBg = $bg[array_rand($bg)];
-                            @endphp
-
-                            <h5 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <h6 class="text-wrap w-100">
                                 {{ ucwords($kelas->nama_kelas) }}
-                            </h5>
-                            <span class="badge badge-{{ $randomBg }}">{{ $kelas->kategori_kelas }}</span>
-                            <p class="lead">{{ $kelas->nama_program }}</p>
+                            </h6>
+                            <span class="badge text-light"
+                                style="width: 100px; background-color: blue;">{{ $kelas->kategori->kategori_kelas }}</span>
+                            <span class="badge text-light"
+                                style="width: 100px; background-color: red;">{{ $kelas->program_belajar->tipe_kelas->tipe_kelas }}
+                            </span>
+                            <p class="lead">{{ $kelas->program_belajar->nama_program }}</p>
                         </div>
                     </div>
 
@@ -33,51 +41,74 @@
                                     <div class="ticket-title">
                                         <h4 class="text-primary">
                                             <i class="fas fa-play-circle mr-3 text-primary"></i> Jumlah Pertemuan :
-                                            {{ $jumlah_pertemuan }}
                                         </h4>
+                                        <span class="text-black italic font-light ms-3">{{ $jumlah_pertemuan }}
+                                            Pertemuan</span>
                                     </div>
                                 </div>
                                 <div class="ticket-item d-flex align-items-center p-3 border-bottom">
                                     <div class="ticket-title">
                                         <h4 class="text-primary">
-                                            <i
-                                                class="fas fa-chalkboard-teacher mr-3 text-success"></i>{{ $kelas->penanggung_jawab }}
+                                            <i class="fas fa-chalkboard-teacher mr-3 text-success"></i>
+                                            Penanggung Jawab Kelas :
                                         </h4>
+                                        <span class="ms-4">{{ $kelas->pengajar->nama }}</span>
                                     </div>
                                 </div>
                                 <div class="ticket-item d-flex align-items-center p-3 border-bottom">
-                                    <i class="fas fa-layer-group mr-3 text-warning"></i>
                                     <div class="ticket-title">
-                                        <h4 class="text-primary"> Level :
-                                            @if ($kelas->level == 'mudah')
-                                                <span class="badge badge-success px-3 py-2"
-                                                    style="font-size: 0.8rem;">Mudah</span>
-                                            @elseif ($kelas->level == 'sedang')
-                                                <span class="badge badge-warning px-3 py-2"
-                                                    style="font-size: 0.8rem;">Sedang</span>
-                                            @elseif ($kelas->level == 'sulit')
-                                                <span class="badge badge-danger px-3 py-2"
-                                                    style="font-size: 0.8rem;">Sulit</span>
-                                            @endif
-                                        </h4>
+                                        <h4 class="text-primary"> <i class="fas fa-layer-group mr-3 text-danger"></i>
+                                            Level
+                                            : </h4>
+                                        @if ($kelas->program_belajar->level == 'mudah')
+                                            <span class="badge badge-success px-3 py-2 ms-3"
+                                                style="font-size: 0.8rem;">Beginner</span>
+                                        @elseif ($kelas->program_belajar->level == 'sedang')
+                                            <span class="badge badge-warning px-3 py-2 ms-3"
+                                                style="font-size: 0.8rem;">Intermediate</span>
+                                        @elseif ($kelas->program_belajar->level == 'sulit')
+                                            <span class="badge badge-danger px-3 py-2 ms-3"
+                                                style="font-size: 0.8rem;">Advanced</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="ticket-item d-flex align-items-center p-3 border-bottom">
                                     <div class="ticket-title w-100">
-                                        <h4>Poin didapat :</h4>
+                                        <h4 class="text-primary">
+                                            <i class="fas fa-award mr-3 text-warning"></i> Poin didapat :
+                                        </h4>
+
                                         <ul class="list-unstyled mb-0">
-                                            <li class="d-flex justify-content-between">
-                                                <span><i class="fas fa-cogs text-warning mr-2"></i>Mekanik</span>
-                                                <span class="badge badge-warning">+{{ $kelas->mekanik }}</span>
-                                            </li>
-                                            <li class="d-flex justify-content-between">
-                                                <span><i class="fas fa-bolt text-success mr-2"></i>Elektronik</span>
-                                                <span class="badge badge-success">+{{ $kelas->elektronik }}</span>
-                                            </li>
-                                            <li class="d-flex justify-content-between">
-                                                <span><i class="fas fa-code text-primary mr-2"></i>Pemrograman</span>
-                                                <span class="badge badge-primary">+{{ $kelas->pemrograman }}</span>
-                                            </li>
+                                            <table class="ms-3">
+                                                <tr>
+                                                    <td style="width: 160px">
+                                                        <span><i class="fas fa-cogs text-warning"></i> Mekanik</span>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-danger">+{{ $kelas->program_belajar->mekanik }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span><i class="fas fa-bolt text-success"></i> Elektronik</span>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-success">+{{ $kelas->program_belajar->elektronik }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span><i class="fas fa-code text-primary"></i>
+                                                            Pemrograman</span>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-primary">+{{ $kelas->program_belajar->pemrograman }}</span>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </ul>
                                     </div>
                                 </div>
@@ -114,11 +145,11 @@
                                 </div>
                                 <div class="activity-detail w-100">
                                     <div class="mb-2">
-                                        <span class="font-weight-bold text-small"># Pertemuan Ke
-                                            {{ $pertemuan->pertemuan }}</span> <br>
+                                        <span class="font-weight-bold text-small"># Pertemuan Ke {{ $no++ }}</span>
+                                        <br>
                                         <span class="text-job text-success">{{ $daftar_hari[$namahari] }},
                                             {{ date('d-m-Y', strtotime($pertemuan->tanggal)) }} /
-                                            {{ $pertemuan->durasi_belajar }}</span>
+                                            {{ $pertemuan->kelas->durasi_belajar }}</span>
                                         <span class="bullet"></span>
                                         <button
                                             style="border: 0px; border-radius: 5px; background: #6777ef; color: #fff; padding: 3px 10px;"
@@ -139,7 +170,7 @@
 
                 <h2 class="section-title">Daftar Siswa</h2>
                 <div class="row">
-                    @foreach ($daftar_siswa as $siswa)
+                    @foreach ($dataFix as $siswa)
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
@@ -148,36 +179,39 @@
                                     <p class="text-small"><i class="fa fa-school mr-2"></i> {{ $siswa->sekolah }}</p>
                                     <p class="text-small"><i class="fa fa-signal mr-2"></i> Presentase Kehadiran</p>
                                     <div class="budget-price">
-                                        <div class="budget-price d-flex align-items-center">
-                                            <div class="budget-price-square bg-{{ $siswa->persentase <= 50 ? 'danger' : 'primary' }}"
-                                                style="width: {{ $siswa->persentase }}%; height: 5px;">
+                                        <div class="budget-price d-flex align-items-center w-100">
+                                            <div class="position-relative w-100"
+                                                style="height: 5px; background-color: #e0e0e0;">
+                                                <div class="position-absolute top-0 left-0 bg-{{ $siswa->persentase <= 50 ? 'danger' : 'primary' }}"
+                                                    style="width: {{ $siswa->persentase }}%; height: 5px;">
+                                                </div>
                                             </div>
-                                            <span
-                                                class="ml-2">{{ number_format($siswa->persentase, 1, ',', '.') }}%</span>
+                                            {{-- Teks persentase --}}
+                                            <span class="ms-2">
+                                                {{ number_format($siswa->persentase, 0, ',', '.') }}%
+                                            </span>
                                         </div>
                                     </div>
                                     <hr>
-                                    @if ($siswa->nilai == null)
-                                        <button data-idsiswa="{{ $siswa->id }}" data-id_kelas="{{ $kelas->id }}"
-                                            class="btn btn-block btn-success btn_selesai_siswa">
-                                            <i class="fas fa-check"></i> Selesaikan</button>
-                                    @else
-                                        <div class="p-3 text-center">
-                                            <h4 class="text-primary">Nilai Siswa</h4>
-                                            @php
-                                                $nilaiColor = [
-                                                    'A' => 'text-success',
-                                                    'B' => 'text-success', // 'Warning' harus huruf kecil
-                                                    'Gagal' => 'text-danger',
-                                                ];
-                                            @endphp
+                                    <div class="p-3 text-center">
+                                        <h4 class="text-primary">Nilai Siswa</h4>
+                                        @php
+                                            $nilaiColor = [
+                                                'A' => 'text-success',
+                                                'B' => 'text-success',
+                                                'Gagal' => 'text-danger',
+                                            ];
+                                        @endphp
 
-                                            <h2 class="fw-bold {{ $nilaiColor[$siswa->nilai] ?? 'text-dark' }}">
-                                                {{ $siswa->nilai }}
-                                            </h2>
+                                        <h2 class="fw-bold {{ $nilaiColor[$siswa->nilai] ?? 'text-dark' }}">
+                                            {{ $siswa->nilai }}
+                                        </h2>
+                                        @if ($siswa->nilai == null)
+                                            <p class="text-muted">Nilai Belum diberikan</p>
+                                        @else
                                             <p class="text-muted">Nilai sudah diberikan</p>
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
 
                                 </div>
                             </div>
@@ -187,7 +221,7 @@
 
                 <h2 class="section-title">Status Kelas</h2>
                 <div class="col-12">
-                    <div class="card shadow-sm py-4 text-center">
+                    <div class="card shadow-sm py-5 text-center">
                         @if ($kelas->status_kelas == 'aktif')
                             <h2 class="text-danger">Kelas Belum Selesai</h2>
                             <p class="text-muted">Pastikan semua tugas telah diselesaikan sebelum menyelesaikan kelas.</p>
@@ -202,7 +236,7 @@
                         @else
                             <h2 class="text-success">Kelas Telah Selesai</h2>
                             <p class="text-muted">Terima kasih telah menyelesaikan kelas ini!</p>
-                            <i class="fas fa-check-circle text-success mt-3" style="font-size: 80px;"></i>
+                            <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
                         @endif
                     </div>
                 </div>
@@ -240,15 +274,15 @@
                         </li>
                         <span style="border-bottom: 0.0px solid #343a40;"></span>
                         <li class="list-group-item">
-                            <b><i class="fas fa-book"></i> Materi </b>
-                            <div class="profile-desc-item pull-right">
+                            <b><i class="fas fa-book"></i> Materi </b> <br>
+                            <div class="profile-desc-item pull-righ ms-3">
                                 <span id="getmateri"></span>
                             </div>
                         </li>
                         <span style="border-bottom: 0.0px solid #343a40;"></span>
                         <li class="list-group-item">
-                            <b><i class="fas fa-file-alt"></i> Catatan Pengajar </b>
-                            <div class="profile-desc-item pull-right">
+                            <b><i class="fas fa-file-alt"></i> Catatan Pengajar </b> <br>
+                            <div class="profile-desc-item pull-righ ms-3">
                                 <span id="getcatatan"></span>
                             </div>
                         </li>
@@ -285,7 +319,7 @@
                     url: `{{ url('/detail/Absen/${id}/json') }}`,
                     dataType: "json",
                     success: function(response) {
-                        $("#getpengajar").text(response.absen.pengajar);
+                        $("#getpengajar").text(response.absen.pengajar.nama);
 
                         let tanggal = response.absen.tanggal;
                         let date = new Date(tanggal);

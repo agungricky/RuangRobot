@@ -64,16 +64,16 @@
                                                         background-color: {{ $rgba }};
                                                         padding:35px";>
                                                 <div class="hero-inner">
-                                                    <h5 class="text-wrap w-100">
+                                                    <h6 class="text-wrap w-100">
                                                         ${item.nama_kelas}
-                                                    </h5>
+                                                    </h6>
                                                     <span class="badge text-light" style="width: 100px; background-color: blue;">
                                                         ${item.kategori.kategori_kelas}
                                                     </span>
                                                     <span class="badge text-light" style="width: 100px; background-color: red;">
                                                         ${item.program_belajar.tipe_kelas.tipe_kelas}
                                                     </span>
-                                                    <p class="lead">${item.program_belajar.nama_program || "Program tidak tersedia"}</p>
+                                                    <!-- <p class="lead">${item.program_belajar.nama_program || "Program tidak tersedia"}</p> -->
                                                 </div>
                                             </div>
                                         </a>

@@ -33,8 +33,10 @@
                         let data = response.data || [];
 
                         if (searchTerm) {
-                            data = data.filter(item => item.nama_kelas.toLowerCase().includes(searchTerm
-                                .toLowerCase()));
+                            data = data.filter(item =>
+                                item.nama_kelas.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                item.kode_kelas.toLowerCase().includes(searchTerm.toLowerCase())
+                            );
                         }
 
                         if (data.length === 0) {
@@ -42,28 +44,36 @@
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
                         } else {
                             data.forEach(item => {
-                                // let randomColors = ['primary', 'success', 'danger',
-                                //     'warning',
-                                // ];
-                                // let randomColor = randomColors[Math.floor(Math.random() *
-                                //     randomColors.length)];
+                                console.log(item)
+                                let hex = item.kategori.color_bg;
+
+                                // Ambil komponen RGB
+                                let r = parseInt(hex.substr(1, 2), 16);
+                                let g = parseInt(hex.substr(3, 2), 16);
+                                let b = parseInt(hex.substr(5, 2), 16);
+
+                                // Buat warna RGBA
+                                let rgba = `rgba(${r}, ${g}, ${b}, 1)`;
+                                let rgbb = `rgba(${r}, ${g}, ${b}, 0.4)`;
 
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/selesai/${item.id}') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
-                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px; height: 200px !important;">
+                                                style="background-image: url({{ asset('img_videogaming1.png') }});
+                                                        background-color: ${rgba};
+                                                        padding:35px";>
                                                 <div class="hero-inner">
-                                                    <h5 class="text-wrap w-100">
+                                                    <h6 class="text-wrap w-100">
                                                         ${item.nama_kelas}
-                                                    </h5>
-                                                    <span class="badge badge-danger">
-                                                        ${item.tipe_kelas}
+                                                    </h6>
+                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                        ${item.kategori.kategori_kelas}
                                                     </span>
-                                                    <span class="badge badge-secondary text-dark">
-                                                        ${item.tipe_kelas}
+                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                        ${item.program_belajar.tipe_kelas.tipe_kelas}
                                                     </span>
-                                                    <p class="lead">${item.nama_program || "Program tidak tersedia"}</p>
+                                                    <!-- <p class="lead">${item.program_belajar.nama_program || "Program tidak tersedia"}</p> -->
                                                 </div>
                                             </div>
                                         </a>

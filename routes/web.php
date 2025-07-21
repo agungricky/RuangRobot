@@ -172,6 +172,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/detail/Absen/{id}/json', [kelaspengajarController::class, 'detail_absensi'])->name('detailabsensi.json');
         Route::get('/search_pengajarbantu/{id}/json', [kelaspengajarController::class, 'pengajarbantu_searchRiwayat'])->name('pengajar_bantusearch.json');
         Route::post('/absen/siswa/store/{id}', [kelaspengajarController::class, 'store'])->name('absen.store');
+
+        Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
+        Route::get('/detail_kelas/selesai/{id}', [kelaspengajarController::class, 'show_selesai'])->name('pengajar.detail_kelas.selesai');
+        Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
+        Route::get('/absen/siswa/{id}', [kelaspengajarController::class, 'siswa_show'])->name('absen.siswa');
+        Route::patch('/siswa/selesai/{id_kelas}/{id_siswa}', [kelaspengajarController::class, 'siswa_selesai'])->name('siswa.selesai');
+        Route::post('/kelas/selesai/{id}', [kelaspengajarController::class, 'finish_kelas'])->name('kelas.selesai');
+
+        // ========= Gaji ========= //
+        Route::get('/gaji/{id}', [gajiPengajarController::class, 'index'])->name('gaji.pengajar');
     });
 
     Route::middleware('CheckRole:Siswa')->group(function () {});
@@ -192,16 +202,10 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::get('/kelas_pengajar/selesai', [kelaspengajarController::class, 'kelas_selesai'])->name('kelas_selesai.pengajar');
 
-Route::get('/detail_kelas/selesai/{id}', [kelaspengajarController::class, 'show_selesai'])->name('pengajar.detail_kelas.selesai');
-Route::post('/pengajar/bantu/absen/{id}', [kelaspengajarController::class, 'pengajar_bantu'])->name('pengajarbantu.absen');
-Route::get('/absen/siswa/{id}', [kelaspengajarController::class, 'siswa_show'])->name('absen.siswa');
-Route::patch('/siswa/selesai/{id_kelas}/{id_siswa}', [kelaspengajarController::class, 'siswa_selesai'])->name('siswa.selesai');
-Route::post('/kelas/selesai/{id}', [kelaspengajarController::class, 'finish_kelas'])->name('kelas.selesai');
 
-// ========= Gaji ========= //
-Route::get('/gaji/{id}', [gajiPengajarController::class, 'index'])->name('gaji.pengajar');
+
+
 Route::get('/riwayat/gaji/{id}', [gajiPengajarController::class, 'riwayat_gaji'])->name('riwayatgaji.pengajar');
 Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, 'detail_histori'])->name('detail.riwayat.histori');
 Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->name('gaji.custom');
