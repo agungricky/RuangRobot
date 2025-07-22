@@ -19,7 +19,7 @@
                                 </div>
                             </div>
      
-                            <div class="mt-2">
+                            <div class="mt-1" style="margin-left: 33px">
                                 <a href="{{ route('detail.riwayat.histori', ['id'=> $dataLogin->id, 'idtanggal'=>$list_gajian->id]) }}"
                                     class="text-primary">
                                     Selengkapnya

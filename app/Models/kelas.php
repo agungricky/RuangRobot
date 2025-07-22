@@ -47,4 +47,9 @@ class kelas extends Model
     public function riwayat_pembayaran(){
         return $this->hasMany(riwayatPembayaran::class, 'kelas_id', 'id');
     }
+
+    public function invoice(){
+        return $this->hasMany(invoice::class, 'kelas_id', 'id');
+    }
+
 }

@@ -781,7 +781,7 @@
                     12: 'XII'
                 };
 
-                let no_sertiv = `${tanggal}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
+                let no_sertiv = `${id_kelas}/RUANGROBOT/${bulanRomawi[bulan]}/${tahun}`;
 
                 pilihNilai().then((nilai) => {
                     // console.log("Nilai yang dipilih:", nilai);

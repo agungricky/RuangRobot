@@ -23,18 +23,21 @@ class siswaController extends Controller
      */
     public function index(Request $request, $id)
     {
-        $kelas = invoice::where('invoice.profile_id', $id)
-            ->where('kelas.status_kelas', 'Aktif')
-            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
-            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-            ->select('kelas.*', 'program_belajar.nama_program')
+        $kelas = Invoice::with([
+            'kelas.kategori',
+            'kelas.program_belajar'
+        ])
+            ->where('profile_id', $id)
+            ->whereHas('kelas', function ($q) {
+                $q->where('status_kelas', 'aktif');
+            })
             ->get();
 
-        $kelas_selesai = invoice::where('invoice.profile_id', $id)
-            ->where('kelas.status_kelas', 'Selesai')
-            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
-            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-            ->select('kelas.*', 'program_belajar.nama_program')
+        $kelas_selesai = Invoice::with(['kelas.kategori', 'kelas.program_belajar'])
+            ->where('profile_id', $id)
+            ->whereHas('kelas', function ($q) {
+                $q->where('status_kelas', 'selesai');
+            })
             ->get();
 
         if ($request->ajax()) {
@@ -69,19 +72,16 @@ class siswaController extends Controller
      */
     public function show(string $id)
     {
-        $kelas = Kelas::where('kelas.id', $id)
-            ->join('program_belajar', 'program_belajar.id', 'kelas.program_belajar_id')
-            ->join('kategori_kelas', 'kategori_kelas.id', 'kelas.kategori_kelas_id')
-            ->select('kelas.id', 'kelas.nama_kelas', 'kelas.status_kelas', 'program_belajar.nama_program', 'program_belajar.level', 'program_belajar.mekanik', 'program_belajar.elektronik', 'program_belajar.pemrograman', 'kategori_kelas.kategori_kelas')
+        $kelas = kelas::with(['kategori', 'program_belajar'])
+            ->where('kelas.id', $id)
             ->first();
 
         $jumlah_pertemuan = pembelajaran::where('kelas_id', $id)->count();
+        $pembelajaran = pembelajaran::with('kelas.pengajar')->where('pembelajaran.kelas_id', $id)->get();
 
-        $pembelajaran = pembelajaran::where('pembelajaran.kelas_id', $id)
-            ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('pembelajaran.*', 'kelas.durasi_belajar')
-            ->orderBy('pertemuan', 'asc')
-            ->get();
+        // Kebutuhan nomor Sertif
+        $awal = Pembelajaran::whereNotNull('tanggal')->orderByDesc('id')->first();
+        $akhir = Pembelajaran::whereNotNull('tanggal')->latest('id')->first();
 
         $siswa_login = Auth::user();
         $siswa = pengguna::where('id', $siswa_login->id)->first();
@@ -108,6 +108,7 @@ class siswaController extends Controller
 
             $item->absensi_siswa = $dataAbsen;
         }
+
 
         $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
         $daftar_siswa = json_decode($daftar_siswa->murid);
@@ -158,7 +159,7 @@ class siswaController extends Controller
         }
 
 
-        return view('pages.kelas.siswa.detail_kelas', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa', 'status_pembayaran', 'kekurangan'));
+        return view('pages.kelas.siswa.detail_kelas', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'daftar_siswa', 'status_pembayaran', 'kekurangan', 'siswa', 'awal', 'akhir'));
     }
 
     /**
@@ -216,6 +217,7 @@ class siswaController extends Controller
      */
     public function generate_sertiv(Request $request)
     {
+        // dd($request->all());
         $templatePath = public_path('assets/sertifikat.jpg');
         $ttdPath = public_path('assets/ttd2.png');
         $fontPath = public_path('assets/arial.ttf');

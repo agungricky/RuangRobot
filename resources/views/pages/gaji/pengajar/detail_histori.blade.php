@@ -92,7 +92,7 @@
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
                                                     <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
+                                                    <td>{{ $item->nama_kelas }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
                                                     </td>
                                                     <td>{{ $item->status_pengajar }}</td>

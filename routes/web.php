@@ -30,7 +30,11 @@ Route::post('/register', [pendaftaranController::class, 'store'])->name('registe
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
 
-    Route::middleware('CheckRole:Admin,Pengajar,Siswa')->group(function () {});
+    Route::middleware('CheckRole:Admin,Pengajar,Siswa')->group(function () {
+        // ========= Edit Profile ========= //
+        Route::get('/edit_profile/{id}', [dashboardPenggunaController::class, 'edit'])->name('edit_profile');
+        Route::patch('/update_profile/{id}', [dashboardPenggunaController::class, 'update'])->name('update_profile');
+    });
 
     Route::middleware('CheckRole:Admin')->group(function () {
         // ========= Pembuatan Form Index Pendaftaran ========= //
@@ -182,48 +186,23 @@ Route::middleware('auth')->group(function () {
 
         // ========= Gaji ========= //
         Route::get('/gaji/{id}', [gajiPengajarController::class, 'index'])->name('gaji.pengajar');
+        Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->name('gaji.custom');
+        Route::get('/riwayat/gaji/{id}', [gajiPengajarController::class, 'riwayat_gaji'])->name('riwayatgaji.pengajar');
+        Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, 'detail_histori'])->name('detail.riwayat.histori');
+        Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
     });
 
-    Route::middleware('CheckRole:Siswa')->group(function () {});
+    Route::middleware('CheckRole:Siswa')->group(function () {
+        // ====================================================================================== //
+        // ================================== SISWA ============================================= //
+        // ====================================================================================== //
+
+        // ========= Dashboard Siswa ========= //
+        Route::get('/dashboard/siswa', [dashboardPenggunaController::class, 'index_Siswa'])->name('dashboard_siswa');
+        Route::get('/kelas/saya/{id}', [siswaController::class, 'index'])->name('siswa.kelas.json');
+        Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('siswa_kelas.detail.json');
+        Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
+        Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
+        Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+    });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Route::get('/riwayat/gaji/{id}', [gajiPengajarController::class, 'riwayat_gaji'])->name('riwayatgaji.pengajar');
-Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, 'detail_histori'])->name('detail.riwayat.histori');
-Route::get('/Absen/custom', [gajiPengajarController::class, 'gaji_custom'])->name('gaji.custom');
-Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
-
-// ========= Edit Profile ========= //
-Route::get('/edit_profile/{id}', [dashboardPenggunaController::class, 'edit'])->name('edit_profile');
-Route::patch('/update_profile/{id}', [dashboardPenggunaController::class, 'update'])->name('update_profile');
-
-
-// ====================================================================================== //
-// ================================== SISWA ============================================= //
-// ====================================================================================== //
-
-// ========= Dashboard Siswa ========= //
-Route::get('/dashboard/siswa', [dashboardPenggunaController::class, 'index_Siswa'])->name('dashboard_siswa');
-Route::get('/kelas/saya/{id}', [siswaController::class, 'index'])->name('siswa.kelas.json');
-Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('siswa_kelas.detail.json');
-Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
-Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
-Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');

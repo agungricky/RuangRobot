@@ -198,12 +198,6 @@
                     <a href="{{ url('/dashboard/pengajar') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 </li>
                 <li class="menu-header">Manage Kelas</li>
-                {{-- <li>
-                    <a href="{{ url('/kelas_pengajar') }}">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span>Kelas Aktif</span>
-                    </a>
-                </li> --}}
                 <li>
                     <a href="#kelas" class="nav-link" data-bs-toggle="collapse">
                         <i class="fas fa-chalkboard-teacher"></i><span>Kelas Aktif</span>
@@ -224,6 +218,13 @@
                         <span>Kelas Selesai</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('gaji.custom') }}">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Custom Gaji</span>
+                    </a>
+                </li>
+
 
                 <li class="menu-header">Gaji</li>
                 <li>
