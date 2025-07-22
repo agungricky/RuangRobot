@@ -10,7 +10,7 @@
                         <div id="kelas-container" style="display: none;">
                             <div class="row" id="kelas-aktif"></div>
                         </div>
-                    
+
                         <h2 class="section-title my-3 p-0">
                             <span id="toggle-kelas-selesai" style="cursor: pointer;">
                                 Kelas Selesai (<span id="total-kelas">0</span>)
@@ -19,7 +19,7 @@
                         <div id="kelas-selesai-container" style="display: none;">
                             <div class="row" id="kelas-selesai-list"></div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </div>
         </section>
@@ -31,35 +31,48 @@
 
             function loadKelas() {
                 $.ajax({
-                    url: "{{ url('/kelas/saya/' . $id) }}", // Sesuaikan dengan route yang benar
+                    url: "{{ url('/kelas/saya/' . $id) }}", 
                     type: "GET",
                     dataType: "json",
                     success: function(response) {
                         let kelasHtml = "";
                         let data = response.kelas || [];
 
-                        console.log(data);
-
                         if (data.length === 0) {
                             kelasHtml =
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
                         } else {
                             data.forEach(item => {
+                                let hex = item.kelas.kategori.color_bg;
+
+                                // Ambil komponen RGB
+                                let r = parseInt(hex.substr(1, 2), 16);
+                                let g = parseInt(hex.substr(3, 2), 16);
+                                let b = parseInt(hex.substr(5, 2), 16);
+
+                                // Buat warna RGBA
+                                let rgba = `rgba(${r}, ${g}, ${b}, 1)`;
+                                let rgbb = `rgba(${r}, ${g}, ${b}, 0.4)`;
+
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ url('/detail/kelas/${item.id}/siswa') }}" class="text-decoration-none">
+                                        <a href="{{ url('/detail/kelas/${item.kelas_id}/siswa') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
-                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
+                                                style="background-image: url({{ asset('img_videogaming1.png') }});
+                                                        background-color: ${rgba};
+                                                        padding:35px";>
                                                 <div class="hero-inner">
-                                                    <h5 class="text-wrap w-100">
-                                                        ${item.nama_kelas}
-                                                    </h5>
-                                                    <span class="badge badge-warning">
-                                                        ${item.status_kelas}
+                                                    <h6 class="text-wrap w-100">
+                                                        ${item.kelas.nama_kelas}
+                                                    </h6>
+                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                        ${item.kelas.status_kelas}
                                                     </span>
-                                                    <p class="lead mt-2" style="line-height: 1;">${item.nama_program || "Pengajar tidak tersedia"}</p>
-                                                    <span class="small">
-                                                        ${item.status_kelas !== "selesai" ? `Jam Pembelajaran: ${item.durasi_belajar}` : `Status: Kelas Telah Selesai`}
+                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                        ${item.kelas.kategori.kategori_kelas}
+                                                    </span> </br>
+                                                    <span class="d-block mt-2">
+                                                        ${item.kelas.status_kelas !== "selesai" ? `Jam Pembelajaran: ${item.kelas.durasi_belajar}` : `Status: Kelas Telah Selesai`} 
                                                     </span>
                                                 </div>
                                             </div>
@@ -95,22 +108,39 @@
 
                         if (data.length === 0) {
                             kelasHtml =
-                            "<p class='text-center text-muted'>Tidak ada kelas selesai.</p>";
+                                "<p class='text-center text-muted'>Tidak ada kelas selesai.</p>";
                         } else {
                             data.forEach(item => {
-                                    kelasHtml += `
+                                let hex = item.kelas.kategori.color_bg;
+
+                                // Ambil komponen RGB
+                                let r = parseInt(hex.substr(1, 2), 16);
+                                let g = parseInt(hex.substr(3, 2), 16);
+                                let b = parseInt(hex.substr(5, 2), 16);
+
+                                // Buat warna RGBA
+                                let rgba = `rgba(${r}, ${g}, ${b}, 1)`;
+                                let rgbb = `rgba(${r}, ${g}, ${b}, 0.4)`;
+                                kelasHtml += `
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ url('/detail/kelas/${item.id}/siswa') }}" class="text-decoration-none">
+                                        <a href="{{ url('/detail/kelas/${item.kelas_id}/siswa') }}" class="text-decoration-none">
                                             <div class="hero text-white hero-bg-image h-100" 
-                                                style="background-image: url('{{ asset('img_videogaming.jpg') }}'); padding: 20px;">
+                                                style="background-image: url({{ asset('img_videogaming1.png') }});
+                                                        background-color: ${rgba};
+                                                        padding:35px";>
                                                 <div class="hero-inner">
-                                                    <h5 class="text-wrap w-100">
-                                                        ${item.nama_kelas}
-                                                    </h5>
-                                                    <span class="badge badge-success">
-                                                        ${item.status_kelas}
+                                                    <h6 class="text-wrap w-100">
+                                                        ${item.kelas.nama_kelas}
+                                                    </h6>
+                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                        ${item.kelas.status_kelas}
                                                     </span>
-                                                    <p class="lead mt-3" style="line-height: 1.5;">${item.nama_program || "Pengajar tidak tersedia"}</p>
+                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                        ${item.kelas.kategori.kategori_kelas}
+                                                    </span> </br>
+                                                    <span class="d-block mt-2">
+                                                        ${item.kelas.status_kelas !== "selesai" ? `Jam Pembelajaran: ${item.kelas.durasi_belajar}` : `Kelas Telah Selesai`} 
+                                                    </span>
                                                 </div>
                                             </div>
                                         </a>

@@ -15,22 +15,20 @@
                                 <form action="{{ route('gajicustom.store') }}" method="POST">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <label for="nominal">Nominal</label>
-                                            <input type="text" class="form-control" placeholder="Masukan Nominal Gaji"
-                                                oninput="formatToRupiah(this)"
-                                                value="{{ old('nominal') ? 'Rp ' . number_format(old('nominal'), 0, ',', '.') : '' }}">
-                                            <input type="hidden" id="hidden_nominal" name="nominal"
-                                                value="{{ old('nominal') }}">
-                                            <x-validation_form.error name="nominal" />
+                                        <div class="col-12 col-md-6 mb-3">
+                                            <label for="pekerjaan">Pekerjaan</label>
+                                            <select id="pekerjaan" class="form-control select2" name="pekerjaan">
+                                                @foreach ($data as $item)
+                                                    <option value={{ $item->id }}>{{ $item->nama_pekerjaan }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="col-12 mb-3">
+                                        <div class="col-12 col-md-6 mb-3">
                                             <label for="tanggal">Tanggal</label>
                                             <input type="date" class="form-control" placeholder="Masukan Tanggal"
                                                 name="tanggal" value="{{ old('tanggal') }}">
-                                                <x-validation_form.error name="tanggal" />
-                                        
+                                            <x-validation_form.error name="tanggal" />
                                         </div>
 
                                         <div class="col-12 mb-3">
@@ -55,19 +53,18 @@
         </section>
     </div>
 
-    <script>
-        function formatToRupiah(element) {
-            // Hapus semua karakter kecuali angka
-            let rawValue = element.value.replace(/[^0-9]/g, "");
-
-            // Format angka ke Rupiah dengan menambahkan titik setiap 3 digit
-            let formattedValue = rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-            // Update nilai input utama dengan format "Rp"
-            element.value = rawValue ? "Rp " + formattedValue : "";
-
-            // Update nilai input hidden dengan angka asli tanpa format
-            document.getElementById("hidden_nominal").value = rawValue;
+    <style>
+        .select2-container--default .select2-selection--single {
+            padding-top: 6px !important;
         }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Pilih Pekerjaan",
+                allowClear: true
+            });
+        });
     </script>
 @endsection

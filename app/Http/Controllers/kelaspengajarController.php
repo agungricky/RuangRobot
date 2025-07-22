@@ -373,7 +373,7 @@ class kelaspengajarController extends Controller
     public function finish_kelas(Request $request, $id)
     {
         try {
-            $kelas = kelas::where('id', $id)->update([
+            kelas::where('id', $id)->update([
                 'status_kelas' => $request->status_kelas
             ]);
 

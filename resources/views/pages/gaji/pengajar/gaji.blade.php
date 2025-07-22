@@ -38,144 +38,235 @@
                 </div>
             </div>
 
-            <a href="{{ route('gaji.custom') }}">
-                <button class="btn btn-primary btn-lg shadow-sm my-3">
-                    <i class="fas fa-receipt me-2"></i> Absen Gaji Custom
-                </button>
-            </a>
-
             <div class="section-body">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Mengajar</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 3%;" class="text-center">No.</th>
-                                                <th style="width: 15%;">Nama Pengajar</th>
-                                                <th style="width: 25%;" class="text-center">Kelas</th>
-                                                <th style="width: 15%;">Tanggal</th>
-                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($gaji as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
-                                                    </td>
-                                                    <td>{{ $item->status_pengajar }}</td>
-                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                    <div class="col-12 col-md-6">
+                        <div class="widget widget-reminder">
+                            <div class="widget-reminder-header text-uppercase text-start fw-bold"
+                                style="letter-spacing: 6px;">
+                                #GAJI MENGAJAR
                             </div>
+                            @foreach ($gaji as $item)
+                                <div class="widget-reminder-container">
+                                    <div class="widget-reminder-time pt-4 pt-md-3">
+                                        {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                    </div>
+                                    <div class="widget-reminder-divider bg-secondary"></div>
+                                    <div class="widget-reminder-content">
+                                        <h4 class="widget-title">
+                                            <i class="fa fa-map-pin"></i> {{ $item->pembelajaran->kelas->nama_kelas }}
+                                        </h4>
+                                        <div class="widget-desc">
+                                            <i class="fa fa-user me-1 text-muted"></i> {{ $item->pengguna->nama }} |
+                                            {{ $item->status_pengajar }}
+                                        </div>
+                                        <div class="widget-desc">
+                                            <i class="fa fa-money me-1 text-muted"></i> Rp.
+                                            {{ number_format($item->nominal, 0, ',', '.') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="widget widget-reminder">
+                            <div class="widget-reminder-header text-uppercase text-start fw-bold"
+                                style="letter-spacing: 6px;">
+                                #GAJI TRANSPORT
+                            </div>
+                            @foreach ($transport as $item)
+                                <div class="widget-reminder-container">
+                                    <div class="widget-reminder-time pt-4 pt-md-3">
+                                        {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                    </div>
+                                    <div class="widget-reminder-divider bg-secondary"></div>
+                                    <div class="widget-reminder-content">
+                                        <h4 class="widget-title">
+                                            <i class="fa fa-map-pin"></i> {{ $item->pembelajaran->kelas->nama_kelas }}
+                                        </h4>
+                                        <div class="widget-desc">
+                                            <i class="fa fa-user me-1 text-muted"></i> {{ $item->pengguna->nama }} |
+                                            {{ $item->status_pengajar }}
+                                        </div>
+                                        <div class="widget-desc">
+                                            <i class="fa fa-money me-1 text-muted"></i> Rp.
+                                            {{ number_format($item->nominal, 0, ',', '.') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    @if ($custom->count() > 0)
+                        <div class="col-12 col-md-6">
+                            <div class="widget widget-reminder">
+                                <div class="widget-reminder-header text-uppercase text-start fw-bold"
+                                    style="letter-spacing: 6px;">
+                                    #GAJI CUSTOM
+                                </div>
+                                @foreach ($custom as $item)
+                                    <div class="widget-reminder-container">
+                                        <div class="widget-reminder-time pt-4 pt-md-3">
+                                            {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                        </div>
+                                        <div class="widget-reminder-divider bg-secondary"></div>
+                                        <div class="widget-reminder-content">
+                                            <h4 class="widget-title">
+                                                <i class="fa fa-map-pin"></i> {{ $item->keterangan }}
+                                            </h4>
+                                            <div class="widget-desc">
+                                                <i class="fa fa-user me-1 text-muted"></i> {{ $item->pengguna->nama }}
+                                            </div>
+                                            <div class="widget-desc">
+                                                <i class="fa fa-money me-1 text-muted"></i> Rp.
+                                                {{ number_format($item->nominal, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
             </div>
 
-            {{-- Gaji Transport --}}
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Transport</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 3%;" class="text-center">No.</th>
-                                                <th style="width: 15%;">Nama Pengajar</th>
-                                                <th style="width: 25%;" class="text-center">Kelas</th>
-                                                <th style="width: 15%;">Tanggal</th>
-                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($transport as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{!! 'Pertemuan ke ' . $item->pertemuan . '<br>' . $item->nama_kelas !!}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
-                                                    </td>
-                                                    <td>{{ $item->status_pengajar }}</td>
-                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            {{-- Gaji Custom --}}
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Custom</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 1%;" class="text-center">No.</th>
-                                                <th style="width: 8%;">Nama Pengajar</th>
-                                                <th style="width: 25%;" class="text-center">Keterangan</th>
-                                                <th style="width: 10%;" class="text-start">Tanggal</th>
-                                                <th style="width: 10%;" class="text-center">Nominal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($custom as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{{ $item->keterangan }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
-                                                    </td>
-                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
+
+    <style>
+        .widget {
+            background: #fff;
+            margin-bottom: .75rem;
+            display: block;
+            position: relative;
+            box-shadow: 0 0.46875rem 2.1875rem rgba(90, 97, 105, 0.1), 0 0.9375rem 1.40625rem rgba(90, 97, 105, 0.1), 0 0.25rem 0.53125rem rgba(90, 97, 105, 0.12), 0 0.125rem 0.1875rem rgba(90, 97, 105, 0.1);
+        }
+
+        .widget .widget-header,
+        .widget-reminder-content,
+        .widget-reminder-time,
+        a.widget-header-title {
+            padding: 0.625rem;
+        }
+
+        .widget-chat-message:after,
+        .widget-chat-message:before,
+        .widget-reminder-container:after,
+        .widget-reminder-container:before {
+            display: table;
+            content: "";
+            clear: both;
+        }
+
+        .widget-footer.with-border,
+        .widget-reminder-container+.widget-reminder-container {
+            border-top: 1px solid #efeff4;
+        }
+
+        .widget-footer.with-bg,
+        .widget-header.with-bg {
+            background: #efeff4;
+        }
+
+        .widget-header.with-border {
+            border-bottom: 1px solid #efeff4;
+        }
+
+        .widget-reminder-header {
+            background: #efeff4;
+            padding: 0.625rem;
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: #8a8a8f;
+        }
+
+        .widget-reminder-container {
+            position: relative;
+        }
+
+        .inverse-mode .widget-reminder-container+.widget-reminder-container {
+            border-color: #333;
+        }
+
+        .inverse-mode .widget-reminder-header {
+            background: #212121;
+        }
+
+        .widget-reminder-time {
+            width: 5rem;
+            float: left;
+            text-align: right;
+            font-size: 0.625rem;
+        }
+
+        .widget-reminder-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 5rem;
+            width: 0.125rem;
+            background: #efeff4;
+        }
+
+        .widget-reminder-content {
+            margin-left: 5.125rem;
+        }
+
+        .widget-header-title {
+            margin: 0;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .widget .widget-title,
+        .widget .widget-title a {
+            font-size: .75rem;
+            color: #000;
+            line-height: 1rem;
+        }
+
+        .widget .widget-title {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .widget-desc,
+        .widget-desc a {
+            font-size: .6875rem;
+            line-height: 1rem;
+            color: #8A8A8F;
+            font-weight: 500;
+        }
+
+        .img-circle {
+            border-radius: 50%;
+        }
+
+        .pull-left {
+            float: left !important;
+        }
+
+        .pull-right {
+            float: right !important;
+        }
+
+        .m-t-15 {
+            margin-top: 15px !important;
+        }
+
+        .m-r-5 {
+            margin-right: 5px !important;
+        }
+
+        .widget .widget-header,
+        .widget-reminder-content,
+        .widget-reminder-time,
+        a.widget-header-title {
+            padding: .625rem;
+        }
+    </style>
 @endsection

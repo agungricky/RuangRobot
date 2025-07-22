@@ -44,7 +44,6 @@
                                 "<p class='text-center text-muted'>Tidak ada kelas ditemukan.</p>";
                         } else {
                             data.forEach(item => {
-                                console.log(item)
                                 let hex = item.kategori.color_bg;
 
                                 // Ambil komponen RGB

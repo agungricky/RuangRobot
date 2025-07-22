@@ -6,6 +6,7 @@ use App\Models\gajiCustom;
 use App\Models\gajiTransport;
 use App\Models\gajiUtama;
 use App\Models\historigaji;
+use App\Models\kategori_pekerjaan;
 use Illuminate\Http\Request;
 
 class gajiPengajarController extends Controller
@@ -15,31 +16,11 @@ class gajiPengajarController extends Controller
      */
     public function index($id)
     {
-        // $gaji = gajiUtama::where('gajis.pengajar', $id)
-        //     ->where('gajis.status', 'pending')
-        //     ->orwhere('gajis.status', 'diverifikasi')
-        //     ->join('akun', 'akun.id', 'gajis.pengajar')
-        //     ->join('profile', 'profile.id', 'akun.id')
-        //     ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
-        //     ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-        //     ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
-        //     ->get();
-
         $gaji = gajiUtama::with(['pengguna.akun', 'pembelajaran.kelas'])
             ->where('gajis.pengajar', $id)
             ->where('gajis.status', 'pending')
             ->orwhere('gajis.status', 'diverifikasi')
             ->get();
-
-        // $transport = gajiTransport::where('transport.pengajar', $id)
-        //     ->where('transport.status', 'pending')
-        //     ->orwhere('transport.status', 'diverifikasi')
-        //     ->join('akun', 'akun.id', 'transport.pengajar')
-        //     ->join('profile', 'profile.id', 'akun.id')
-        //     ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
-        //     ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-        //     ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
-        //     ->get();
 
         $transport = gajiTransport::with(['pengguna.akun', 'pembelajaran.kelas'])
             ->where('transport.pengajar', $id)
@@ -47,14 +28,7 @@ class gajiPengajarController extends Controller
             ->orwhere('transport.status', 'diverifikasi')
             ->get();
 
-        // $custom = gajiCustom::where('gaji_custom.pengajar', $id)
-        //     ->where('gaji_custom.status', 'pending')
-        //     ->orWhere('gaji_custom.status', 'diverifikasi')
-        //     ->join('akun', 'akun.id', 'gaji_custom.pengajar')
-        //     ->join('profile', 'profile.id', 'akun.id')
-        //     ->get();
-
-        $custom = gajiCustom::with('profile.akun')
+        $custom = gajiCustom::with('pengguna.akun')
             ->where('gaji_custom.pengajar', $id)
             ->where('gaji_custom.status', 'pending')
             ->orWhere('gaji_custom.status', 'diverifikasi')
@@ -107,7 +81,7 @@ class gajiPengajarController extends Controller
             ->join('profile', 'profile.id', 'akun.id')
             ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
             ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+            ->select('gajis.*', 'profile.nama', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
         $transport = gajiTransport::where('transport.pengajar', $id)
@@ -117,7 +91,7 @@ class gajiPengajarController extends Controller
             ->join('profile', 'profile.id', 'akun.id')
             ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
             ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+            ->select('transport.*', 'profile.nama', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
         $custom = gajiCustom::where('gaji_custom.pengajar', $id)
@@ -158,7 +132,7 @@ class gajiPengajarController extends Controller
             ->join('profile', 'profile.id', 'akun.id')
             ->join('pembelajaran', 'pembelajaran.id', 'gajis.pembelajaran_id')
             ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('gajis.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+            ->select('gajis.*', 'profile.nama', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
         $transport_ditolak = gajiTransport::where('transport.pengajar', $id)
@@ -168,7 +142,7 @@ class gajiPengajarController extends Controller
             ->join('profile', 'profile.id', 'akun.id')
             ->join('pembelajaran', 'pembelajaran.id', 'transport.pembelajaran_id')
             ->join('kelas', 'kelas.id', 'pembelajaran.kelas_id')
-            ->select('transport.*', 'profile.nama', 'pembelajaran.pertemuan', 'kelas.nama_kelas', 'pembelajaran.tanggal')
+            ->select('transport.*', 'profile.nama', 'kelas.nama_kelas', 'pembelajaran.tanggal')
             ->get();
 
         $custom_ditolak = gajiCustom::where('gaji_custom.pengajar', $id)
@@ -208,7 +182,8 @@ class gajiPengajarController extends Controller
      */
     public function gaji_custom()
     {
-        return view('pages.gaji.pengajar.form_gajicustom');
+        $data = kategori_pekerjaan::all();
+        return view('pages.gaji.pengajar.form_gajicustom', compact('data'));
     }
 
     /**
@@ -217,6 +192,7 @@ class gajiPengajarController extends Controller
     public function store(Request $request)
     {
         $message = [
+            'pekerjaan' => 'Pekerjaan Harus Di isi',
             'pengajar.required'   => 'Pengajar harus diisi.',
             'tanggal.required'    => 'Tanggal harus diisi.',
             'keterangan.required' => 'Keterangan wajib diisi.',
@@ -225,19 +201,20 @@ class gajiPengajarController extends Controller
         ];
 
         $request->validate([
+            'pekerjaan' => 'required',
             'idpengajar'   => 'required',
             'tanggal'    => 'required',
             'keterangan' => 'required',
-            'nominal'    => 'required',
             'status'     => 'required'
         ], $message);
 
+        $pekerjaan = kategori_pekerjaan::findOrfail($request->pekerjaan);
         try {
             gajiCustom::create([
                 'pengajar' => $request->idpengajar,
                 'tanggal' => $request->tanggal,
-                'keterangan' => $request->keterangan,
-                'nominal' => $request->nominal,
+                'keterangan' => $request->keterangan . ' | ' . $pekerjaan->nama_pekerjaan,
+                'nominal' => $pekerjaan->gaji,
                 'status' => $request->status,
                 'history_gaji_id' => null
             ]);
