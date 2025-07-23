@@ -225,13 +225,11 @@ class penggunaController extends Controller
 
     public function kelas_diikuti($id)
     {
-        $data = invoice::where('invoice.profile_id', $id)
-            ->join('kelas', 'invoice.kelas_id', 'kelas.id')
-            ->join('profile', 'invoice.profile_id', 'profile.id')
-            ->join('program_belajar', 'kelas.program_belajar_id', 'program_belajar.id')
-            ->select('invoice.*', 'kelas.nama_kelas', 'profile.nama', 'program_belajar.nama_program')
-            ->orderBy('invoice.created_at', 'desc')
+        $data = invoice::with('kelas.program_belajar', 'pengguna')
+            ->where('profile_id', $id)
+            ->orderBy('created_at', 'desc')
             ->get();
+
         return view('pages.pengguna.kelas_diikuti', compact('data'));
     }
 }

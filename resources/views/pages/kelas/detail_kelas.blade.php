@@ -322,14 +322,14 @@
                             </div>
                         </li>
                         <li class="list-group-item">
-                            <b><i class="fas fa-book"></i> Materi </b>
-                            <div class="profile-desc-item pull-right">
+                            <b><i class="fas fa-book"></i> Materi </b> <br>
+                            <div class="profile-desc-item pull-righ ms-3">
                                 <span id="materi"></span>
                             </div>
                         </li>
                         <li class="list-group-item">
-                            <b><i class="fas fa-chalkboard-teacher"></i> Catatan Pengajar </b>
-                            <div class="profile-desc-item pull-right">
+                            <b><i class="fas fa-chalkboard-teacher"></i> Catatan Pengajar </b> <br>
+                            <div class="profile-desc-item pull-righ ms-3">
                                 <span id="cttn_pengajar"></span>
                             </div>
                         </li>
@@ -618,7 +618,7 @@
                         $('#pengajar').text(data.pengajar.nama);
                         $('#tanggal').text(`${hari}, ${tanggal}`);
                         $('#materi').text(data.materi);
-                        $('#cttn_pengajar').text(data.catatan_pengajar)
+                        $('#cttn_pengajar').html(data.catatan_pengajar)
 
                         // Proses data absensi
                         let absensi = JSON.parse(data.absensi);

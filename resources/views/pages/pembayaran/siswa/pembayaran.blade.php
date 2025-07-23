@@ -13,13 +13,12 @@
 
                                 <div class="m-3">
                                     <h4 class="fw-bold">Selesaikan Pembayaran Kelas Siswa</h4>
-                                    <p class="text-muted">Jika sudah melakukan pembayaran, harap konfirmasi kepada pihak
-                                        administrasi kami dinomor <a href="wa.me/085655770506"> +6285655770506 </a> atas
-                                        nama <span class="text-primary">Julian Sahertian</span>.</p>
+                                    <p class="text-muted col-12 col-md-10">Jika sudah melakukan pembayaran, harap konfirmasi kepada pihak
+                                        administrasi kami dinomor <a href="https://wa.me/6281272455577" target="_blank">+62 812-7245-5577</a> dengan menghubungi <span class="text-primary">Admin Ruang Robot</span>.</p>
 
-                                    <h5 class="mt-4">
+                                    <h6 class="mt-4">
                                         <i class="fas fa-money-bill-wave text-warning me-1"></i> Belum Terbayar
-                                    </h5>
+                                    </h6>
 
                                     @foreach ($data_siswa as $item)
                                         @if ($item['status_pembayaran'] == 'Belum Lunas')
@@ -67,9 +66,9 @@
                                         @endif
                                     @endforeach
 
-                                    <h5 class="mt-4 text-dark" id="toggle-pembayaran" style="cursor: pointer;">
-                                        <i class="fas fa-check-circle text-success me-1"></i> Pembayaran Selesai
-                                    </h5>
+                                    <h6 class="mt-4 text-dark" id="toggle-pembayaran" style="cursor: pointer;">
+                                        <i class="fas fa-check-circle text-success me-1"></i> Pembayaran Selesai<i class="fas fa-chevron-down ms-2" style="cursor: pointer;"></i>
+                                    </h6>
                                     <div id="pembayaran-detail" style="display: none;">
                                         @foreach ($data_siswa as $item)
                                             @if ($item['status_pembayaran'] == 'Lunas')
