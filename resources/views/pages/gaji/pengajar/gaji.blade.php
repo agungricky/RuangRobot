@@ -110,7 +110,7 @@
                                 @foreach ($custom as $item)
                                     <div class="widget-reminder-container">
                                         <div class="widget-reminder-time pt-4 pt-md-3">
-                                            {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') }}
+                                            {!! \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l') . ',<br>' . \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d-m-Y') !!}
                                         </div>
                                         <div class="widget-reminder-divider bg-secondary"></div>
                                         <div class="widget-reminder-content">

@@ -57,13 +57,13 @@
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail/kelas/${item.kelas_id}/siswa') }}" class="text-decoration-none">
-                                            <div class="hero text-white hero-bg-image h-100" 
+                                            <div class="hero text-white hero-bg-image h-100 p-50" 
                                                 style="background-image: url({{ asset('img_videogaming1.png') }});
                                                         background-color: ${rgba};
                                                         padding:35px";>
                                                 <div class="hero-inner">
                                                     <h6 class="text-wrap w-100">
-                                                        ${item.kelas.nama_kelas}
+                                                        ${item.kelas.nama_kelas.length > 59 ? item.kelas.nama_kelas.slice(0, 50) + '...' : item.kelas.nama_kelas}
                                                     </h6>
                                                     <span class="badge text-light" style="width: 100px; background-color: blue;">
                                                         ${item.kelas.status_kelas}
@@ -130,7 +130,7 @@
                                                         padding:35px";>
                                                 <div class="hero-inner">
                                                     <h6 class="text-wrap w-100">
-                                                        ${item.kelas.nama_kelas}
+                                                        ${item.kelas.nama_kelas.length > 59 ? item.kelas.nama_kelas.slice(0, 50) + '...' : item.kelas.nama_kelas}
                                                     </h6>
                                                     <span class="badge text-light" style="width: 100px; background-color: blue;">
                                                         ${item.kelas.status_kelas}

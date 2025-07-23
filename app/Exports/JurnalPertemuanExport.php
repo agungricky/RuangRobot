@@ -21,7 +21,7 @@ class JurnalPertemuanExport implements FromArray, WithEvents, WithTitle
                 'program_belajar',
                 'pengajar',
                 'pembelajaran' => function ($query) {
-                    $query->orderBy('tanggal', 'asc');
+                   $query->orderByRaw('ISNULL(tanggal), tanggal ASC');
                 },
             ]
         )->findOrFail($kelas_id);

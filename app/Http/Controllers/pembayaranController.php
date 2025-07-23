@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use App\Models\kelas;
+use App\Models\keuangan;
 use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
@@ -229,6 +230,17 @@ Admin 085655770506"
             'nominal' => $request->nominal,
             'jenis_pembayaran' => $request->jenis_pembayaran,
             'tanggal' => $request->tanggal,
+            'metode_pembayaran' => $request->metode_pembayaran,
+        ]);
+
+        $saldoakhir = keuangan::orderBy('id', 'desc')->first();
+        keuangan::create([
+            'indexkeuangan_id' => null,
+            'tipe' => 'Pemasukan',
+            'keterangan' => 'Pembayaran' . $data->nama . ' Kelas ' . $kelas->nama_kelas,
+            'tanggal' => $request->tanggal,
+            'nominal' => $request->nominal,
+            'saldo_akhir' => $saldoakhir->saldo_akhir + $request->nominal,
             'metode_pembayaran' => $request->metode_pembayaran,
         ]);
 

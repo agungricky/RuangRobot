@@ -58,13 +58,13 @@
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/selesai/${item.id}') }}" class="text-decoration-none">
-                                            <div class="hero text-white hero-bg-image h-100" 
+                                            <div class="hero text-white hero-bg-image h-100 p-5" 
                                                 style="background-image: url({{ asset('img_videogaming1.png') }});
                                                         background-color: ${rgba};
                                                         padding:35px";>
                                                 <div class="hero-inner">
                                                     <h6 class="text-wrap w-100">
-                                                        ${item.nama_kelas}
+                                                        ${item.nama_kelas.length > 59 ? item.nama_kelas.slice(0, 50) + '...' : item.nama_kelas}
                                                     </h6>
                                                     <span class="badge text-light" style="width: 100px; background-color: blue;">
                                                         ${item.kategori.kategori_kelas}

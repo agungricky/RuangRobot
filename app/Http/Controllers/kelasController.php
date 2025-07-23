@@ -494,7 +494,7 @@ class kelasController extends Controller
         $box = new Box($template);
         $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
-        $box->setFontSize(30);
+        $box->setFontSize(45);
         $box->setStrokeColor(new Color(0, 0, 0));
         $box->setStrokeSize(.6);
         $box->setBox(750, 610, 300, 70);
