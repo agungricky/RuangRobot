@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
         // ========= Edit Profile ========= //
         Route::get('/edit_profile/{id}', [dashboardPenggunaController::class, 'edit'])->name('edit_profile');
         Route::patch('/update_profile/{id}', [dashboardPenggunaController::class, 'update'])->name('update_profile');
+        Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
     });
 
     Route::middleware('CheckRole:Admin')->group(function () {
@@ -119,7 +120,7 @@ Route::middleware('auth')->group(function () {
 
         // ========= Generate Sertiv Custom ========= //
         Route::get('/generate-sertiv', [kelasController::class, 'generate_show'])->name('generate.show');
-        Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+        // Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
 
         // ========= Pengguna ========= //
         Route::get('/pengguna/{id}', [penggunaController::class, 'pengguna'])->name('pengguna');
@@ -203,6 +204,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/detail/kelas/{id}/siswa', [siswaController::class, 'show'])->name('siswa_kelas.detail.json');
         Route::get('/pembayaran/{id}', [siswaController::class, 'pembayaran'])->name('pembayaran.siswa');
         Route::post('/detail/pembayaran', [siswaController::class, 'detail_pembayaran'])->name('detail_pembayaran.siswa');
-        Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
+        // Route::post('/sertiv/pembelajaran', [siswaController::class, 'generate_sertiv'])->name('sertiv.siswa');
     });
 });

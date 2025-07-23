@@ -76,7 +76,7 @@
                                             <div class="col-sm-12 mb-3">
                                                 <div class="card-body">
                                                     <h6 class="d-flex align-items-center mb-3">
-                                                        <i class="material-icons text-info mr-2"> Level </i> &nbsp; Penanganan Pembelajaran</h6>
+                                                        <i class="material-icons text-info mr-2"> Level </i> &ensp; Pembelajaran</h6>
                                                     <small>Elektronik ({{ $dataLogin->elektronik }}/100)</small>
                                                     <div class="progress mb-3" style="height: 15px">
                                                         <div class="progress-bar bg-primary" role="progressbar"
