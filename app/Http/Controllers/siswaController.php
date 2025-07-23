@@ -349,8 +349,14 @@ class siswaController extends Controller
 
         // Buat file gambar sementara
         return response()->streamDownload(function () use ($template) {
+            ob_clean(); // bersihkan buffer
+            flush();    // paksa kirim header bersih
+
             imagejpeg($template);
             imagedestroy($template);
-        }, "sertifikat_17.jpg");
+        }, $no_sertiv_safe . '_' . $nama_safe . '.jpg', [
+            'Content-Type' => 'image/jpeg',
+            'Content-Disposition' => 'attachment; filename="' . $no_sertiv_safe . '_' . $nama_safe . '.jpg"',
+        ]);
     }
 }

@@ -12,4 +12,8 @@ class invoice extends Model
     public function kelas(){
         return $this->belongsTo(kelas::class, 'kelas_id', 'id');
     }
+
+    public function pengguna(){
+        return $this->belongsTo(pengguna::class, 'profile_id', 'id');
+    }
 }

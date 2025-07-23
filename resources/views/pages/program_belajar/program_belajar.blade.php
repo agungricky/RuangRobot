@@ -137,13 +137,23 @@
                         render: function(data, type, row) {
                             if (data == 'mudah') {
                                 color = 'success';
+                                level = 'Beginner';
                             }
                             if (data == 'sedang') {
                                 color = 'warning';
+                                level = 'Intermediate';
                             } else if (data == 'sulit') {
                                 color = 'danger';
+                                level = 'Advanced';
                             }
-                            return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
+                            return `
+                               <!-- <div class="text-center level"> -->
+                                    <span class="level text-white bg-${color} px-3 py-1 rounded" 
+                                          style="white-space: nowrap; display: inline-block; width: max-content;">
+                                      ${level}
+                                    </span>
+                                <!--  </div> -->
+                                `;
                         }
                     },
                     {

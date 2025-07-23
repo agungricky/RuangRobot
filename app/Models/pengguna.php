@@ -58,4 +58,9 @@ class pengguna extends Model
     public function riwayat_pembayaran(){
         return $this->hasMany(riwayatPembayaran::class, 'nama', 'id');
     }
+
+    public function invoice()
+    {
+        return $this->hasMany(invoice::class, 'profile_id', 'id');
+    }
 }
