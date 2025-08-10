@@ -8,6 +8,8 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="" />
+    {{-- <link rel="icon" type="image/png" href="{{ asset('fav2.png') }}"> --}}
+
 
     <!-- General CSS Files -->
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}"

@@ -16,7 +16,7 @@ class akunAdminSeeder extends Seeder
     public function run(): void
     {
         $akun = akun::create([
-            'username' => 'Julian',
+            'username' => 'julian',
             'password' => Hash::make('ruangrobot'),
             'role' => 'admin',
         ]);

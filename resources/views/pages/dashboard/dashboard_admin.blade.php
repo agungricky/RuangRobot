@@ -87,7 +87,7 @@
                                                     Total Saldo Saat ini: <br>
                                                     <span class="fs-3">
                                                         Rp.
-                                                        {{ $total_saldo->saldo_akhir ? number_format($total_saldo->saldo_akhir, 0, ',', '.') : 0 }}
+                                                        {{ $total_saldo ? number_format($total_saldo->saldo_akhir, 0, ',', '.') : 0 }}
                                                     </span>
                                                 </h6>
 

@@ -63,16 +63,18 @@
                                                         padding:35px";>
                                                 <div class="hero-inner">
                                                     <h6 class="text-wrap w-100">
-                                                        ${item.kelas.nama_kelas.length > 59 ? item.kelas.nama_kelas.slice(0, 50) + '...' : item.kelas.nama_kelas}
+                                                        ${item.kelas.nama_kelas.length > 30 ? item.kelas.nama_kelas.slice(0, 30) + '...' : item.kelas.nama_kelas}
                                                     </h6>
-                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
-                                                        ${item.kelas.status_kelas}
-                                                    </span>
-                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
-                                                        ${item.kelas.kategori.kategori_kelas}
-                                                    </span> </br>
+                                                    <div class="d-flex flex-nowrap p-0 m-0" style="gap: 10px;">
+                                                        <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                            ${item.kelas.status_kelas}
+                                                        </span>
+                                                        <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                            ${item.kelas.kategori.kategori_kelas}
+                                                        </span> 
+                                                    </div>
                                                     <span class="d-block mt-2">
-                                                        ${item.kelas.status_kelas !== "selesai" ? `Jam Pembelajaran: ${item.kelas.durasi_belajar}` : `Status: Kelas Telah Selesai`} 
+                                                        ${item.kelas.status_kelas !== "selesai" ? `Pembelajaran : ${item.kelas.durasi_belajar}` : `Status: Kelas Telah Selesai`} 
                                                     </span>
                                                 </div>
                                             </div>
@@ -130,14 +132,16 @@
                                                         padding:35px";>
                                                 <div class="hero-inner">
                                                     <h6 class="text-wrap w-100">
-                                                        ${item.kelas.nama_kelas.length > 59 ? item.kelas.nama_kelas.slice(0, 50) + '...' : item.kelas.nama_kelas}
-                                                    </h6>
-                                                    <span class="badge text-light" style="width: 100px; background-color: blue;">
-                                                        ${item.kelas.status_kelas}
-                                                    </span>
-                                                    <span class="badge text-light" style="width: 100px; background-color: red;">
-                                                        ${item.kelas.kategori.kategori_kelas}
-                                                    </span> </br>
+                                                        ${item.kelas.nama_kelas.length > 30 ? item.kelas.nama_kelas.slice(0, 30) + '...' : item.kelas.nama_kelas}
+                                                    </h6> 
+                                                    <div class="d-flex flex-nowrap p-0 m-0" style="gap: 10px;">
+                                                        <span class="badge text-light" style="width: 100px; background-color: blue;">
+                                                            ${item.kelas.status_kelas}
+                                                        </span>
+                                                        <span class="badge text-light" style="width: 100px; background-color: red;">
+                                                            ${item.kelas.kategori.kategori_kelas}
+                                                        </span>
+                                                    </div>
                                                     <span class="d-block mt-2">
                                                         ${item.kelas.status_kelas !== "selesai" ? `Jam Pembelajaran: ${item.kelas.durasi_belajar}` : `Kelas Telah Selesai`} 
                                                     </span>

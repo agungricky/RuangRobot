@@ -45,8 +45,8 @@
                     type: "GET",
                     url: "{{ route('gaji.json') }}",
                     dataSrc: function(response) {
-                        console.log("Data dari API:", response); // Cek apakah API merespon dengan benar
-                        console.log("Total Gaji:", response.total_gaji); // Cek isi total_gaji
+                        // console.log("Data dari API:", response); // Cek apakah API merespon dengan benar
+                        // console.log("Total Gaji:", response.total_gaji); // Cek isi total_gaji
                         return response.total_gaji; // Pastikan hanya mengembalikan array data
                     }
                 },
