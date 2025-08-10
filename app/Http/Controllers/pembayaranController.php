@@ -60,18 +60,19 @@ Yth. *{$siswa[0]['nama']}*,
 Menginformasikan kekurangan pembayaran:
 
 💳 *Rincian Pembayaran:*  
-🔹 *Nama:* {$siswa[0]['nama']}  
-🔹 *Kelas:* {$muridKelas->kelas->nama_kelas}  
-🔹 *Jumlah Dibayarkan:* Rp. " . number_format($siswa[0]['pembayaran'], 0, ',', '.') . "  
-🔹 *Total Tagihan:* Rp. " . number_format($siswa[0]['tagihan'], 0, ',', '.') . "  
-🔹 *Kekurangan:* Rp. " . number_format($total_kekurangan, 0, ',', '.') . "  
+✅ *Nama:* {$siswa[0]['nama']}  
+🏤 *Kelas di ikuti:* 
+{$muridKelas->kelas->nama_kelas}  
+
+- *Jumlah Dibayarkan:* Rp. " . number_format($siswa[0]['pembayaran'], 0, ',', '.') . "  
+- *Total Tagihan:* Rp. " . number_format($siswa[0]['tagihan'], 0, ',', '.') . "  
+- *Kekurangan:* Rp. " . number_format($total_kekurangan, 0, ',', '.') . "  
 
 Mohon segera melunasi pembayaran.
 
-📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di:  
-📞 +6285655770506  
+📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di : +6281272455577
 
-Pembayaran bisa transfer ke rekening berikut
+Pembayaran bisa transfer ke rekening berikut :
 
 Mandiri
 a/n Julian Sahertian
@@ -206,19 +207,19 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
         ])->post('https://api.fonnte.com/send', [
             'target' => $data->no_telp,
             'message' => "
-💡 #INFORMASI PEMBAYARAN DITERIMA# 📚
+📢 #INFORMASI PEMBAYARAN DITERIMA
 
 Halo 👋 $data->nama,
 Terimakasih sudah melakukan pembayaran :
 
-Pembelajaran : *$kelas->nama_kelas*
-Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
-Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
-Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
+- Pembelajaran : *$kelas->nama_kelas*
+- Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+- Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
+- Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
 $jatuh_tempo
 
 Pesan ini adalah bukti pembayaran yang sah dari ruang robot apabila ada kendala bisa menghubungi 
-Admin 085655770506"
+Admin +6281272455577"
         ]);
 
         // Simpan response untuk debug jika diperlukan
@@ -276,16 +277,17 @@ Yth. *{$value['nama']}*,
 Menginformasikan kekurangan pembayaran:
 
 💳 *Rincian Pembayaran:*  
-🔹 *Nama:* {$value['nama']}  
-🔹 *Kelas:* {$value['namaKelas']}  
-🔹 *Jumlah Dibayarkan:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "  
-🔹 *Total Tagihan:* Rp. " . number_format($value['tagihan'], 0, ',', '.') . "  
-🔹 *Sisa Pembayaran:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
+- *Nama:* {$value['nama']}  
+- *Kelas di ikuti:* 
+{$value['namaKelas']}  
+
+- *Jumlah Dibayarkan:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "  
+- *Total Tagihan:* Rp. " . number_format($value['tagihan'], 0, ',', '.') . "  
+- *Sisa Pembayaran:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
 
 Mohon segera melunasi pembayaran.
 
-📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di:  
-📞 https://wa.me/+6285655770506  
+📌 Jika ada pertanyaan atau memerlukan bantuan, silakan hubungi kami di : +6281272455577
 
 Pembayaran bisa transfer ke rekening berikut
 

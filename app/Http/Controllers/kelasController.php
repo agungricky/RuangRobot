@@ -502,8 +502,8 @@ class kelasController extends Controller
         $keterangan = match ($nilai) {
             "A" => "Sangat Baik",
             "B" => "Baik",
-            null => "BELUM LULUS",
-            default => "BELUM LULUS",
+            null => "-",
+            default => "-",
         };
         $box->draw($keterangan);
 

@@ -287,7 +287,7 @@
                                         <input type="hidden" name="sekolah" value="{{ $item->sekolah }}">
                                         <input type="hidden" name="tanggal_mulai" value="{{$awal->tanggal}}">
                                         <input type="hidden" name="tanggal_selesai" value="{{$akhir->tanggal}}">
-                                        <input type="hidden" name="keterangan" value=" Telah menyelesaikan pelatihan {{ strtoupper($kelas->program_belajar->nama_program) }}">
+                                        <input type="hidden" name="keterangan" value=" Telah menyelesaikan kelas {{ strtoupper($kelas->program_belajar->nama_program) }}">
 
                                         <button type="submit" class="btn btn-success btn-lg mt-3">
                                             <i class="fas fa-check"></i> Lihat Sertifikat

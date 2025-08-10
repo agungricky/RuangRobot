@@ -14,6 +14,7 @@ use App\Http\Controllers\pembelajaranController;
 use App\Http\Controllers\pendaftaranController;
 use App\Http\Controllers\penggunaController;
 use App\Http\Controllers\programbelajarController;
+use App\Http\Controllers\resetController;
 use App\Http\Controllers\RiwayatPembayaranController;
 use App\Http\Controllers\sekolahController;
 use App\Http\Controllers\siswaController;
@@ -161,6 +162,11 @@ Route::middleware('auth')->group(function () {
 
         // ========= Riwayat Pembayaran ========= //
         Route::get('/riwayat_pembayaran/{siswa_id}/{kelas_id}', [RiwayatPembayaranController::class, 'index'])->name('riwayat_pembayaran');
+
+        // ========= Riwayat Pembayaran ========= //
+        Route::get('/reset', [resetController::class, 'index'])->name('reset');
+        Route::post('/reset', [resetController::class, 'store'])->name('reset.store');
+        Route::post('/reset-verifikasi', [resetController::class, 'verivikasi'])->name('reset.verifikasi');
     });
 
     Route::middleware('CheckRole:Pengajar')->group(function () {

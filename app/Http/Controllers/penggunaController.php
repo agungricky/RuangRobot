@@ -34,6 +34,7 @@ class penggunaController extends Controller
                 ->join('sekolah', 'sekolah.id', 'profile.sekolah_id')
                 ->select('profile.*', 'akun.role', 'akun.username', 'sekolah.nama_sekolah')
                 ->where('akun.role', 'Siswa')
+                ->orderBy('akun.created_at', 'desc')
                 ->get();
         }
 
