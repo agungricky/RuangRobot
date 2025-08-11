@@ -59,7 +59,7 @@
                                 kelasHtml += `
                                     <div class="col-md-4 mb-4">
                                         <a href="{{ url('/detail_kelas/${item.id}') }}" class="text-decoration-none">
-                                            <div class="hero text-white hero-bg-image h-100 p-5 p-md-5" 
+                                            <div class="hero text-white hero-bg-image h-100 p-4 p-md-5" 
                                                 style="background-image: url({{ asset('img_videogaming1.png') }});
                                                         background-color: {{ $rgba }};
                                                         padding:35px";>
