@@ -27,7 +27,7 @@ class pembelajaranController extends Controller
         // dd($data);
 
         $response = Http::withHeaders([
-            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+            'Authorization' => '6aESQEF3pHwm9HbAiZYA'  // Ganti dengan token yang valid
         ])->post('https://api.fonnte.com/send', [
             'target' => $data->no_telp,
             'message' => "
@@ -90,7 +90,7 @@ Perum Mojoroto Indah, Jl. Raya Mojoroto No. 123, Kota Surabaya, Jawa Timur, 6023
             $username = $data->akun ? $data->akun->username : '-';
 
             $response = Http::withHeaders([
-                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'  // Ganti dengan token yang valid
+                'Authorization' => '6aESQEF3pHwm9HbAiZYA'  // Ganti dengan token yang valid
             ])->post('https://api.fonnte.com/send', [
                 'target' => $data->no_telp,
                 'message' => "

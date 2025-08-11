@@ -50,7 +50,7 @@ class pembayaranController extends Controller
 
 
         Http::withHeaders([
-            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
+            'Authorization' => '6aESQEF3pHwm9HbAiZYA'
         ])->post('https://api.fonnte.com/send', [
             'target' => $dataSiswa->no_telp,
             'message' => "
@@ -203,7 +203,7 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
         }
 
         $response = Http::withHeaders([
-            'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
+            'Authorization' => '6aESQEF3pHwm9HbAiZYA'
         ])->post('https://api.fonnte.com/send', [
             'target' => $data->no_telp,
             'message' => "
@@ -267,7 +267,7 @@ Admin +6281272455577"
 
         foreach ($cariSiswa as $value) {
             Http::withHeaders([
-                'Authorization' => '14c3GQbn1ZJNKGLCHwz1'
+                'Authorization' => '6aESQEF3pHwm9HbAiZYA'
             ])->post('https://api.fonnte.com/send', [
                 'target' => $value['no_telp'],
                 'message' => "
