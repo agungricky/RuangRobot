@@ -17,14 +17,14 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
+          username: ruang6601
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo -i
             cd /home/ruangrobot.com/RuangRobot 
+            git reset --hard
             git pull origin master
-
+            
       #Kirim Notifikasi Ke Telegram 
       - name: ✅ Notifikasi Sukses
         if: success()
@@ -34,7 +34,7 @@ jobs:
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="✅ Bang Ricky Deploy ke server BERHASIL
           Branch: master
-          Project: testcicd"
+          Project: RuangRobot"
 
       # Kirim Notifikasi Ke Telegram
       - name: ❌ Notifikasi Gagal
