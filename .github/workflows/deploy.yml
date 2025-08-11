@@ -17,14 +17,16 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ruang6601
+          username: ruangrobot
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/ruangrobot.com/RuangRobot 
-            git reset --hard
-            git pull origin master
-            
+            sudo -u ruang6601 -H bash -c '
+              cd /home/ruangrobot.com/RuangRobot &&
+              git reset --hard &&
+              git pull origin master
+            '
+
       #Kirim Notifikasi Ke Telegram 
       - name: ✅ Notifikasi Sukses
         if: success()
