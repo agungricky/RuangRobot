@@ -56,8 +56,8 @@
                     <div class=" col-md-9 col-sm-9">
                         <div class="topbar-left">
                             <ul>
-                                <li><a href="#"><i class="fa fa-envelope"></i> info@ruangrobot.id</a></li>
-                                <li><a href="#"><i class="fa fa-phone-square"></i> +6285655770506</a></li>
+                                <li><a href="#"><i class="fa fa-envelope"></i> info@ruangrobot.com</a></li>
+                                <li><a href="http://wa.me/+6281272455577" target="_blank"><i class="fa fa-phone-square"></i> +6281272455577</a></li>
                                 <li><a href="#"><i class="fa fa-clock-o"></i> Senin - Jumat: 09:00 - 17:00</a>
                                 </li>
                             </ul>
@@ -185,7 +185,7 @@
                                 <!-- layer 3 -->
                                 <div class="layer-3 wow fadeInUp" data-wow-delay="0.7s">
                                     <a href="{{ route('login') }}" class="ready-btn" method="POST">Login</a>
-                                    <a class="ready-btn" href="https://wa.me/6281234567890?text=Hai%20min%2C%20saya%20ingin%20mendaftar%20kelas%20reguler."
+                                    <a class="ready-btn" href="https://wa.me/+6281272455577?text=Hai%20min%2C%20saya%20ingin%20mendaftar%20kelas%20reguler."
                                         target="_blank">Register
                                     </a>
                                 </div>

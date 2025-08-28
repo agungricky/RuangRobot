@@ -206,6 +206,8 @@ class kelasController extends Controller
     {
         $message = [
             'nama_kelas.required' => 'Nama Kelas harus diisi.',
+            'kode_kelas.required' => 'Kode Kelas harus diisi.',
+            'harga_kelas.required' => 'Harga Kelas harus diisi.',
             'durasi_belajar.required' => 'Durasi Belajar harus diisi.',
             'program_belajar.required' => 'Program Belajar harus diisi.',
             'jenis_kelas.required' => 'Jenis Kelas harus diisi.',
@@ -220,6 +222,8 @@ class kelasController extends Controller
 
         $request->validate([
             'nama_kelas' => 'required',
+            'kode_kelas' => 'required',
+            'harga_kelas' => 'required',
             'durasi_belajar' => 'required',
             'programId' => 'required|exists:program_belajar,id',
             'kategori_kelas' => 'required',
@@ -233,6 +237,8 @@ class kelasController extends Controller
 
         kelas::where('id', $id)->update([
             'nama_kelas' => $request->nama_kelas,
+            'kode_kelas' => $request->kode_kelas . '-' . Str::upper(Str::random(5)),
+            'harga' => $request->harga_kelas,
             'durasi_belajar' => $request->durasi_belajar,
             'program_belajar_id' => $request->programId,
             'kategori_kelas_id' => $request->kategori_kelas,
