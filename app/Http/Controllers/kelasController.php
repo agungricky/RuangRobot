@@ -235,9 +235,12 @@ class kelasController extends Controller
             'harga_kelas' => 'required',
         ], $message);
 
+        $kelas = kelas::findOrFail($id);
+        $kode_kelas = $kelas->kode_kelas == $request->kode_kelas ? $kelas->kode_kelas : $request->kode_kelas . '-' . Str::upper(Str::random(5));
+
         kelas::where('id', $id)->update([
             'nama_kelas' => $request->nama_kelas,
-            'kode_kelas' => $request->kode_kelas . '-' . Str::upper(Str::random(5)),
+            'kode_kelas' => $kode_kelas,
             'harga' => $request->harga_kelas,
             'durasi_belajar' => $request->durasi_belajar,
             'program_belajar_id' => $request->programId,
@@ -248,6 +251,9 @@ class kelasController extends Controller
             'status_kelas' => $request->status_kelas,
             'jatuh_tempo' => $request->jatuh_tempo,
         ]);
+
+
+
 
         return redirect(route('kelas', ['id' => $request->kategoriKelas]))->with('success', 'Data Kelas Berhasil Diupdate');
     }
