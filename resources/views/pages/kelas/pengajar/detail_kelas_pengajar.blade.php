@@ -682,6 +682,8 @@
                 let id = $(".absen").data("id");
                 let gaji_transport = '{{ $kelas->gaji_transport }}'
 
+                $('#final-submit').addClass('disabled').text('Menyimpan...');
+
                 simpanKeStorage(id_kelas);
 
                 let savedData = ambilDariStorage(id_kelas);
