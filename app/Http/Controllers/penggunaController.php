@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\akun;
 use App\Models\invoice;
+use App\Models\muridKelas;
 use App\Models\pendaftaran;
 use App\Models\pengguna;
 use App\Models\riwayatPembayaran;
 use App\Models\sekolah;
+use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -155,6 +157,7 @@ class penggunaController extends Controller
     {
         $data = pengguna::with('akun', 'sekolah')->where('id', $id)->first();
         $sekolah = sekolah::all();
+
         return view('pages.pengguna.edit_pengguna', compact('data', 'role', 'sekolah'));
     }
 
@@ -208,6 +211,24 @@ class penggunaController extends Controller
         }
 
         pengguna::where('id', $id)->update($updateProfile);
+
+        $kelas_diikuti = invoice::where('profile_id', $id)->get();
+        foreach ($kelas_diikuti as $key => $value) {
+            $murid_kelas = muridKelas::where('kelas_id', $value->kelas_id)->first();
+            if ($murid_kelas) {
+                $murid_array = json_decode($murid_kelas->murid, true);
+                foreach ($murid_array as &$value) {
+                    if ($value['id'] == $id) {
+                        $value['nama'] = $updateProfile['nama'];
+                        break;
+                    }
+                }
+
+                unset($value);
+                $murid_kelas->murid = json_encode($murid_array);
+                $murid_kelas->save();
+            }
+        }
 
         return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguan berhasil diUpdate');
     }

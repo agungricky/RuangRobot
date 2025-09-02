@@ -159,6 +159,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/pembayaran/murid/{kelas_id}/{siswa_id}', [pembayaranController::class, 'update'])->name('pembayaran.murid');
         Route::post('/penagihan', [pembayaranController::class, 'penagihan'])->name('penagihan');
         Route::get('/penagiha/personal/{id}/{kelas_id}', [pembayaranController::class, 'penagihan_personal'])->name('penagihan_personal');
+        Route::delete('/pembayaran/hapus/{id}', [pembayaranController::class, 'destroy'])->name('pembayaran.hapus');
 
         // ========= Riwayat Pembayaran ========= //
         Route::get('/riwayat_pembayaran/{siswa_id}/{kelas_id}', [RiwayatPembayaranController::class, 'index'])->name('riwayat_pembayaran');

@@ -12,6 +12,7 @@ use App\Models\pengguna;
 use App\Models\programbelajar;
 use App\Models\riwayatPembayaran;
 use App\Models\siswa;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use PhpParser\Node\Stmt\If_;
 
@@ -79,7 +80,7 @@ a/n Julian Sahertian
 1710003410076  
 
 Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
-    ]);
+        ]);
 
 
         return response()
@@ -193,24 +194,26 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
             }
         }
         $kekurangan = $datasiswa['tagihan'] - $datasiswa['pembayaran'];
+        $tanggal = Carbon::parse($request->tanggal)->format('d/m/Y');
+        $tanggalLunas = Carbon::parse($request->tanggal)->format('d-m-Y');
 
         if ($kekurangan == 0) {
-            $tangal_lunas = now()->format('d-m-Y');
-            $jatuh_tempo = "Status Pembayaran : *LUNAS* / $tangal_lunas";
+            // $tangal_lunas = $tanggal;
+            $jatuh_tempo = "Status Pembayaran : *LUNAS* / $tanggalLunas";
         } else {
             // $jatuh_tempo = "Jatuh Tempo : " . $datasiswa['jatuh_tempo'];
             $jatuh_tempo = "";
         }
 
-        $response = Http::withHeaders([
-            'Authorization' => '6aESQEF3pHwm9HbAiZYA'
-        ])->post('https://api.fonnte.com/send', [
-            'target' => $data->no_telp,
-            'message' => "
+                $response = Http::withHeaders([
+                    'Authorization' => '6aESQEF3pHwm9HbAiZYA'
+                ])->post('https://api.fonnte.com/send', [
+                    'target' => $data->no_telp,
+                    'message' => "
 📢 #INFORMASI PEMBAYARAN DITERIMA
 
 Halo 👋 $data->nama,
-Terimakasih sudah melakukan pembayaran :
+Terimakasih sudah melakukan pembayaran pada tanggal *$tanggal*, dengan rincian sebagai berikut:
 
 - Pembelajaran : *$kelas->nama_kelas*
 - Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
@@ -220,7 +223,7 @@ $jatuh_tempo
 
 Pesan ini adalah bukti pembayaran yang sah dari ruang robot apabila ada kendala bisa menghubungi 
 Admin +6281272455577"
-        ]);
+                ]);
 
         // Simpan response untuk debug jika diperlukan
         $responses[] = $response->body();
@@ -235,17 +238,31 @@ Admin +6281272455577"
         ]);
 
         $saldoakhir = keuangan::orderBy('id', 'desc')->first();
-        keuangan::create([
-            'indexkeuangan_id' => null,
-            'tipe' => 'Pemasukan',
-            'keterangan' => 'Pembayaran' . $data->nama . ' Kelas ' . $kelas->nama_kelas,
-            'tanggal' => $request->tanggal,
-            'nominal' => $request->nominal,
-            'saldo_akhir' => $saldoakhir->saldo_akhir + $request->nominal,
-            'metode_pembayaran' => $request->metode_pembayaran,
-        ]);
+
+        if ($saldoakhir == null) {
+            keuangan::create([
+                'indexkeuangan_id' => null,
+                'tipe' => 'Pemasukan',
+                'keterangan' => 'Pembayaran' . $data->nama . ' Kelas ' . $kelas->nama_kelas,
+                'tanggal' => $request->tanggal,
+                'nominal' => $request->nominal,
+                'saldo_akhir' => 0 + $request->nominal,
+                'metode_pembayaran' => $request->metode_pembayaran,
+            ]);
+        } else {
+            keuangan::create([
+                'indexkeuangan_id' => null,
+                'tipe' => 'Pemasukan',
+                'keterangan' => 'Pembayaran' . $data->nama . ' Kelas ' . $kelas->nama_kelas,
+                'tanggal' => $request->tanggal,
+                'nominal' => $request->nominal,
+                'saldo_akhir' => $saldoakhir->saldo_akhir + $request->nominal,
+                'metode_pembayaran' => $request->metode_pembayaran,
+            ]);
+        }
 
         return response()->json(['success' => 'Pembayaran berhasil diperbarui', 'data' => $request->all()]);
+        // return response()->json(compact('saldoakhir'));
     }
 
 
@@ -302,5 +319,58 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
         return response()->json([
             'data' => $cariSiswa
         ]);
+    }
+
+    public function destroy($id)
+    {
+        $pembayaran = riwayatPembayaran::findOrFail($id);
+        $siswa = pengguna::where('id', $pembayaran->nama)->first();
+        $kelas = kelas::where('id', $pembayaran->kelas_id)->first();
+
+        if (!$pembayaran) {
+            return response()->json(['error' => 'Data pembayaran tidak ditemukan'], 404);
+        }
+
+        // // Cari data muridKelas yang sesuai
+        $muridKelas = muridKelas::where('kelas_id', $pembayaran->kelas_id)->first();
+
+        if ($muridKelas) {
+            $muridArray = json_decode($muridKelas->murid, true);
+
+            // Kurangi pembayaran siswa yang sesuai
+            foreach ($muridArray as &$murid) {
+                if ($murid['id'] == $pembayaran->nama) {
+                    $murid['pembayaran'] -= $pembayaran->nominal;
+                    if ($murid['pembayaran'] < 0) {
+                        $murid['pembayaran'] = 0;
+                    }
+                    break;
+                }
+            }
+
+            // Update data muridKelas
+            $muridKelas->update([
+                'murid' => json_encode($muridArray),
+            ]);
+        }
+
+        // Hapus data pembayaran
+        $pembayaran->delete();
+
+        $saldoakhir = keuangan::orderBy('id', 'desc')->first();
+
+        keuangan::create([
+            'indexkeuangan_id' => null,
+            'tipe' => 'Pengeluaran',
+            'keterangan' => 'Penghapusan Pembayaran: ' . $siswa->nama . ' kelas ' . $kelas->nama_kelas,
+            'tanggal' => Carbon::now()->format('Y-m-d'),
+            'nominal' => $pembayaran->nominal,
+            'saldo_akhir' => $saldoakhir->saldo_akhir - $pembayaran->nominal,
+            'metode_pembayaran' => $pembayaran->metode_pembayaran,
+        ]);
+
+        return back()->with('success', 'Data pembayaran berhasil dihapus');
+
+        // return response()->json(compact('kelas'));
     }
 }

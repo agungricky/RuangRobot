@@ -231,6 +231,7 @@
                                 <th class="col-1">Nominal</th>
                                 <th class="col-1">Tanggal</th>
                                 <th class="col-1">Metode Pembayaran</th>
+                                <th class="col-1 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="modalTableBody">
@@ -544,12 +545,22 @@
                         let rows = '';
                         data.forEach((d, index) => {
                             rows += `
-                                <tr>
+                                <tr style="text-align: center; vertical-align: middle;">
                                     <td>${index + 1}</td>
                                     <td>${d.jenis_pembayaran}</td>
                                     <td>${formatRupiah(d.nominal)}</td>
                                     <td>${formatHariTanggal(d.tanggal)}</td>
                                     <td>${d.metode_pembayaran}</td>
+                                    <td>
+                                        <form action="/pembayaran/hapus/${d.id}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                        
+                                            <button type="submit" class="btn btn-sm" style="background-color: red; color: white;">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>`;
                         });
 
