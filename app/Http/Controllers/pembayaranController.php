@@ -65,8 +65,7 @@ Menginformasikan kekurangan pembayaran:
 🏤 *Kelas di ikuti:* 
 {$muridKelas->kelas->nama_kelas}  
 
-- *Jumlah Dibayarkan:* Rp. " . number_format($siswa[0]['pembayaran'], 0, ',', '.') . "  
-- *Total Tagihan:* Rp. " . number_format($siswa[0]['tagihan'], 0, ',', '.') . "  
+- *Sudah dibayar:* Rp. " . number_format($siswa[0]['pembayaran'], 0, ',', '.') . "  
 - *Kekurangan:* Rp. " . number_format($total_kekurangan, 0, ',', '.') . "  
 
 Mohon segera melunasi pembayaran.
@@ -216,9 +215,8 @@ Halo 👋 $data->nama,
 Terimakasih sudah melakukan pembayaran pada tanggal *$tanggal*, dengan rincian sebagai berikut:
 
 - Pembelajaran : *$kelas->nama_kelas*
-- Pembayaran Diterima : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
-- Tagihan Kelas : Rp. " . number_format($datasiswa['tagihan'], 0, ',', '.') . "
-- Total Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
+- Sudah dibayar : Rp. " . number_format($datasiswa['pembayaran'], 0, ',', '.') . "
+- Kekurangan: Rp. " . number_format($kekurangan, 0, ',', '.') . "
 $jatuh_tempo
 
 Pesan ini adalah bukti pembayaran yang sah dari ruang robot apabila ada kendala bisa menghubungi 
@@ -298,9 +296,8 @@ Menginformasikan kekurangan pembayaran:
 - *Kelas di ikuti:* 
 {$value['namaKelas']}  
 
-- *Jumlah Dibayarkan:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "  
-- *Total Tagihan:* Rp. " . number_format($value['tagihan'], 0, ',', '.') . "  
-- *Sisa Pembayaran:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
+- *Sudah dibayar:* Rp. " . number_format($value['pembayaran'], 0, ',', '.') . "   
+- *Kekurangan:* Rp. " . number_format($value['sisa_pembayaran'], 0, ',', '.') . "  
 
 Mohon segera melunasi pembayaran.
 
