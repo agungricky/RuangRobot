@@ -164,11 +164,11 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>
-                                                <th style="width: 20%;">Nama Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Tanggal</th>
-                                                <th style="width: 15%;" class="text-center">Keterangan</th>
+                                                <th style="width: 15%;" class="text-center">Nama Pengajar</th>
+                                                <th style="width: 20%;" class="text-center">Tanggal</th>
+                                                <th style="width: 25%;" class="text-center">Keterangan</th>
                                                 <th style="width: 15%;" class="text-center">Nominal</th>
-                                                <th style="width: 10%;">Aksi</th>
+                                                <th style="width: 10%;" class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -179,12 +179,12 @@
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
                                                     <td>{{ $item->pengguna->nama }}</td>
-                                                    <td>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
-                                                    <td>{{ $item->keterangan }}</td>
+                                                    <td class="text-center">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
+                                                    <td class="text-center">{{ $item->keterangan }}</td>
                                                     <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     @if ($item->status == 'pending')
                                                         <td>
-                                                            <div class="d-flex gap-1">
+                                                            <div class="d-flex gap-1 justify-content-center">
                                                                 <form
                                                                     action="{{ route('custom.verifikasi', ['id' => $item->id]) }}"
                                                                     method="POST">
@@ -192,7 +192,7 @@
                                                                     @method('PATCH')
                                                                     <input type="hidden" value="ditolak" name="status">
                                                                     <button type="submit" class="btn btn-danger btn-sm">
-                                                                        <i class="fas fa-times"></i> Tolak
+                                                                        <i class="fas fa-times"></i>
                                                                     </button>
                                                                 </form>
                                                             </div>

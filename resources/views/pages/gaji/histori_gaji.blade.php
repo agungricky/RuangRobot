@@ -15,7 +15,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example"
+                                    <table class="table table-bordered border-dark mt-2 mb-3 align-middle" id="example"
                                         data-page-length="25">
                                         <thead>
                                             <tr>

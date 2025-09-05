@@ -9,135 +9,6 @@
         <section class="section">
             <x-title_halaman title="Detail gaji" />
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Mengajar</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 15%;">Nama Pengajar</th>
-                                                <th style="width: 35%;">Kelas</th>
-                                                <th style="width: 10%;">Tanggal</th>
-                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($gaji as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->pengguna->nama }}</td>
-                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas}}</td>
-                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
-                                                    <td>{{ $item->status_pengajar }}</td>
-                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Gaji Transport --}}
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Transport</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%;" class="text-center">No.</th>
-                                                <th style="width: 15%;">Nama Pengajar</th>
-                                                <th style="width: 35%;">Kelas</th>
-                                                <th style="width: 10%;">Tanggal</th>
-                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($transport as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->pengguna->nama }}</td>
-                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
-                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
-                                                    <td>{{ $item->status_pengajar }}</td>
-                                                    <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Gaji Custom --}}
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="add-items d-flex">
-                                    <p class="fs-4">#Gaji Custom</p>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 10%;" class="text-center">No.</th>
-                                                <th style="width: 20%;">Nama Pengajar</th>
-                                                <th style="width: 15%;" class="text-start">Tanggal</th>
-                                                <th style="width: 15%;" class="text-center">Keterangan</th>
-                                                <th style="width: 15%;" class="text-center">Nominal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach ($custom as $item)
-                                                <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $item->pengguna->nama }}</td>
-                                                    <td>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}</td>
-                                                    <td>{{ $item->keterangan }}</td>
-                                                    <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {{-- Kalkulator Gaji --}}
             <div class="section-body">
                 <div class="row">
@@ -196,19 +67,23 @@
                                             <tr>
                                                 <td class="text-center">1</td>
                                                 <td>Gaji Mengajar</td>
-                                                <td>Rp. {{ number_format($gaji_ditolak['gaji_mengajar_ditolak'], 0, ',', '.') }}
+                                                <td>Rp.
+                                                    {{ number_format($gaji_ditolak['gaji_mengajar_ditolak'], 0, ',', '.') }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="text-center">2</td>
                                                 <td>Gaji Transport</td>
-                                                <td>Rp. {{ number_format($gaji_ditolak['gaji_transport_ditolak'], 0, ',', '.') }}
+                                                <td>Rp.
+                                                    {{ number_format($gaji_ditolak['gaji_transport_ditolak'], 0, ',', '.') }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="text-center">3</td>
                                                 <td>Gaji Custom</td>
-                                                <td>Rp. {{ number_format($gaji_ditolak['gaji_custom_ditolak'], 0, ',', '.') }}</td>
+                                                <td>Rp.
+                                                    {{ number_format($gaji_ditolak['gaji_custom_ditolak'], 0, ',', '.') }}
+                                                </td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
@@ -218,6 +93,168 @@
                                                     {{ number_format($gaji_ditolak['total'], 0, ',', '.') }}</td>
                                             </tr>
                                         </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="add-items d-flex">
+                                    <p class="fs-4">#Gaji Mengajar</p>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%;" class="text-center">No.</th>
+                                                <th style="width: 15%;">Nama Pengajar</th>
+                                                <th style="width: 35%;">Kelas</th>
+                                                <th style="width: 10%;">Tanggal</th>
+                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
+                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
+                                                <th style="width: 5%;" class="text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $no = 1;
+                                            @endphp
+                                            @foreach ($gaji as $item)
+                                                <tr>
+                                                    <td>{{ $no++ }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}
+                                                    </td>
+                                                    <td>{{ $item->status_pengajar }}</td>
+                                                    <td>Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td class="text-center">
+                                                        @if ($item->status == 'diverifikasi')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @elseif ($item->status == 'ditolak')
+                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                        @elseif ($item->status == 'dibayar')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Gaji Transport --}}
+            <div class="section-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="add-items d-flex">
+                                    <p class="fs-4">#Gaji Transport</p>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%;" class="text-center">No.</th>
+                                                <th style="width: 15%;">Nama Pengajar</th>
+                                                <th style="width: 35%;">Kelas</th>
+                                                <th style="width: 10%;">Tanggal</th>
+                                                <th style="width: 10%;" class="text-center">Status Pengajar</th>
+                                                <th style="width: 15%;" class="text-start">Gaji Mengajar</th>
+                                                <th style="width: 5%;" class="text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $no = 1;
+                                            @endphp
+                                            @foreach ($transport as $item)
+                                                <tr>
+                                                    <td>{{ $no++ }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->pembelajaran->kelas->nama_kelas }}</td>
+                                                    <td>{{ $item->pembelajaran->tanggal ? \Carbon\Carbon::parse($item->pembelajaran->tanggal)->translatedFormat('l, d-m-Y') : '' }}
+                                                    </td>
+                                                    <td>{{ $item->status_pengajar }}</td>
+                                                    <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td class="text-center">
+                                                        @if ($item->status == 'diverifikasi')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @elseif ($item->status == 'ditolak')
+                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                        @elseif ($item->status == 'dibayar')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Gaji Custom --}}
+            <div class="section-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="add-items d-flex">
+                                    <p class="fs-4">#Gaji Custom</p>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 10%;" class="text-center">No.</th>
+                                                <th style="width: 20%;">Nama Pengajar</th>
+                                                <th style="width: 15%;" class="text-start">Tanggal</th>
+                                                <th style="width: 15%;" class="text-center">Keterangan</th>
+                                                <th style="width: 15%;" class="text-center">Nominal</th>
+                                                <th style="width: 10%;" class="text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $no = 1;
+                                            @endphp
+                                            @foreach ($custom as $item)
+                                                <tr>
+                                                    <td>{{ $no++ }}</td>
+                                                    <td>{{ $item->pengguna->nama }}</td>
+                                                    <td>{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->translatedFormat('l, d-m-Y') : '' }}
+                                                    </td>
+                                                    <td>{{ $item->keterangan }}</td>
+                                                    <td>{{ 'Rp. ' . number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td class="text-center">
+                                                        @if ($item->status == 'diverifikasi')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @elseif ($item->status == 'ditolak')
+                                                            <i class="fas fa-times-circle text-danger"></i>
+                                                        @elseif ($item->status == 'dibayar')
+                                                            <i class="fas fa-check-circle text-success"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

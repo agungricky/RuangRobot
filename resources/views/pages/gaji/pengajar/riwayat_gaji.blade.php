@@ -17,13 +17,24 @@
                                         </div>
                                         <span
                                             class="time">{{ \Carbon\Carbon::parse($list_gajian->tanggal_terbayar)->translatedFormat('l, d F Y') }}</span>
-                                        <h5 class="m-0 p-0">Gaji diterima - 
+                                        <h5 class="m-0 p-0">Gaji diterima -
                                             <a
                                                 href="{{ route('detail.riwayat.histori', ['id' => $dataLogin->id, 'idtanggal' => $list_gajian->id]) }}">
                                                 Lihat Detail
                                             </a>
                                         </h5>
-                                        <p style="text-align: justify;" class="mt-1">Halo {{$dataLogin->nama}} Gaji kamu sudah di bayarkan ya pada tanggal <span class="text-nowrap">{{ \Carbon\Carbon::parse($list_gajian->tanggal_terbayar)->translatedFormat('d F Y') }}</span> kemarin 😊.</p>
+                                        <p style="text-align: justify;" class="mt-1">
+                                            Halo {{ $dataLogin->nama }} Gaji kamu sudah dibayarkan pada tanggal
+                                            <span class="text-nowrap">
+                                                {{ \Carbon\Carbon::parse($list_gajian->tanggal_terbayar)->translatedFormat('d F Y') }}
+                                            </span>
+
+                                            @if (\Carbon\Carbon::parse($list_gajian->tanggal_terbayar)->isToday())
+                                                ( Hari ini ) 😊.
+                                            @elseif (\Carbon\Carbon::parse($list_gajian->tanggal_terbayar)->isYesterday())
+                                                Kemarin 😊.
+                                            @endif
+                                        </p>
                                     </li>
                                 @endforeach
                             </ul>
@@ -103,7 +114,8 @@
             font-weight: 600;
         }
 
-        .resume-box h5, .resume-box a {
+        .resume-box h5,
+        .resume-box a {
             font-weight: 700;
             color: #20247b;
             font-size: 16px;

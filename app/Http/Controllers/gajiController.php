@@ -53,7 +53,6 @@ class gajiController extends Controller
             ]);
         }
 
-        // dd($data);
         return view('pages.gaji.gaji', compact('data'));
     }
 
@@ -82,16 +81,19 @@ class gajiController extends Controller
         $gaji = gajiUtama::with('pengguna', 'pembelajaran.kelas')
             ->where('gajis.pengajar', $id)
             ->where('gajis.status', '!=', 'dibayar')
+            ->where('history_gaji_id', null)
             ->get();
 
         $transport = gajiTransport::with('pengguna', 'pembelajaran.kelas')
             ->where('transport.pengajar', $id)
             ->where('transport.status', '!=', 'dibayar')
+            ->where('history_gaji_id', null)
             ->get();
 
         $custom = gajiCustom::with('pengguna')
             ->where('gaji_custom.pengajar', $id)
             ->where('gaji_custom.status', '!=', 'dibayar')
+            ->where('history_gaji_id', null)
             ->get();
 
         // dd($custom->toArray());
@@ -123,14 +125,17 @@ class gajiController extends Controller
         // ================================================== //
         $gaji_ditolak = gajiUtama::where('pengajar', $data->id)
             ->where('gajis.status', 'ditolak')
+            ->where('history_gaji_id', null)
             ->sum('nominal');
 
         $transport_ditolak = gajiTransport::where('pengajar', $data->id)
             ->where('transport.status', 'ditolak')
+            ->where('history_gaji_id', null)
             ->sum('nominal');
 
         $custom_ditolak = gajiCustom::where('pengajar', $data->id)
             ->where('gaji_custom.status', 'ditolak')
+            ->where('history_gaji_id', null)
             ->sum('nominal');
 
         $gaji_ditolak = [
@@ -185,12 +190,14 @@ class gajiController extends Controller
         $gaji = gajiUtama::where('pengajar', $id)
             ->where('status', 'diverifikasi')
             ->get()->toArray();
-        
+
         $transport = gajiTransport::where('pengajar', $id)
-            ->where('status', 'diverifikasi')->get()->toArray();
+            ->where('status', 'diverifikasi')
+            ->get()->toArray();
 
         $custom = gajiCustom::where('pengajar', $id)
-            ->where('status', 'diverifikasi')->get()->toArray();
+            ->where('status', 'diverifikasi')
+            ->get()->toArray();
 
         $gaji_total = 0;
         foreach ($gaji as $value) {
@@ -211,32 +218,31 @@ class gajiController extends Controller
         $pengajar = pengguna::findOrfail($id);
         $saldoAkhir = keuangan::orderBy('id', 'desc')->first();
 
-        keuangan::create([
-            'indexkeuangan_id' => null,
-            'tipe' => 'Pengeluaran',
-            'keterangan' => 'Pembayaran Gaji ' . $pengajar->nama,
-            'tanggal' => now(),
-            'nominal' => $totalAll,
-            'saldo_akhir' => $saldoAkhir->saldo_akhir - $totalAll,
-            'metode_pembayaran' => "Transfer"
-        ]);
+        // keuangan::create([
+        //     'indexkeuangan_id' => null,
+        //     'tipe' => 'Pengeluaran',
+        //     'keterangan' => 'Pembayaran Gaji ' . $pengajar->nama,
+        //     'tanggal' => now(),
+        //     'nominal' => $totalAll,
+        //     'saldo_akhir' => $saldoAkhir->saldo_akhir - $totalAll,
+        //     'metode_pembayaran' => "Transfer"
+        // ]);
 
+        // =============================== Tunggu Sampai Sini ===============================
 
 
         // Menampilkan Semua Data
         $gaji = gajiUtama::where('pengajar', $id)
-            ->where('status', 'diverifikasi')
-            ->Orwhere('status', 'ditolak')
+            ->where('history_gaji_id', null)
             ->get()->toArray();
-        
+
         $transport = gajiTransport::where('pengajar', $id)
-            ->Orwhere('status', 'ditolak')
-            ->where('status', 'diverifikasi')->get()->toArray();
+            ->where('history_gaji_id', null)
+            ->get()->toArray();
 
         $custom = gajiCustom::where('pengajar', $id)
-            ->Orwhere('status', 'ditolak')
-            ->where('status', 'diverifikasi')->get()->toArray();
-
+            ->where('history_gaji_id', null)
+            ->get()->toArray();
 
         $histori = historigaji::whereDate('tanggal_terbayar', now()->toDateString())->first();
 
@@ -247,27 +253,24 @@ class gajiController extends Controller
         }
 
         foreach ($gaji as $key => $value) {
-            gajiUtama::where('id', $value['id'])
-                ->update([
-                    'status' => $request->status,
-                    'history_gaji_id' => $histori->id
-                ]);
+            gajiUtama::where('id', $value['id'])->update([
+                'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
+                'history_gaji_id' => $histori->id
+            ]);
         }
 
         foreach ($transport as $key => $value) {
-            gajiTransport::where('id', $value['id'])
-                ->update([
-                    'status' => $request->status,
-                    'history_gaji_id' => $histori->id
-                ]);
+            gajiTransport::where('id', $value['id'])->update([
+                'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
+                'history_gaji_id' => $histori->id
+            ]);
         }
 
         foreach ($custom as $key => $value) {
-            gajiCustom::where('id', $value['id'])
-                ->update([
-                    'status' => $request->status,
-                    'history_gaji_id' => $histori->id
-                ]);
+            gajiCustom::where('id', $value['id'])->update([
+                'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
+                'history_gaji_id' => $histori->id
+            ]);
         }
 
         return back()->with('success', 'Data berhasil di perbarui');

@@ -18,7 +18,7 @@
                                     {{-- <x-button.button_add_modal message="Tambah Sekolah" id="#form_sekolah" /> --}}
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered border-dark mt-2 mb-3" id="example" data-page-length="25">
+                                    <table class="table table-bordered border-dark mt-2 mb-3 align-middle" id="example" data-page-length="25">
                                         <thead>
                                             <tr>
                                                 <th style="width: 10%;" class="text-center">No.</th>

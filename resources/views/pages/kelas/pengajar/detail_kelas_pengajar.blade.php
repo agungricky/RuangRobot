@@ -29,7 +29,7 @@
                                                         padding:35px";>
                             <div class="hero-inner">
                                 <h6 class="text-wrap w-100">
-                                    {{ucwords($kelas->nama_kelas)}}
+                                    {{ ucwords($kelas->nama_kelas) }}
                                 </h6>
                                 <span class="badge text-light"
                                     style="width: 100px; background-color: blue;">{{ $kelas->kategori->kategori_kelas }}</span>
@@ -531,21 +531,24 @@
                 formdata += "&idpembelajaran=" + id;
                 formdata += "&id_kelas=" + id_kelas;
 
-                $.ajax({
-                    type: "POST",
-                    url: `{{ url('/pengajar/bantu/absen/${id}') }}`,
-                    data: formdata,
-                    dataType: "json",
-                    success: function(response) {
-                        if (result == true) {
-                            Swal.fire("Berhasil!", response.message, "success");
-                            $("#detailmodal").modal("hide");
+                if (result == true) {
+                    $.ajax({
+                        type: "POST",
+                        url: `{{ url('/pengajar/bantu/absen/${id}') }}`,
+                        data: formdata,
+                        dataType: "json",
+                        success: function(response) {
+                            if (result == true) {
+                                Swal.fire("Berhasil!", response.message, "success");
+                                $("#detailmodal").modal("hide");
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire("Error!", "Terjadi kesalahan", "error");
                         }
-                    },
-                    error: function(xhr) {
-                        Swal.fire("Error!", "Terjadi kesalahan", "error");
-                    }
-                });
+                    });
+                }
+
             });
 
 
