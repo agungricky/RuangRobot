@@ -218,15 +218,15 @@ class gajiController extends Controller
         $pengajar = pengguna::findOrfail($id);
         $saldoAkhir = keuangan::orderBy('id', 'desc')->first();
 
-        // keuangan::create([
-        //     'indexkeuangan_id' => null,
-        //     'tipe' => 'Pengeluaran',
-        //     'keterangan' => 'Pembayaran Gaji ' . $pengajar->nama,
-        //     'tanggal' => now(),
-        //     'nominal' => $totalAll,
-        //     'saldo_akhir' => $saldoAkhir->saldo_akhir - $totalAll,
-        //     'metode_pembayaran' => "Transfer"
-        // ]);
+        keuangan::create([
+            'indexkeuangan_id' => null,
+            'tipe' => 'Pengeluaran',
+            'keterangan' => 'Pembayaran Gaji ' . $pengajar->nama,
+            'tanggal' => now(),
+            'nominal' => $totalAll,
+            'saldo_akhir' => $saldoAkhir->saldo_akhir - $totalAll,
+            'metode_pembayaran' => "Transfer"
+        ]);
 
         // =============================== Tunggu Sampai Sini ===============================
 
