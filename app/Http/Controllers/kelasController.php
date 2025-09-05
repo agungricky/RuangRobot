@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\AlldataExport;
 use App\Exports\JurnalIndexnExport;
 use App\Models\akun;
+use App\Models\gajiTransport;
+use App\Models\gajiUtama;
 use App\Models\invoice;
 use App\Models\Kategori;
 use App\Models\kelas;
@@ -12,6 +14,7 @@ use App\Models\muridKelas;
 use App\Models\pembelajaran;
 use App\Models\pengguna;
 use App\Models\programbelajar;
+use App\Models\riwayatPembayaran;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
@@ -19,6 +22,7 @@ use Dompdf\Adapter\PDFLib;
 use Illuminate\Http\Request;
 use GDText\Box;
 use GDText\Color;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
@@ -272,11 +276,26 @@ class kelasController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        invoice::where('kelas_id', $id)->delete();
-        muridKelas::where('kelas_id', $id)->delete();
-        pembelajaran::where('kelas_id', $id)->delete();
-        kelas::where('id', $id)->delete();
-        return redirect(route('kelas', ['id' => $request->kelas]))->with('success', 'Data Kelas Berhasil Dihapus');
+        try {
+            DB::transaction(function () use ($id) {
+                riwayatPembayaran::where('kelas_id', $id)->delete();
+                invoice::where('kelas_id', $id)->delete();
+
+                $pembelajaran = pembelajaran::where('kelas_id', $id)->get();
+                foreach ($pembelajaran as $key => $value) {
+                    gajiUtama::where('pembelajaran_id', $value->id)->delete();
+                    gajiTransport::where('pembelajaran_id', $value->id)->delete();
+                }
+
+                pembelajaran::where('kelas_id', $id)->delete();
+                muridKelas::where('kelas_id', $id)->delete();
+                kelas::where('id', $id)->delete();
+            });
+
+            return redirect(route('kelas', ['id' => $request->kelas]))->with('success', 'Data Kelas Berhasil Dihapus');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
     }
 
     public function jurnalkelas(string $id)

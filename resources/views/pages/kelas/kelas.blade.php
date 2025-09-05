@@ -3,6 +3,10 @@
     @if (session('success'))
         <x-sweetalert.success />
     @endif
+    @if (session('error'))
+        <x-sweetalert.failed />
+    @endif
+
 
     <!-- Main Content -->
     <div class="main-content">
@@ -252,19 +256,17 @@
                             <div class="d-flex justify-content-center gap-3">
                                     <a href="{{ url('/kelas/detail/${row.id}') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-right fa-lg"></i></a>
                                     <a href="{{ url('/kelas/edit/${row.id}') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
-                                    <button class="btn btn-danger btn-sm" disabled title="Dimatikan untuk mencegah pengahapusan siswa">
+                                    {{-- <button class="btn btn-danger btn-sm" disabled title="Dimatikan untuk mencegah pengahapusan siswa">
                                         <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    </button> --}}
 
-                                    {{-- Button ini berfungsi namun karna jika diaktifkan akan banyak menghapus relasi data
                                     <form action="{{ url('/kelas/delete/${row.id}') }}" method="POST" class="d-inline">
                                         <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="kelas" value="{{ $id }}">
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                    --}}
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
                                 </form>
                             </div>
                             `;
