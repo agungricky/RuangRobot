@@ -10,6 +10,7 @@ use App\Models\pengguna;
 use App\Models\riwayatPembayaran;
 use App\Models\sekolah;
 use App\Models\siswa;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -238,11 +239,17 @@ class penggunaController extends Controller
      */
     public function destroy(string $id, $role)
     {
-        invoice::where('profile_id', $id)->delete();
-        riwayatPembayaran::findOrfail($id)->delete();
-        pengguna::findOrfail($id)->delete();
-        akun::findOrfail($id)->delete();
-        return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguna berhasil dihapus');
+        try {
+            DB::transaction(function () use ($id) {
+                invoice::where('profile_id', $id)->delete();
+                riwayatPembayaran::where('nama', $id)->delete();
+                pengguna::find($id)->delete();
+                akun::find($id)->delete();
+            });
+            return redirect()->route('pengguna', ['id' => $role])->with('success', 'Data pengguna berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('pengguna', ['id' => $role])->with('error', 'Data pengguna gagal dihapus' . ' ' . $e->getMessage());
+        }
     }
 
     public function kelas_diikuti($id)
