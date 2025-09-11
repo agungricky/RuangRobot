@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\akun;
+use App\Models\gajiTransport;
+use App\Models\gajiUtama;
 use App\Models\invoice;
 use App\Models\kelas;
 use App\Models\muridKelas;
@@ -245,8 +247,17 @@ https://maps.app.goo.gl/A7DbNKCXWmBGcTtm6",
      */
     public function destroy(string $id)
     {
-        pembelajaran::where('id', $id)->delete();
-        return back()->with('success', 'Data berhasil diperbarui!');
+        try {
+            DB::transaction(function () use ($id) {
+                gajiUtama::where('pembelajaran_id', $id)->delete();
+                gajiTransport::where('pembelajaran_id', $id)->delete();
+                pembelajaran::where('id', $id)->delete();
+            });
+
+            return back()->with('success', 'Data berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal: ' . $e->getMessage());
+        }
     }
 
     // ======================================== //
