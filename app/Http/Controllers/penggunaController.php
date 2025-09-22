@@ -201,6 +201,7 @@ class penggunaController extends Controller
             'email' => $request->email,
             'alamat' => $request->alamat,
             'no_telp' => $request->no_telp,
+            // 'sekolah' => $request->sekolah_id,
         ];
 
         if ($request->filled('sekolah_id')) {
@@ -219,8 +220,10 @@ class penggunaController extends Controller
             if ($murid_kelas) {
                 $murid_array = json_decode($murid_kelas->murid, true);
                 foreach ($murid_array as &$value) {
+                    dd($value);
                     if ($value['id'] == $id) {
                         $value['nama'] = $updateProfile['nama'];
+                        // $value['sekolah'] = $updateProfile['sekolah'];
                         break;
                     }
                 }

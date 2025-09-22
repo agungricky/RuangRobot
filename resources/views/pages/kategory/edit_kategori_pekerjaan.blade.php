@@ -33,7 +33,7 @@
                                         <input type="text" id="gaji_view" class="form-control"
                                             placeholder="Masukan Nominal Gaji"
                                             value="{{ old('gaji', $kategori_pekerjaan->gaji) }}">
-                                        <input type="hidden" name="gaji" id="gaji">
+                                        <input type="hidden" name="gaji" id="gaji" value={{old('gaji', $kategori_pekerjaan->gaji)}}>
                                         <div id="errornama_pekerjaan" class="text-danger"></div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
