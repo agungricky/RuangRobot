@@ -235,6 +235,8 @@
                                 color = 'success';
                             } else if (data == 'selesai') {
                                 color = 'secondary-dark';
+                            } else {
+                                color = 'warning';
                             }
                             return `<div class="text-center level"><span class="level bg-${color}">${data}</span></div>`;
                         }

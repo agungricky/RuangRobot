@@ -19,38 +19,50 @@ class gajiPengajarController extends Controller
     {
         $gaji = gajiUtama::with(['pengguna.akun', 'pembelajaran.kelas'])
             ->where('gajis.pengajar', $id)
-            ->where('gajis.status', 'pending')
-            ->orwhere('gajis.status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('gajis.status', 'pending')
+                    ->orwhere('gajis.status', 'diverifikasi');
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
         $transport = gajiTransport::with(['pengguna.akun', 'pembelajaran.kelas'])
             ->where('transport.pengajar', $id)
-            ->where('transport.status', 'pending')
-            ->orwhere('transport.status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('transport.status', 'pending')
+                    ->orwhere('transport.status', 'diverifikasi');
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
         $custom = gajiCustom::with('pengguna.akun')
             ->where('gaji_custom.pengajar', $id)
-            ->where('gaji_custom.status', 'pending')
-            ->orWhere('gaji_custom.status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('gaji_custom.status', 'pending')
+                    ->orWhere('gaji_custom.status', 'diverifikasi');
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
         $total_gaji = gajiUtama::where('pengajar', $id)
-            ->where('status', 'pending')
-            ->orWhere('status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('status', 'pending')
+                    ->orWhere('status', 'diverifikasi');
+            })
             ->sum('nominal');
 
         $total_gajitransport = gajiTransport::where('pengajar', $id)
-            ->where('status', 'pending')
-            ->orwhere('status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('status', 'pending')
+                    ->orWhere('status', 'diverifikasi');
+            })
             ->sum('nominal');
 
         $total_gajicustom = gajiCustom::where('pengajar', $id)
-            ->where('status', 'pending')
-            ->Orwhere('status', 'diverifikasi')
+            ->where(function ($q) {
+                $q->where('status', 'pending')
+                    ->orWhere('status', 'diverifikasi');
+            })
             ->sum('nominal');
 
         $gaji_pengajar = [
@@ -59,6 +71,7 @@ class gajiPengajarController extends Controller
             'gaji_custom' => $total_gajicustom,
             'total' => $total_gaji + $total_gajitransport + $total_gajicustom
         ];
+
         return view('pages.gaji.pengajar.gaji', compact('gaji', 'transport', 'custom', 'gaji_pengajar'));
     }
 

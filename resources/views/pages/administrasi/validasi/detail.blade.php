@@ -259,17 +259,25 @@
                         data: null,
                         render: function(data, type, row) {
                             return `<div class="text-center">${row.sekolah?.nama_sekolah ?? '-'}</div>`;
-
                         }
                     },
                     {
                         data: 'null',
                         render: function(data, type, row) {
-                            return `<div class="text-center">
-                                        <span class="bg-success text-white px-2 py-1 rounded fw-bold d-inline-block">
+                            if (row.status == "mendaftar") {
+                                return `<div class="text-center">
+                                        <span class="bg-primary text-white px-2 py-1 rounded fw-bold d-inline-block">
                                             Mendaftar
                                         </span>
                                     </div>`;
+                            }
+                            if (row.status == "verifikasi") {
+                                return `<div class="text-center">
+                                        <span class="bg-success text-white px-2 py-1 rounded fw-bold d-inline-block">
+                                            Terverifikasi
+                                        </span>
+                                    </div>`;
+                            }                        
                         }
                     },
                     {

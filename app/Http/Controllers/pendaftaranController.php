@@ -255,8 +255,13 @@ class pendaftaranController extends Controller
                 ]);
             }
 
+            // ================= Update Pendaftaran ================= //
+            pendaftaran::where('id', $request->id)->update([
+                'status' => 'verifikasi',
+            ]);
+
             // ================= Menghapus Pendaftaran ================= //
-            pendaftaran::where('id', $request->id)->delete();
+            // pendaftaran::where('id', $request->id)->delete();
 
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil diupdate');

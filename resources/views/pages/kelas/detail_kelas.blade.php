@@ -70,9 +70,20 @@
                                     @php
                                         $aktif = 'Aktif';
                                         $selesai = 'Selesai';
+                                        $pending = 'Pending';
+
+                                        if ($data->status_kelas == 'aktif') {
+                                            $badge = 'badge-success';
+                                            $badgeText = 'Aktif';
+                                        } elseif ($data->status_kelas == 'pending') {
+                                            $badge ='bg-warning';
+                                            $badgeText = 'Pending';
+                                        } elseif ($data->status_kelas == 'selesai') {
+                                            $badge = 'badge-secondary-dark';
+                                            $badgeText = 'Selesai';
+                                        }
                                     @endphp
-                                    <span
-                                        class="ml-2 badge {{ $data->status_kelas == 'aktif' ? 'badge-success' : 'badge-secondary-dark' }}">{{ $data->status_kelas == 'aktif' ? $aktif : $selesai }}</span>
+                                    <span class="ml-2 badge {{ $badge }}">{{ $badgeText }}</span>
                                 </div>
 
                                 <p class="lead d-none d-sm-none d-md-block mt-3"

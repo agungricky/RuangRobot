@@ -76,6 +76,7 @@
                                                     @php
                                                         $option = [
                                                             'aktif' => 'Aktif',
+                                                            'pending' => 'Pending',
                                                             'selesai' => 'Selesai',
                                                         ];
                                                     @endphp

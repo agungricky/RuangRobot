@@ -18,6 +18,7 @@ class pendaftaran extends Model
         'kelas',
         'alamat',
         'kategori',
+        'status',
         'created_at',
         'updated_at'
     ];
