@@ -255,21 +255,21 @@ class gajiController extends Controller
         foreach ($gaji as $key => $value) {
             gajiUtama::where('id', $value['id'])->update([
                 'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
-                'history_gaji_id' => $histori->id
+                'history_gaji_id' => $value['status'] == 'diverifikasi' ? $histori->id : $value['history_gaji_id']
             ]);
         }
 
         foreach ($transport as $key => $value) {
             gajiTransport::where('id', $value['id'])->update([
                 'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
-                'history_gaji_id' => $histori->id
+                'history_gaji_id' => $value['status'] == 'diverifikasi' ? $histori->id : $value['history_gaji_id']
             ]);
         }
 
         foreach ($custom as $key => $value) {
             gajiCustom::where('id', $value['id'])->update([
                 'status' => $value['status'] == 'diverifikasi' ? $request->status : $value['status'],
-                'history_gaji_id' => $histori->id
+                'history_gaji_id' => $value['status'] == 'diverifikasi' ? $histori->id : $value['history_gaji_id']
             ]);
         }
 
