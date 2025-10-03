@@ -77,7 +77,22 @@ class gajiPengajarController extends Controller
 
     public function riwayat_gaji(string $id)
     {
-        $data = historigaji::all();
+        $list = gajiUtama::where('pengajar', $id)
+            ->where(function ($q) {
+                $q->where('status', 'dibayar')
+                    ->orWhere('status', 'ditolak');
+            })
+            ->select('history_gaji_id')
+            ->distinct()
+            ->get();
+
+        $data = [];
+        foreach ($list as $item) {
+            $data[] = historigaji::where('id', $item->history_gaji_id)->first();
+        }
+        // dd($data);
+
+        // $data = historigaji::all();
 
         return view('pages.gaji.pengajar.riwayat_gaji', compact('data'));
     }

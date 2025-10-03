@@ -27,6 +27,8 @@ Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Login');
 Route::get('/register/{kategori}/{id}', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [pendaftaranController::class, 'store'])->name('register.post');
+Route::get('/sekolah', [sekolahController::class, 'index'])->name('sekolah');
+
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
@@ -78,7 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori_pekerjaan', KategoriPekerjaanController::class)->names('kategori_pekerjaan');
 
         // ========= Sekolah ========= //
-        Route::get('/sekolah', [sekolahController::class, 'index'])->name('sekolah');
+        // Route::get('/sekolah', [sekolahController::class, 'index'])->name('sekolah');
         Route::get('/sekolah/json', [sekolahController::class, 'index'])->name('sekolah.json');
         Route::post('/sekolah/store', [sekolahController::class, 'store'])->name('sekolah.store');
         Route::get('/sekolah/edit/{id}', [sekolahController::class, 'edit'])->name('sekolah.edit');
