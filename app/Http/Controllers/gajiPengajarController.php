@@ -81,7 +81,7 @@ class gajiPengajarController extends Controller
             ->where(function ($q) {
                 $q->where('status', 'dibayar')
                     ->orWhere('status', 'ditolak');
-            })
+            })->whereNotNull('history_gaji_id')
             ->select('history_gaji_id')
             ->distinct()
             ->get();
@@ -90,7 +90,7 @@ class gajiPengajarController extends Controller
         foreach ($list as $item) {
             $data[] = historigaji::where('id', $item->history_gaji_id)->first();
         }
-        // dd($data);
+        // dd($list->toArray());
 
         // $data = historigaji::all();
 
