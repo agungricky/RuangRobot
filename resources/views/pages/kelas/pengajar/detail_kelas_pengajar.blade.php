@@ -171,7 +171,8 @@
                                             </div>
                                             <p class="mb-2" style="font-size: 15px;">
                                                 <b>Catatan Pengajar :</b> <br>
-                                                {!! Str::words($pertemuan->catatan_pengajar ?? '-', 10, '...') !!}
+                                                {!! Str::words($pertemuan->catatan_pengajar) !!}
+                                                {{-- {!! Str::words(strip_tags($pertemuan->catatan_pengajar ?? '-'), 10, '...') !!} --}}
 
                                             </p>
                                         </div>
