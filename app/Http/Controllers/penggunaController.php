@@ -220,7 +220,6 @@ class penggunaController extends Controller
             if ($murid_kelas) {
                 $murid_array = json_decode($murid_kelas->murid, true);
                 foreach ($murid_array as &$value) {
-                    dd($value);
                     if ($value['id'] == $id) {
                         $value['nama'] = $updateProfile['nama'];
                         // $value['sekolah'] = $updateProfile['sekolah'];
