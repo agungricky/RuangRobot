@@ -76,7 +76,7 @@
                                             $badge = 'badge-success';
                                             $badgeText = 'Aktif';
                                         } elseif ($data->status_kelas == 'pending') {
-                                            $badge ='bg-warning';
+                                            $badge = 'bg-warning';
                                             $badgeText = 'Pending';
                                         } elseif ($data->status_kelas == 'selesai') {
                                             $badge = 'badge-secondary-dark';
@@ -387,11 +387,16 @@
     <script>
         $(document).ready(function() {
             // Menampilkan Data Tabel Pertemuan Kelas
+            let jmlPertemuan;
             $('#example').DataTable({
                 ajax: {
                     type: "GET",
                     url: "{{ route('pembelajaran.json', ['id' => $data->id]) }}",
-                    dataSrc: 'data',
+                    // dataSrc: 'data',
+                    dataSrc: function(json) {
+                        jmlPertemuan = json.data.length;
+                        return json.data;
+                    }
                 },
                 columns: [{
                         data: null,
@@ -467,7 +472,6 @@
                     type: "GET",
                     url: "{{ route('datasiswa_kelas.json', ['id' => $data->id]) }}",
                     dataSrc: function(response) {
-                        // console.log(response);
                         return JSON.parse(response.data.murid || '[]');
                     },
                 },
@@ -494,23 +498,34 @@
                         render: function(data, type, row) {
                             let result = @json($result);
                             if (result[row.id]) {
-                                let persentase = result[row.id].persentase;
+                                // let persentase = result[row.id].persentase;
+                                // return `
+                                //         <div class="text-center">
+                                //             <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
+                                //                 <div class="progress-bar" role="progressbar" style="width: ${persentase}%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
+                                //             </div>
+                                //             <span style="font-size: 12px; margin-top: 5px; display: inline-block;"> ${persentase} %</span>
+                                //         </div>
+                                //     `;
+                                let kehadiran = result[row.id].kehadiran;
                                 return `
                                         <div class="text-center">
-                                            <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
-                                                <div class="progress-bar" role="progressbar" style="width: ${persentase}%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="${persentase}" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;">${persentase} %</span>
+                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;"> ${kehadiran}x dari ${jmlPertemuan} pertemuan</span>
                                         </div>
                                     `;
                             } else {
+                                // return `
+                                //  <div class="text-center">
+                                //             <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
+                                //                 <div class="progress-bar" role="progressbar" style="width: 0%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                //             </div>
+                                //             <span style="font-size: 12px; margin-top: 5px; display: inline-block;">0%</span>
+                                //         </div>
+                                // `;
                                 return `
-                                 <div class="text-center">
-                                            <div class="progress" style="height: 8px; border-radius: 50px; background-color: #e9ecef;">
-                                                <div class="progress-bar" role="progressbar" style="width: 0%; border-radius: 50px; background-color: #4caf50;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <span style="font-size: 12px; margin-top: 5px; display: inline-block;">0%</span>
-                                        </div>
+                                <div class="text-center">
+                                    <span style="font-size: 12px; margin-top: 5px; display: inline-block;">0x dari ${jmlPertemuan} pertemuan</span>
+                                </div>
                                 `;
                             }
                         }
@@ -843,7 +858,7 @@
                             error: function(xhr) {
                                 Swal.fire('Gagal!',
                                     'Terjadi kesalahan saat mengirim data.', 'error'
-                                    );
+                                );
                             },
                             complete: function() {
                                 // Kembalikan tombol ke semula

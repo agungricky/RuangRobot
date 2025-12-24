@@ -313,9 +313,6 @@ class kelasController extends Controller
         $tanggalAwal = optional($pembelajaran->first())->tanggal;
         $tanggalAkhir = optional($pembelajaran->last())->tanggal;
 
-        // dd($tanggalAwal, $tanggalAkhir);
-
-        // dd($participants->toArray());
         if (!$participants) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
@@ -479,7 +476,7 @@ class kelasController extends Controller
         $box = new Box($template);
         $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
-        $box->setFontSize(55);
+        $box->setFontSize(40);
         $box->setBox(500, 330, 800, 160);
         $box->setTextAlign('center', 'center');
         $box->draw(ucwords($nama));
@@ -512,31 +509,35 @@ class kelasController extends Controller
         $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
         $box->setFontSize(24);
-        $box->setBox(500, 530, 800, 200);
+        $box->setBox(500, 510, 800, 200);
         $box->setTextAlign('center', 'top');
-
         $tanggalAwalFormatted  = \Carbon\Carbon::parse($tanggalAwal)->format('d-m-Y');
         $tanggalAkhirFormatted = \Carbon\Carbon::parse($tanggalAkhir)->format('d-m-Y');
         $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($dataKelas->kelas->program_belajar->nama_program) .
-            ' di Ruang Robot yang dilaksanakan pada tanggal ' .
+            ' di Ruang Robot yang dilaksanakan pada ' . "\n" . 
             $tanggalAwalFormatted . ' s/d ' . $tanggalAkhirFormatted . ' dengan predikat :');
 
         // --------- Nilai / Predikat ------------
         $box = new Box($template);
         $box->setFontFace($fontPath);
         $box->setFontColor(new Color(0, 0, 0));
-        $box->setFontSize(45);
+        $box->setFontSize(30);
         $box->setStrokeColor(new Color(0, 0, 0));
-        $box->setStrokeSize(.6);
-        $box->setBox(750, 610, 300, 70);
+        $box->setStrokeSize(0.2);
+
+        $box->setBox(700, 610, 400, 70);
+
         $box->setTextAlign('center', 'center');
+
         $keterangan = match ($nilai) {
-            "A" => "Sangat Baik",
-            "B" => "Baik",
+            "A" => "SANGAT BAIK",
+            "B" => "BAIK",
             null => "-",
             default => "-",
         };
+
         $box->draw($keterangan);
+
 
         // --------- Tambah Gambar Tanda Tangan ------------
         $ttd = imagecreatefrompng($ttdPath);
