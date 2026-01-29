@@ -13,6 +13,8 @@ use App\Models\programbelajar;
 use App\Models\riwayatPembayaran;
 use App\Models\siswa;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PhpParser\Node\Stmt\If_;
 
@@ -158,7 +160,10 @@ Terima kasih atas perhatian dan kerjasamanya. 🙏😊"
             'siswa_id' => 'required|numeric',
         ]);
 
-        $kelas = muridKelas::where('kelas_id', $kelas_id)->first();
+        DB::beginTransaction();
+
+       try {
+         $kelas = muridKelas::where('kelas_id', $kelas_id)->first();
 
         if (!$kelas) {
             return response()->json(['error' => 'Kelas tidak ditemukan'], 404);
@@ -259,8 +264,14 @@ Admin +6281272455577"
             ]);
         }
 
+        DB::commit();
         return response()->json(['success' => 'Pembayaran berhasil diperbarui', 'data' => $request->all()]);
-        // return response()->json(compact('saldoakhir'));
+
+       } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+
+       }
     }
 
 
