@@ -308,12 +308,22 @@
                     @endphp
 
                     <div class="doc-row">
-                        <div class="doc-label">Keterampilan dan Kemandirian Siswa</div>
+                        <div class="doc-label">Pemahaman Siswa</div>
                         <div class="doc-colon">:</div>
-                        <div id="valSkillsIndependence" class="doc-value">
-                            <strong>{{ $data->keterampilan }}</strong>
+                        <div id="valUnderstanding" class="doc-value">
+                            <strong>{{ $data->pemahaman }}</strong>
                             <br>
-                            {{ $keterangan['keterampilan'][$data->keterampilan] ?? '-' }}
+                            {{ $keterangan['pemahaman'][$data->pemahaman] ?? '-' }}
+                        </div>
+                    </div>
+
+                    <div class="doc-row">
+                        <div class="doc-label">Keamanan dan Ketelitian Saat Pengerjaan Project</div>
+                        <div class="doc-colon">:</div>
+                        <div id="valSafetyAccuracy" class="doc-value">
+                            <strong>{{ $data->keamanan }}</strong>
+                            <br>
+                            {{ $keterangan['keamanan'][$data->keamanan] ?? '-' }}
                         </div>
                     </div>
 
@@ -351,7 +361,7 @@
                         <div class="doc-label">Catatan dari Pengajar</div>
                         <div class="doc-colon">:</div>
                         <div id="valTeacherNotes" class="doc-value">
-                            Mengikuti arahan dengan baik, cepat menangkap materi yang disampaikan, sedikit pendiam.
+                            -
                         </div>
                     </div>
 
