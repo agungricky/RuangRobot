@@ -136,8 +136,50 @@
                         <div class="activities">
                             @php
                                 $no = 1;
+                                $jumlah_pertemuan = $pembelajaran->count();
                             @endphp
                             @foreach ($pembelajaran as $pertemuan)
+                                @if ($pertemuan->kelas->kategori->kategori_kelas == 'Reguler' && in_array($no, [5, 9, 13, 17, 21, 25]))
+                                    @php
+                                        // ID report mengikuti nomor pertemuan sebelumnya
+                                        $idreport = $no - 1;
+
+                                        $assessment = $pertemuan->kelas->assessment->firstWhere('idreport', $idreport);
+
+                                        $sudahAssessment = $assessment !== null;
+                                    @endphp
+
+                                    <div class="activity">
+
+                                        <div class="activity-icon bg-primary text-light shadow-primary">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+
+                                        <div class="activity-detail w-100">
+
+                                            <div class="mb-2">
+                                                <span class="font-weight-bold text-small">
+                                                    # ISI ASSESSMENT {{ $idreport }} PERTEMUAN
+                                                </span>
+                                            </div>
+
+                                            <button type="button" class="btn btn-block btn-warning btn-lg mb-2 assessment"
+                                                data-id="{{ $idreport }}" data-idkelas="{{ $pertemuan->kelas->id }}"
+                                                data-bs-toggle="modal" data-bs-target="#assessmentModal"
+                                                {{ $sudahAssessment ? 'disabled' : '' }}>
+                                                <i class="fas fa-clipboard-check"></i>
+
+                                                @if ($sudahAssessment)
+                                                    Assessment Sudah Diisi
+                                                @else
+                                                    Assessment
+                                                @endif
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+                                @endif
                                 @php
                                     $daftar_hari = [
                                         'Sunday' => 'Minggu',
@@ -212,7 +254,8 @@
                                             <hr>
                                             <p class="text-small"><i class="fa fa-school mr-2"></i> {{ $siswa->sekolah }}
                                             </p>
-                                            <p class="text-small"><i class="fa fa-signal mr-2"></i> Presentase Kehadiran</p>
+                                            <p class="text-small"><i class="fa fa-signal mr-2"></i> Presentase Kehadiran
+                                            </p>
                                             <div class="budget-price">
                                                 <div class="budget-price d-flex align-items-center w-100">
                                                     <div class="position-relative w-100"
@@ -425,6 +468,100 @@
 
     @endif
 
+    {{-- ============================================ --}}
+    {{-- ======== Modal Input Assessment ============ --}}
+    {{-- ============================================ --}}
+    <div class="modal fade" id="assessmentModal" tabindex="-1" aria-labelledby="assessmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <form action="{{ route('asessment.store') }}" method="POST">
+                    @csrf
+
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="assessmentModalLabel">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            Form Assessment Siswa
+                        </h5>
+
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            @php
+                                $nilai = ['A', 'A-', 'B+', 'B', 'B-'];
+                            @endphp
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Pemahaman Dasar Robot</label>
+                                <select class="form-select" name="pemahaman">
+                                    @foreach ($nilai as $n)
+                                        <option value="{{ $n }}">{{ $n }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Keterampilan dan Kemandirian Siswa</label>
+                                <select class="form-select" name="keterampilan">
+                                    @foreach ($nilai as $n)
+                                        <option value="{{ $n }}">{{ $n }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Keamanan dan Ketelitian</label>
+                                <select class="form-select" name="keamanan">
+                                    @foreach ($nilai as $n)
+                                        <option value="{{ $n }}">{{ $n }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Antusiasme dan Semangat Belajar</label>
+                                <select class="form-select" name="antusiasme">
+                                    @foreach ($nilai as $n)
+                                        <option value="{{ $n }}">{{ $n }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Percaya Diri dan Tanggung Jawab</label>
+                                <select class="form-select" name="percaya_diri">
+                                    @foreach ($nilai as $n)
+                                        <option value="{{ $n }}">{{ $n }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <input type="hidden" name="idreport" id="idreport">
+                            <input type="hidden" name="kelas_id" id="kelas_id">
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Simpan Assessment
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/trumbowyg.min.css') }}">
@@ -438,6 +575,11 @@
 
         .bg-putih {
             background-color: #f8f8f8
+        }
+
+        .modal-dialog-scrollable .modal-body {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
         }
     </style>
     <script>
@@ -825,6 +967,19 @@
                 });
             });
 
+            $(".assessment").on("click", function() {
+                let id_pertemuan = $(this).data("id");
+                let idreport = $(this).data('id');
+                let kelasId = $(this).data('idkelas');
+
+                $('#idreport').val(idreport);
+                $('#kelas_id').val(kelasId);
+
+                $("#assessmentModal").modal("show");
+
+                // Set action form sesuai ID Pertemuan dan ID Kelas
+                // $("#assessmentModal form").attr("action", `{{ url('/asessment/${id_pertemuan}/${id_kelas}') }}`);
+            });
         });
     </script>
 @endsection

@@ -52,4 +52,8 @@ class kelas extends Model
         return $this->hasMany(invoice::class, 'kelas_id', 'id');
     }
 
+    public function assessment(){
+        return $this->hasMany(Assessment::class, 'kelas_id', 'id');
+    }
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\asessmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardPenggunaController;
 use App\Http\Controllers\gajiController;
@@ -28,7 +29,7 @@ Route::post('/login', [AuthController::class, 'Authenticate'])->name('proses-Log
 Route::get('/register/{kategori}/{id}', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [pendaftaranController::class, 'store'])->name('register.post');
 Route::get('/sekolah', [sekolahController::class, 'index'])->name('sekolah');
-
+Route::get('/asessment/{id}', [asessmentController::class, 'show'])->name('asessment');
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
@@ -138,7 +139,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/pengguna/delete/{id}/{role}', [penggunaController::class, 'destroy'])->name('pengguna.delete');
         Route::get('/data_pengajar', [penggunaController::class, 'datapengajar'])->name('pengajar');
 
-
         // ========= Gaji ========= //
         Route::get('/gaji', [gajiController::class, 'index'])->name('gaji');
         Route::get('/data_pengajar/json', [gajiController::class, 'index'])->name('gaji.json');
@@ -200,6 +200,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat/gaji/{id}', [gajiPengajarController::class, 'riwayat_gaji'])->name('riwayatgaji.pengajar');
         Route::get('/detail/{id}/histori/{idtanggal}', [gajiPengajarController::class, 'detail_histori'])->name('detail.riwayat.histori');
         Route::post('/Absen/custom', [gajiPengajarController::class, 'store'])->name('gajicustom.store');
+
+        // ========= Assesmet ========= //
+        Route::post('/asessment', [asessmentController::class, 'store'])->name('asessment.store');
     });
 
     Route::middleware('CheckRole:Siswa')->group(function () {

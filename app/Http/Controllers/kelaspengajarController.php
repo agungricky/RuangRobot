@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assessment;
 use App\Models\gajiTransport;
 use App\Models\gajiUtama;
 use App\Models\Kategori;
@@ -70,7 +71,8 @@ class kelaspengajarController extends Controller
         $daftar_siswa = muridKelas::where('murid_kelas.kelas_id', $id)->first();
         $daftar_siswa = json_decode($daftar_siswa->murid);
 
-        $pembelajaran = pembelajaran::with('kelas')->where('pembelajaran.kelas_id', $id)->get();
+        $pembelajaran = pembelajaran::with('kelas.kategori', 'kelas.assessment')->where('pembelajaran.kelas_id', $id)->get();
+        $assesment = Assessment::where('kelas_id', $id)->get();
         $kehadiran = [];
         foreach ($pembelajaran as $pertemuan) {
             $absensi = json_decode($pertemuan->absensi, true);
@@ -118,7 +120,7 @@ class kelaspengajarController extends Controller
             ];
         }
 
-        return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'dataFix'));
+        return view('pages.kelas.pengajar.detail_kelas_pengajar', compact('kelas', 'jumlah_pertemuan', 'pembelajaran', 'dataFix', 'assesment'));
     }
 
     public function show_selesai(string $id)
