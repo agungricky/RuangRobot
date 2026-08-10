@@ -389,6 +389,225 @@
         </div>
     </footer> --}}
 
+    <style>
+        /* ================================
+   RESPONSIVE LAPORAN
+================================ */
+
+        .report-paper {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .document-box {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .doc-row {
+            display: grid;
+            grid-template-columns: 260px 20px minmax(0, 1fr);
+            gap: 8px;
+            align-items: start;
+        }
+
+        .doc-label,
+        .doc-colon,
+        .doc-value {
+            min-width: 0;
+        }
+
+        .doc-value {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+
+        /* ================================
+   TABLET
+================================ */
+
+        @media (max-width: 768px) {
+
+            main {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            #documentViewSection {
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .report-paper {
+                width: 100%;
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            /* Logo */
+            .report-paper img {
+                width: 170px !important;
+                height: auto !important;
+            }
+
+            /* Judul */
+            .document-title {
+                font-size: 18px !important;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            /* Kotak laporan */
+            .document-box {
+                padding: 15px !important;
+            }
+
+            .doc-row {
+                grid-template-columns: 180px 15px minmax(0, 1fr);
+                gap: 5px;
+            }
+
+            .doc-label,
+            .doc-value {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .doc-colon {
+                font-size: 14px;
+            }
+        }
+
+
+        /* ================================
+   HP
+================================ */
+
+        @media (max-width: 576px) {
+
+            main {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+
+            #documentViewSection {
+                padding: 0;
+            }
+
+            .report-paper {
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            /* Logo */
+            .report-paper img {
+                width: 130px !important;
+                height: auto !important;
+            }
+
+            /* Jarak logo */
+            .report-paper .mb-4 {
+                margin-bottom: 15px !important;
+            }
+
+            /* Judul */
+            .document-title {
+                font-size: 15px !important;
+                line-height: 1.35;
+                margin-bottom: 12px !important;
+            }
+
+            /* Box */
+            .document-box {
+                padding: 12px !important;
+            }
+
+            /*
+       Pada HP label dibuat satu baris sendiri.
+       Ini jauh lebih nyaman daripada memaksa
+       label panjang berdampingan dengan deskripsi.
+    */
+            .doc-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 3px;
+                padding: 10px 0;
+            }
+
+            .doc-label {
+                font-weight: 600;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            .doc-colon {
+                display: none;
+            }
+
+            .doc-value {
+                font-size: 13px;
+                line-height: 1.6;
+                width: 100%;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .doc-value strong {
+                display: inline-block;
+                margin-bottom: 2px;
+                font-size: 14px;
+            }
+
+        }
+
+
+        /* ================================
+            HP SANGAT KECIL
+            ================================ */
+
+        @media (max-width: 375px) {
+
+            .report-paper {
+                padding: 8px;
+            }
+
+            .document-box {
+                padding: 10px !important;
+            }
+
+            .report-paper img {
+                width: 115px !important;
+            }
+
+            .document-title {
+                font-size: 14px !important;
+            }
+
+            .doc-row {
+                padding: 8px 0;
+            }
+
+            .doc-label {
+                font-size: 12px;
+            }
+
+            .doc-value {
+                font-size: 12px;
+                line-height: 1.55;
+            }
+
+            .doc-value strong {
+                font-size: 13px;
+            }
+        }
+    </style>
+
     <!-- Bootstrap 5 JS Bundle (Includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
