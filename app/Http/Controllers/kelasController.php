@@ -308,10 +308,9 @@ class kelasController extends Controller
     public function generateAndDownloadZip($id)
     {
         $participants = muridKelas::with(['kelas.program_belajar', 'kelas.pembelajaran'])->where('murid_kelas.kelas_id', $id)->first();
-
         $pembelajaran = $participants->kelas->pembelajaran;
         $tanggalAwal = optional($pembelajaran->first())->tanggal;
-        $tanggalAkhir = optional($pembelajaran->last())->tanggal;
+        $tanggalAkhir = $pembelajaran->filter(fn($item) => !empty($item->tanggal))->last()?->tanggal;
 
         if (!$participants) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
@@ -514,7 +513,7 @@ class kelasController extends Controller
         $tanggalAwalFormatted  = \Carbon\Carbon::parse($tanggalAwal)->format('d-m-Y');
         $tanggalAkhirFormatted = \Carbon\Carbon::parse($tanggalAkhir)->format('d-m-Y');
         $box->draw('Telah menyelesaikan pelatihan ' . strtoupper($dataKelas->kelas->program_belajar->nama_program) .
-            ' di Ruang Robot yang dilaksanakan pada ' . "\n" . 
+            ' di Ruang Robot yang dilaksanakan pada ' . "\n" .
             $tanggalAwalFormatted . ' s/d ' . $tanggalAkhirFormatted . ' dengan predikat :');
 
         // --------- Nilai / Predikat ------------
